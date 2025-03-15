@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<br>
+<br>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="bg-white border rounded-5 shadow p-4 text-center">
+                
+       
+
+                <!-- Payment Info -->
+                <h4 class="mb-3">Confirm Your Payment</h4>
+                <p class="">
+                    You are about to make a payment of <div class='display-6 fw-bold'>₦{{ payment.amount }}</div>
+                    Transaction Reference: <b>{{ payment.ref|slice:":6" }}</b>
+                </p>
+<br>
+                <!-- Paystack Payment Button -->
+                <button onclick="payWithPaystack()" class="btn btn-success btn-lg w-100">Proceed to Payment</button>
+
+                <p class="text-muted small mt-3">
+                    By proceeding, you agree to our <a href="#">Terms & Conditions</a>.
+                </p>
+				         <!-- Payment Gateway Logos -->
+                <div class="mb-3">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="mx-2" width="50">
+         <img src="{% static "assets2/images/stripe.png" %}" alt="Paystack" class="mx-2" width="50" onerror="this.style.display='none'">
+         <img src="{% static "assets2/images/paystack.png" %}" alt="Paystack" class="m-2" height="17.09" onerror="this.style.display='none'">
+          
+                </div>
+            </div>
+			
+        </div>
+    </div>
+</div>
+
+<script>
+    function payWithPaystack() {
+        let ref = "{{ payment.ref }}";
+        let amount = "{{ amount_value }}";
+
+        let handler = PaystackPop.setup({
+            key: "{{ paystack_pub_key }}",
+            email: "{{ payment.email }}",
+            amount: amount,
+            ref: ref,
+            currency: "NGN",
+            callback: function (response) {
+                window.location.href = "{% url 'verify_payment' payment.ref %}";
+            },
+            onClose: function () {
+                alert("Payment process was canceled. Try again.");
+            }
+        });
+
+        handler.openIframe();
+    }
+</script>
+{% endblock content %}

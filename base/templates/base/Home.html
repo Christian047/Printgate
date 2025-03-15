@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<body>
+
+
+  <nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Quest Academy</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+        aria-controls="offcanvasExample" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+
+    </div>
+  </nav>
+
+
+
+  <!-- --------------------Offcanvas start -------------------------- -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Admissions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About the School</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Quest Group of Schools</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </li>
+
+          </ul>
+        </li>
+
+        <svg class="icon-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+          class="bi bi-cart-check-fill" viewBox="0 0 16 16">
+          <path
+            d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708" />
+        </svg>
+
+
+
+
+      </ul>
+    </div>
+  </div>
+  <!-- -----------------------Offcanvas end ------------------------------- -->
+
+
+
+  <!-- Carousel Start -->
+  <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+        aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+        aria-label="Slide 2"></button>
+
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active itemized" data-bs-interval="2000">
+        <img src="{% static 'Images/Boost.png' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption  p-4">
+          <div class="container mt-5">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <!-- Search container -->
+                <div class="search-wrapper">
+                  <div class="input-group mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="What would you like to Print?"
+                      autocomplete="off">
+                    <button class="btn btn-primary" type="button">
+                      Search
+                    </button>
+                  </div>
+                  <!-- Dropdown for search results -->
+                  <div id="searchResults" class="search-results list-group shadow d-none">
+                    <!-- Results will appear here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="display-5 fw-bold">Welcome to the house
+            of Prints.</div>
+          <div class="display fw-light">Let our print products stand you out</div>
+
+          <a href="#" class="btn btn-primary purple mt-2">Start Designing</a>
+
+        </div>
+      </div>
+
+      <div class="carousel-item itemized">
+        <img src="{% static 'Images/Boost.png' %}" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-md-block ">
+          <div class="display-5 fw-bold">Welcome to the house
+            of Prints.</div>
+          <div class="display fw-light">Let our print products stand you out</div>
+
+          <a href="" class="btn btn-primary mt-2 purple" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample" aria-expanded="false" aria-label="Toggle navigation">Start Designing</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Carousel End -->
+
+
+  <!-- Bootsrap slick -->
+  <div class="custom-carousel-container">
+    <h1 class="text-center mb-4">Enhanced Bootstrap Card Carousel</h1>
+    <div class="custom-carousel">
+    </div>
+  </div>
+  <!-- End Bootsrap slick -->
+
+
+
+  <header id="header" class="header fixed-top d-none">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="{% static 'assets/img/logo.png' %}" alt="" />
+        <span>CJACK AUTOS</span>
+      </a>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+          <li><a class="nav-link scrollto" href="#services">Services</a></li>
+          <li>
+            <a class="nav-link scrollto" href="#portfolio">Portfolio</a>
+          </li>
+          <li><a class="nav-link scrollto" href="#team">Team</a></li>
+          <li><a href="blog.html">Blog</a></li>
+
+          <li class="dropdown megamenu">
+            <a href="#"><span>Mega Menu</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li>
+                <a href="#">Column 1 link 1</a>
+                <a href="#">Column 1 link 2</a>
+                <a href="#">Column 1 link 3</a>
+              </li>
+              <li>
+                <a href="#">Column 2 link 1</a>
+                <a href="#">Column 2 link 2</a>
+                <a href="#">Column 3 link 3</a>
+              </li>
+              <li>
+                <a href="#">Column 3 link 1</a>
+                <a href="#">Column 3 link 2</a>
+                <a href="#">Column 3 link 3</a>
+              </li>
+              <li>
+                <a href="#">Column 4 link 1</a>
+                <a href="#">Column 4 link 2</a>
+                <a href="#">Column 4 link 3</a>
+              </li>
+            </ul>
+          </li>
+
+          <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+          <li><a class="nav-link scrollto" href="#contact"><i class="bi bi-search"></i><span
+                class="search-text">Search</span></a></li>
+
+          <li>
+            <a class="getstarted scrollto" href="#about">Get Started</a>
+          </li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav>
+      <!-- .navbar -->
+    </div>
+  </header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+</body>
+
+</html>
+{% endblock content %}

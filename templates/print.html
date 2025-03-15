@@ -1,0 +1,381 @@
+
+{% extends "base.html" %}
+
+{% load static  %}
+{% block content %}
+    <h1>Hello, world!</h1>
+
+
+
+
+<!-- Carousel Start -->
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+      aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active itemized" data-bs-interval="2000">
+      <img src="{% static 'Images/Boost.png' %}" class="d-block w-100" alt="...">
+      <div class="carousel-caption  p-4">
+            <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Search container -->
+                <div class="search-wrapper">
+                    <div class="input-group mb-3">
+                        <input type="text" 
+                               id="searchInput" 
+                               class="form-control" 
+                               placeholder="What would you like to Print?" 
+                               autocomplete="off">
+                        <button class="btn btn-primary" type="button">
+                            Search
+                        </button>
+                    </div>
+                    <!-- Dropdown for search results -->
+                    <div id="searchResults" class="search-results list-group shadow d-none">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="display-5 fw-bold">Welcome to the house
+        of Prints.</div>
+        <div class="display fw-light">Let our print products stand you out</div>
+
+        <a href="" class="btn btn-primary purple mt-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+          aria-controls="offcanvasExample" aria-expanded="false" aria-label="Toggle navigation">Start Designing</a>
+
+      </div>
+    </div>
+
+    <div class="carousel-item itemized">
+      <img src="{% static 'Images/Boost.png' %}" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-md-block ">
+        <div class="display-5 fw-bold">Welcome to the house
+        of Prints.</div>
+            <div class="display fw-light">Let our print products stand you out</div>
+
+        <a href="" class="btn btn-primary mt-2 purple" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+          aria-controls="offcanvasExample" aria-expanded="false" aria-label="Toggle navigation">Start Designing</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Carousel End -->
+
+
+<!-- Bootsrap slick -->
+<div class="custom-carousel-container">
+  <h1 class="text-center mb-4">Enhanced Bootstrap Card Carousel</h1>
+  <div class="custom-carousel">
+  </div>
+</div>
+<!-- End Bootsrap slick -->
+
+
+
+
+      
+      <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <header class="section-header">
+            <h2>Portfolio</h2>
+            <p>Catalogue</p>
+          </header>
+
+          <div class="row" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-lg-12 d-flex justify-content-center">
+              <ul id="portfolio-flters">
+                <li data-filter="*" class="filter-active">All</li>
+                <li data-filter=".filter-app">App</li>
+                <li data-filter=".filter-card">Card</li>
+                <li data-filter=".filter-web">Web</li>
+              </ul>
+            </div>
+          </div>
+
+          <div
+            class="row gy-4 portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/a1.jpeg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>App 1</h4>
+                  <p>App</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/a4.jpeg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="App 1"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/a3.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Web 3</h4>
+                  <p>Web</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/a9.jpeg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Web 3"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/a10.jpeg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>App 2</h4>
+                  <p>App</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/a8.jpeg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="App 2"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/a5.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Card 2</h4>
+                  <p>Card</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/portfolio-4.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Card 2"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/a2.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Web 2</h4>
+                  <p>Web</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/a4.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Web 2"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/portfolio-6.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>App 3</h4>
+                  <p>App</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/portfolio-6.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="App 3"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/portfolio-7.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Card 1</h4>
+                  <p>Card</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/portfolio-7.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Card 1"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-card">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/portfolio-8.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Card 3</h4>
+                  <p>Card</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/portfolio-8.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Card 3"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item filter-web">
+              <div class="portfolio-wrap">
+                <img
+                  src="{% static 'assets/img/portfolio/portfolio-9.jpg' %}"
+                  class="img-fluid"
+                  alt=""
+                />
+                <div class="portfolio-info">
+                  <h4>Web 3</h4>
+                  <p>Web</p>
+                  <div class="portfolio-links">
+                    <a
+                      href="assets/img/portfolio/portfolio-9.jpg"
+                      data-gallery="portfolioGallery"
+                      class="portfokio-lightbox"
+                      title="Web 3"
+                      ><i class="bi bi-plus"></i
+                    ></a>
+                    <a href="portfolio-details.html" title="More Details"
+                      ><i class="bi bi-link"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="text-center m-2 fw-bold"><a href="">See all Products</a></p>
+      </section>
+      <!-- End Portfolio Section -->
+
+
+
+<!-- Sections start -->
+
+<section>
+  <div class="text-center">
+    <h2>Photo Speaks...</h2>
+  </div>
+  <div class="row">
+    <!-- ------------------------------------------- -->
+    <div class="col-lg-4 col-md-6 mb-4">
+      <h2>Photo Speaks...</h2>
+      <div class="card h-100">
+        <div class="img-container">
+          <div class="hover-zoom-container">
+            <img src="{% static 'images/Boost' %}" class="card-img-top hover-zoom" alt="Boat on Calm Water" />
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Card Title</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SEction end -->
+{% endblock content %}

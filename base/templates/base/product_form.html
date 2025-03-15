@@ -1,0 +1,110 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="card shadow-lg" style="max-width: 800px;">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Create Product</h2>
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary btn-lg d-block mx-auto">Create Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Footer for Cart Total -->
+    <footer class="fixed-bottom bg-white shadow-lg py-3">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary rounded-pill me-2">
+                            <span id="cart-item-count">0</span> items
+                        </span>
+                        <span class="text-muted">in your cart</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="me-3">
+                            <span class="text-muted">Total:</span>
+                            <span class="h5 mb-0 ms-2 fw-bold" id="cart-total">$0.00</span>
+                        </div>
+                        <a href="{% url 'checkout' %}" class="btn btn-success">
+                            Checkout <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add this script to update cart total dynamically -->
+    <script>
+        // This function would be called whenever the cart is updated
+        function updateCartSummary(itemCount, total) {
+            document.getElementById('cart-item-count').textContent = itemCount;
+            document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+        }
+        
+        // Example: Update cart when page loads (you would replace this with your actual cart data)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Replace these values with your actual cart data from the backend
+            // For example, you might use Django template variables like {{ cart.item_count }} and {{ cart.total }}
+            updateCartSummary(0, 0.00);
+        });
+    </script>
+{% endblock %}
+
+
+
+{% comment %} {% extends 'main.html' %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+
+    <div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="card shadow-lg" style="max-width: 800px;">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Create Product</h2>
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            <div class="invalid-feedback">
+                                {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary btn-lg d-block mx-auto">Create Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %} {% endcomment %}

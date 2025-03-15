@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<br>
+<br>
+<div class="container p-3">
+    <div class="display-5 m-3">Upload Your Design</div>
+    <div class="row m-3">
+
+
+        <!-- Print Options Section -->
+        <div class="col-12 form-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <div class="quantity-wrapper">
+                            <input type="number" class="form-control" id="quantity" min="1" placeholder="Quantity">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark text-white p-2 h-25 w-auto">Item Price: N5000</div>
+        </div>
+
+        <div class="display-5 ">Dimensions</div>
+        <div class="col-12 form-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label text-small text-muted">Height & Width</label>
+                        <div class="quantity-wrapper">
+                            <input type="number" class="form-control" id="quantity" min="1" placeholder="Height">
+                            <input type="number" class="form-control" id="quantity" min="1" placeholder="Width">
+                            <select class="form-select" aria-label="Common quantities">
+                                <option selected>Inches</option>
+                                <option value="100">Feet</option>
+                     
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+            <div class="">
+                <label for="exampleFormControlInput1" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+            <div class="text-small muted help-text">Accepted formats<br>
+                <div class="print_icons">
+                    <img src="{% static 'assets/img/Icons/image.png' %}" alt="">
+                    <img src="{% static 'assets/img/Icons/pdf.png' %}" alt="">
+                    <img src="{% static 'assets/img/Icons/illus.png' %}" alt="">
+                    <img src="{% static 'assets/img/Icons/coreldraw.png' %}" alt="">
+                    <img src="{% static 'assets/img/Icons/photoshop.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Special Instructions</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                    placeholder="Any specific requirements or notes"></textarea>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+
+
+
+
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-secondary me-md-2" type="button">Save Draft</button>
+            <button class="btn btn-primary" type="submit">Submit Order</button>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="bg-dark h50 w-100 fixed-bottom text-white py-5"><div class="container">
+     <div class="row d-flex justify-content-between">
+        <div class="col-4">
+            <div>Business Cards</div>
+            <div>Quantity: 100</div>
+        </div>
+        
+        <div class="col-4">
+            <div class="display-5 fw-bold">1000</div>
+            <div><button>sdvavdvv</button></div>
+        </div>
+        
+    </div>
+</div></div>
+
+
+
+<script>
+    // Sync the number input and dropdown
+    document.querySelector('select').addEventListener('change', function (e) {
+        if (e.target.value !== 'Common quantities') {
+            document.getElementById('quantity').value = e.target.value;
+        }
+    });
+
+    document.getElementById('quantity').addEventListener('input', function (e) {
+        document.querySelector('select').value = 'Common quantities';
+    });
+</script>
+</body>
+{% endblock content %}

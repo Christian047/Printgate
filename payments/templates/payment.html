@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<br>
+<br>
+<br>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="bg-white border rounded-5 p-4 shadow">
+        <h2 class="text-center mb-4">Make Payment</h2>
+
+        <!-- Payment Gateway Logos -->
+ <!-- Payment Gateway Logos -->
+        
+        <form action="{% url 'initiate_payment' %}" method="POST">
+          {% csrf_token %}
+
+          <!-- Email input -->
+          <div class="form-outline mb-3">
+            <input type="email" id="email" class="form-control" name="email" placeholder="Email" required>
+          </div>
+
+          <!-- First Name input -->
+          <div class="form-outline mb-3">
+            <input type="text" id="firstname" class="form-control" name="firstname" placeholder="First Name" required>
+          </div>
+
+          <!-- Last Name input -->
+          <div class="form-outline mb-3">
+            <input type="text" id="lastname" class="form-control" name="lastname" placeholder="Last Name" required>
+          </div>
+
+          <!-- Amount input -->
+          <div class="form-outline mb-4">
+            <input type="number" min="1" step="0.01" id="amount" class="form-control" name="amount" placeholder="Amount" value="{{ order.get_cart_total|floatformat:2 }}" readonly>
+          </div>
+
+          <!-- Payment Button -->
+          <button type="submit" class="btn btn-primary btn-block mb-3 w-100">Proceed with Payment</button>
+
+       <div class="mb-3 text-center">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="mx-2" width="50">
+         <img src="{% static "assets2/images/stripe.png" %}" alt="Paystack" class="mx-2" width="50" onerror="this.style.display='none'">
+         <img src="{% static "assets2/images/paystack.png" %}" alt="Paystack" class="m-2" height="17.09" onerror="this.style.display='none'">
+          
+                </div>
+          <p class="text-center text-muted small">
+            By proceeding, you agree to our <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+

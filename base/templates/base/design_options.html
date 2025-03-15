@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+
+            <h1 class="display-4 fw-bold">Design Options</h1>
+            <p class="lead text-secondary">Select how you'd like to proceed with your {{ product.name }} design</p>
+        </div>
+    </div>
+
+    <!-- Options Cards -->
+    <div class="row g-4">
+        <!-- Upload Design Option -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 rounded-4 option-card">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h2 class="card-title h3 fw-bold">Upload Your Design</h2>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div class="image-container mb-4">
+                        <img src="{% static 'images/upload.jpeg' %}" alt="Upload design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                    </div>
+                    <p class="text-muted mb-4">Already have a design ready to go? Upload your file and we'll prepare it for printing.</p>
+                    <a href="{% url 'create_order' product.pk %}" class="btn btn-primary w-100 py-3">
+                        <span>Continue with my design</span>
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hire Designer Option -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 rounded-4 option-card">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h2 class="card-title h3 fw-bold">Hire a Professional Designer</h2>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div class="image-container mb-4">
+                        <img src="{% static 'images/design1.jpg' %}" alt="Hire a designer" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                    </div>
+                    <p class="text-muted mb-4">Need creative assistance? Our professional designers will create a custom design tailored to your needs.</p>
+                    <div class="price-tag mb-4">
+                        <span class="text-muted">Starting from</span>
+                        <h3 class="fw-bold mb-0">₦5,000</h3>
+                    </div>
+                    <a href="{% url 'hire_designer' product.pk %}" class="btn btn-outline-primary w-100 py-3">
+                        <span>Work with a designer</span>
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">Need help deciding? <a href="#" class="text-decoration-none">View our design guidelines</a> or contact our support team.</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+<style>
+    /* Card styling */
+    .option-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .option-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button styling */
+    .btn {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #3366FF;
+        border-color: #3366FF;
+    }
+
+    .btn-primary:hover {
+        background-color: #2952CC;
+        border-color: #2952CC;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-primary {
+        color: #3366FF;
+        border-color: #3366FF;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #3366FF;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Price tag styling */
+    .price-tag {
+        display: inline-block;
+    }
+
+    /* Image container */
+    .image-container {
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    /* WhatsApp button */
+    .btn-success {
+        background-color: #25D366;
+        border-color: #25D366;
+    }
+
+    .btn-success:hover {
+        background-color: #128C7E;
+        border-color: #128C7E;
+    }
+</style>
+{% endblock %}

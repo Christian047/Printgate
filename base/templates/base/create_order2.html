@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<br>
+<div class="container mb-5">
+    <div class="card border-0 rounded-4 option-card p-4 pt-4" >
+        <div class="row">
+            <div class="col-md-6">
+                <h1>Order {{ product.title }}</h1>
+                <p>{{ product.description }}</p>
+        
+                {% if product.image %}
+                <img src="{{ product.imageURL }}" class="img-fluid mb-4" alt="{{ product.title }}">
+                {% endif %}
+        
+                <p><span class='text-muted'>Base price: N{{ product.base_price }}</span></p>
+            </div>
+        
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Customize Your Order</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data" id="order-form">
+                            {% csrf_token %}
+        
+                            {% for field in form %}
+                            <div class="form-group mb-3">
+                                {{ field.label_tag }}
+                                {% if field.name == 'variant' %}
+                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control price-affecting-field">
+                                        <option value="">Select a variant</option>
+                                        {% for choice in field.field.choices %}
+                                            {% if choice.0 %}
+                                                {% for variant in product.variants.all %}
+                                                    {% if variant.id == choice.0 %}
+                                                        <option value="{{ choice.0 }}" data-price-adjustment="{{ variant.price_adjustment }}">
+                                                            {{ choice.1 }} {% if variant.price_adjustment != 0 %}({% if variant.price_adjustment > 0 %}+{% endif %}${{ variant.price_adjustment }}){% endif %}
+                                                        </option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+        
+                                {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {{ field.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+        
+                            <button type="submit" class="btn btn-primary">Review Order</button>
+                        </form>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Footer for Order Summary -->
+<footer class="fixed-bottom bg-white border-top shadow-sm py-3">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-7 col-md-8">
+                <div class="d-flex flex-column flex-md-row align-items-md-center">
+                    <h5 class="mb-0 me-md-3">Order Summary</h5>
+                    <span class="d-none d-md-inline text-muted">{{ product.title }}</span>
+                    <div class="ms-md-3 d-none d-md-block">
+                        <span id="variant-display" class="badge bg-secondary"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5 col-md-4 text-end">
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="me-3">
+                        <span class="text-muted d-none d-sm-inline">Total:</span>
+                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">${{ product.base_price }}</span>
+                    </div>
+                    <button type="submit" form="order-form" class="btn btn-success">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Add this script to update order total dynamically -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form and base price
+        const form = document.getElementById('order-form');
+        const basePrice = {{ product.base_price }};
+        const totalDisplay = document.getElementById('total-price');
+        const variantDisplay = document.getElementById('variant-display');
+        
+        // Handle dimensions
+        const widthField = document.getElementById('id_width');
+        const heightField = document.getElementById('id_height');
+        const dimensionUnitField = document.getElementById('id_dimension_unit');
+        
+        // Function to calculate and update the total price
+        function updateTotalPrice() {
+            let total = basePrice;
+            let priceBreakdown = [`Base: $${basePrice.toFixed(2)}`];
+            
+            // Get selected variant and its price adjustment
+            const variantField = document.getElementById('id_variant');
+            if (variantField) {
+                const selectedOption = variantField.options[variantField.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    const priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
+                    total += priceAdjustment;
+                    
+                    // Update variant display in footer
+                    variantDisplay.textContent = selectedOption.text;
+                    
+                    if (priceAdjustment !== 0) {
+                        priceBreakdown.push(`Variant: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
+                    }
+                } else {
+                    variantDisplay.textContent = '';
+                }
+            }
+            
+            // Calculate price based on dimensions if applicable
+            if (widthField && heightField) {
+                const width = parseFloat(widthField.value) || 0;
+                const height = parseFloat(heightField.value) || 0;
+                
+                if (width > 0 && height > 0) {
+                    // Calculate area and any price adjustments based on size
+                    const area = width * height;
+                    const unit = dimensionUnitField ? dimensionUnitField.value : 'inches';
+                    
+                    // This is just an example - adjust based on your pricing model
+                    let sizePriceAdjustment = 0;
+                    if (unit === 'feet') {
+                        // Example: $10 per square foot
+                        sizePriceAdjustment = area * 10;
+                    } else {
+                        // Example: $0.10 per square inch
+                        sizePriceAdjustment = area * 0.10;
+                    }
+                    
+                    total += sizePriceAdjustment;
+                    priceBreakdown.push(`Size (${width} × ${height} ${unit}): +$${sizePriceAdjustment.toFixed(2)}`);
+                }
+            }
+            
+            // Process other spec fields that might affect price
+            // This section would need to be customized based on your spec fields
+            document.querySelectorAll('.spec-field').forEach(field => {
+                const fieldName = field.getAttribute('name');
+                const fieldType = field.getAttribute('type') || field.tagName.toLowerCase();
+                
+                let priceAdjustment = 0;
+                
+                // Handle different field types
+                if (fieldType === 'select-one') {
+                    const selectedOption = field.options[field.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
+                    }
+                } else if (fieldType === 'checkbox' && field.checked) {
+                    priceAdjustment = parseFloat(field.getAttribute('data-price-adjustment') || 0);
+                } else if (fieldType === 'radio' && field.checked) {
+                    priceAdjustment = parseFloat(field.getAttribute('data-price-adjustment') || 0);
+                }
+                
+                if (priceAdjustment !== 0) {
+                    total += priceAdjustment;
+                    const fieldLabel = field.getAttribute('data-label') || fieldName;
+                    priceBreakdown.push(`${fieldLabel}: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
+                }
+            });
+            
+            // Update the total display
+            totalDisplay.textContent = '$' + total.toFixed(2);
+            
+            // Set a hidden input with the calculated total price
+            let totalInput = document.getElementById('calculated_total_price');
+            if (!totalInput) {
+                totalInput = document.createElement('input');
+                totalInput.type = 'hidden';
+                totalInput.name = 'calculated_total_price';
+                totalInput.id = 'calculated_total_price';
+                form.appendChild(totalInput);
+            }
+            totalInput.value = total.toFixed(2);
+            
+            // For debugging or detailed breakdown
+            console.log('Price breakdown:', priceBreakdown);
+        }
+        
+        // Add event listeners to all form elements that might affect price
+        form.querySelectorAll('select, input').forEach(element => {
+            element.addEventListener('change', updateTotalPrice);
+            element.addEventListener('input', updateTotalPrice);
+        });
+        
+        // Initial calculation
+        updateTotalPrice();
+    });
+</script>
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container p-4">
+         <form id="printOrderForm" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <h2 class="display-5 mb-4">Upload Your Design</h2>
+
+        <!-- Quantity and Pricing Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input 
+                        type="number" 
+                        class="form-control" 
+                        id="quantity"
+                        name="quantity" 
+                        min="1" 
+                        max="1000" 
+                        required 
+                        placeholder="Enter quantity"
+                    >
+                    <div class="invalid-feedback">
+                        Please enter a valid quantity between 1 and 1000.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-dark text-white p-3 rounded">
+                    <span>Item Price: </span>
+                    <strong id="totalPrice">N5,000</strong>
+                </div>
+            </div>
+        </div>
+
+<!-- Dimensions Section -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3 class="h4 mb-3">Dimensions</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="number" class="form-control" id="height" name="height" placeholder="Height" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" class="form-control" id="width" name="width" placeholder="Width" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="dimensionUnit" name="dimensionUnit">
+                    <option value="inches" selected>Inches</option>
+                    <option value="feet">Feet</option>
+                </select>
+            </div>
+        </div>
+        <small id="dimensionConversion" class="form-text text-muted mt-2"></small>
+    </div>
+</div>
+        <!-- File Upload Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fileUpload" class="form-label">Upload Design File</label>
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        name="fileUpload"
+                        id="fileUpload" 
+                        accept=".jpg,.jpeg,.png,.pdf,.ai,.psd,.cdr" 
+                        required
+                    >
+                    <div class="text-muted mt-2">
+                        <small>Accepted Formats:</small>
+                        <div class="print_icons mt-2">
+                            <img src="{% static 'assets/img/Icons/image.png' %}" alt="Image" data-bs-toggle="tooltip" title="JPG/PNG">
+                            <img src="{% static 'assets/img/Icons/pdf.png' %}" alt="PDF" data-bs-toggle="tooltip" title="PDF">
+                            <img src="{% static 'assets/img/Icons/illus.png' %}" alt="Illustrator" data-bs-toggle="tooltip" title="Adobe Illustrator">
+                            <img src="{% static 'assets/img/Icons/coreldraw.png' %}" alt="CorelDraw" data-bs-toggle="tooltip" title="CorelDRAW">
+                            <img src="{% static 'assets/img/Icons/photoshop.png' %}" alt="Photoshop" data-bs-toggle="tooltip" title="Adobe Photoshop">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="specialInstructions" class="form-label">Special Instructions</label>
+                    <textarea 
+                        class="form-control" 
+                        id="specialInstructions" 
+                        name="specialInstructions"
+                        rows="3" 
+                        placeholder="Any specific design or printing requirements"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+
+  <a href="{% url "cart" %}">Proceed</a>
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-secondary me-md-2" type="button" id="saveDraftBtn">Save Draft</button>
+            <button class="btn btn-primary" type="submit">Submit Order</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('printOrderForm');
+    const quantityInput = document.getElementById('quantity');
+    const heightInput = document.getElementById('height');
+    const widthInput = document.getElementById('width');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+
+    // Enable Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Dynamic Price Calculation
+    function calculatePrice() {
+        const quantity = quantityInput.value || 0;
+        const basePrice = 5000;
+        const totalPrice = quantity * basePrice;
+        totalPriceElement.textContent = `N${totalPrice.toLocaleString()}`;
+    }
+
+    // Form Validation
+    function validateForm() {
+        let isValid = form.checkValidity();
+        form.classList.add('was-validated');
+        return isValid;
+    }
+
+    // Event Listeners
+    quantityInput.addEventListener('input', calculatePrice);
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (validateForm()) {
+            // Submit form logic here
+            alert('Order submitted successfully!');
+        }
+    });
+
+    saveDraftBtn.addEventListener('click', function() {
+        // Local storage draft save logic
+        localStorage.setItem('printOrderDraft', JSON.stringify({
+            quantity: quantityInput.value,
+            height: heightInput.value,
+            width: widthInput.value,
+            email: document.getElementById('emailAddress').value
+        }));
+        alert('Draft saved successfully!');
+    });
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heightInput = document.getElementById('height');
+    const widthInput = document.getElementById('width');
+    const dimensionUnit = document.getElementById('dimensionUnit');
+    const dimensionConversion = document.getElementById('dimensionConversion');
+
+    function convertDimensions() {
+        const height = parseFloat(heightInput.value) || 0;
+        const width = parseFloat(widthInput.value) || 0;
+        const currentUnit = dimensionUnit.value;
+
+        if (height > 0 && width > 0) {
+            if (currentUnit === 'inches') {
+                // Convert inches to feet
+                const heightInFeet = (height / 12).toFixed(2);
+                const widthInFeet = (width / 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInFeet} ft, Width ${widthInFeet} ft`;
+            } else if (currentUnit === 'feet') {
+                // Convert feet to inches
+                const heightInInches = (height * 12).toFixed(2);
+                const widthInInches = (width * 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInInches} inches, Width ${widthInInches} inches`;
+            }
+        } else {
+            dimensionConversion.textContent = '';
+        }
+    }
+
+    heightInput.addEventListener('input', convertDimensions);
+    widthInput.addEventListener('input', convertDimensions);
+    dimensionUnit.addEventListener('change', convertDimensions);
+});
+
+// [Previous JavaScript remains the same]
+</script>
+{% endblock content %} {% endcomment %}

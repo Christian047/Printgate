@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <style>
+        .design-container { display: flex; }
+        .design-controls { 
+            width: 250px; 
+            padding: 10px; 
+            background: #f4f4f4;
+        }
+        .control-section { margin-bottom: 15px; }
+        #canvas-container { border: 2px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="design-container">
+        <div id="canvas-container">
+            <canvas id="design-canvas" width="600" height="400"></canvas>
+        </div>
+        <div class="design-controls">
+            <div class="control-section">
+                <h3>Text Controls</h3>
+                <input type="text" id="text-input" placeholder="Enter text">
+                <select id="font-select">
+                    <option>Arial</option>
+                    <option>Helvetica</option>
+                    <option>Times New Roman</option>
+                </select>
+                <input type="color" id="text-color">
+                <input type="range" id="font-size" min="10" max="72" value="24">
+                <button onclick="addTextToTemplate()">Add Text</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Text Effects</h3>
+                <button onclick="toggleBold()">Bold</button>
+                <button onclick="toggleItalic()">Italic</button>
+                <button onclick="alignText('left')">Left</button>
+                <button onclick="alignText('center')">Center</button>
+                <button onclick="alignText('right')">Right</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Layer Management</h3>
+                <button onclick="bringForward()">Bring Forward</button>
+                <button onclick="sendBackward()">Send Backward</button>
+                <button onclick="deleteSelected()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = new fabric.Canvas('design-canvas');
+        let currentText = null;
+
+        function addTextToTemplate() {
+            const textInput = document.getElementById('text-input');
+            const fontSelect = document.getElementById('font-select');
+            const colorInput = document.getElementById('text-color');
+            const fontSizeInput = document.getElementById('font-size');
+
+            const text = new fabric.Text(textInput.value, {
+                left: 100,
+                top: 100,
+                fill: colorInput.value,
+                fontSize: parseInt(fontSizeInput.value),
+                fontFamily: fontSelect.value,
+                editable: true
+            });
+
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            currentText = text;
+        }
+
+        function toggleBold() {
+            if (!currentText) return;
+            const isBold = currentText.fontWeight === 'bold';
+            currentText.set('fontWeight', isBold ? 'normal' : 'bold');
+            canvas.renderAll();
+        }
+
+        function toggleItalic() {
+            if (!currentText) return;
+            const isItalic = currentText.fontStyle === 'italic';
+            currentText.set('fontStyle', isItalic ? 'normal' : 'italic');
+            canvas.renderAll();
+        }
+
+        function alignText(alignment) {
+            if (!currentText) return;
+            currentText.set('textAlign', alignment);
+            canvas.renderAll();
+        }
+
+        function bringForward() {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                canvas.bringForward(activeObj);
+            }
+        }
+
+        function sendBackward() {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                canvas.sendBackwards(activeObj);
+            }
+        }
+
+        function deleteSelected() {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                canvas.remove(activeObj);
+            }
+        }
+
+        canvas.on('selection:created', function(e) {
+            currentText = e.target;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Mobile-first styles */
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .quantity-input {
+            width: 60px;
+        }
+
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .btn-quantity {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stock-status {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+
+        .in-stock {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .low-stock {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        /* Hide table headers on mobile */
+        @media (max-width: 768px) {
+            .product-details {
+                font-size: 0.9rem;
+            }
+            
+            .price-details {
+                font-size: 0.85rem;
+            }
+
+            .cart-item {
+                position: relative;
+            }
+
+            .remove-item {
+                position: absolute;
+                top: 0.5rem;
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <!-- Save/Clear Cart buttons -->
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-outline-primary btn-sm me-2" id="saveCart">
+                <i class="fas fa-save me-1"></i>Save
+            </button>
+            <button class="btn btn-outline-danger btn-sm" id="clearCart">
+                <i class="fas fa-trash me-1"></i>Clear
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-3">
+                        <h5 class="mb-3">Shopping Cart (<span id="itemCount">2</span> items)</h5>
+                        <div class="cart-items">
+                            <!-- Item 1 -->
+                            <div class="cart-item" data-price="25.00" data-stock="12">
+                                <div class="d-flex gap-2">
+                                    <!-- Mobile: conditionally hide image -->
+                                    <img src="/api/placeholder/60/60" alt="T-Shirt" class="product-img rounded d-none d-sm-block">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="product-details">
+                                                <h6 class="mb-1">Premium T-Shirt</h6>
+                                                <small class="text-muted d-block">Size: M | Color: Blue</small>
+                                                <span class="stock-status in-stock">In Stock: 12</span>
+                                            </div>
+                                            <button class="btn btn-link text-danger p-0 remove-item">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                                            <div class="price-details">
+                                                <div class="fw-bold">$25.00</div>
+                                                <small class="text-muted">Subtotal: <span class="subtotal">$25.00</span></small>
+                                            </div>
+                                            <div class="input-group input-group-sm" style="width: 120px;">
+                                                <button class="btn btn-outline-secondary btn-quantity minus-btn">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center quantity-input" value="1" min="1" max="12">
+                                                <button class="btn btn-outline-secondary btn-quantity plus-btn">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="cart-item" data-price="45.00" data-stock="3">
+                                <div class="d-flex gap-2">
+                                    <img src="/api/placeholder/60/60" alt="Jeans" class="product-img rounded d-none d-sm-block">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="product-details">
+                                                <h6 class="mb-1">Classic Jeans</h6>
+                                                <small class="text-muted d-block">Size: 32 | Color: Dark Blue</small>
+                                                <span class="stock-status low-stock">Low Stock: 3</span>
+                                            </div>
+                                            <button class="btn btn-link text-danger p-0 remove-item">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                                            <div class="price-details">
+                                                <div class="fw-bold">$45.00</div>
+                                                <small class="text-muted">Subtotal: <span class="subtotal">$45.00</span></small>
+                                            </div>
+                                            <div class="input-group input-group-sm" style="width: 120px;">
+                                                <button class="btn btn-outline-secondary btn-quantity minus-btn">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center quantity-input" value="1" min="1" max="3">
+                                                <button class="btn btn-outline-secondary btn-quantity plus-btn">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimated delivery -->
+                <div class="card border-0 shadow-sm mt-3">
+                    <div class="card-body p-3">
+                        <h6 class="mb-2"><i class="fas fa-truck me-2"></i>Estimated Delivery</h6>
+                        <p class="mb-0 small">Standard Delivery: 3-5 business days</p>
+                    </div>
+                </div>
+
+                <!-- Continue Shopping -->
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 1rem;">
+                    <div class="card-body p-3">
+                        <h5 class="card-title mb-3">Order Summary</h5>
+                        
+                        <!-- Price Details -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span class="text-muted">Subtotal</span>
+                                <span id="cartSubtotal">$70.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span class="text-muted">Shipping</span>
+                                <span>$5.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span class="text-muted">Tax</span>
+                                <span id="tax">$7.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Shipping method -->
+                        <div class="mb-3">
+                            <h6 class="mb-2 small">Shipping Method</h6>
+                            <select class="form-select form-select-sm" id="shippingMethod">
+                                <option value="5.00">Standard Shipping - $5.00</option>
+                                <option value="15.00">Express Shipping - $15.00</option>
+                                <option value="25.00">Next Day Delivery - $25.00</option>
+                            </select>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Total</h6>
+                            <div class="text-end">
+                                <h6 class="mb-0" id="cartTotal">$82.00</h6>
+                                <small class="text-muted">Including VAT</small>
+                            </div>
+                        </div>
+
+                        <!-- Payment icons -->
+                        <div class="text-center mb-3">
+                            <i class="fab fa-cc-visa mx-1"></i>
+                            <i class="fab fa-cc-mastercard mx-1"></i>
+                            <i class="fab fa-cc-amex mx-1"></i>
+                            <i class="fab fa-cc-paypal mx-1"></i>
+                        </div>
+
+                        <!-- Checkout Button -->
+                        <button class="btn btn-primary w-100">
+                            Proceed to Checkout
+                        </button>
+
+                        <!-- Secure checkout message -->
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>Secure Checkout
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // The JavaScript remains the same as in the original code
+        // Just update the selectors to match the new HTML structure
+        document.addEventListener('DOMContentLoaded', function() {
+            function formatPrice(price) {
+                return '$' + price.toFixed(2);
+            }
+
+            function updateRowSubtotal(item) {
+                const price = parseFloat(item.dataset.price);
+                const quantity = parseInt(item.querySelector('.quantity-input').value);
+                const subtotal = price * quantity;
+                item.querySelector('.subtotal').textContent = formatPrice(subtotal);
+                updateCartTotals();
+            }
+
+            function updateCartTotals() {
+                let subtotal = 0;
+                document.querySelectorAll('.cart-item').forEach(item => {
+                    const price = parseFloat(item.dataset.price);
+                    const quantity = parseInt(item.querySelector('.quantity-input').value);
+                    subtotal += price * quantity;
+                });
+
+                const shipping = parseFloat(document.getElementById('shippingMethod').value);
+                const tax = subtotal * 0.1;
+                const total = subtotal + shipping + tax;
+
+                document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
+                document.getElementById('tax').textContent = formatPrice(tax);
+                document.getElementById('cartTotal').textContent = formatPrice(total);
+            }
+
+            document.querySelectorAll('.plus-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    const currentValue = parseInt(input.value);
+                    if (currentValue < parseInt(input.max)) {
+                        input.value = currentValue + 1;
+                        updateRowSubtotal(this.closest('.cart-item'));
+                    }
+                });
+            });
+
+            document.querySelectorAll('.minus-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    const currentValue = parseInt(input.value);
+                    if (currentValue > parseInt(input.min)) {
+                        input.value = currentValue - 1;
+                        updateRowSubtotal(this.closest('.cart-item'));
+                    }
+                });
+            });
+
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    let value = parseInt(this.value);
+                    if (isNaN(value) || value < parseInt(this.min)) {
+                        value = parseInt(this.min);
+                    } else if (value > parseInt(this.max)) {
+                        value = parseInt(this.max);
+                    }
+                    this.value = value;
+                    updateRowSubtotal(this.closest('.cart-item'));
+                });
+            });
+
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.closest('.cart-item');
+                    item.remove();
+                    const remainingItems = document.querySelectorAll('.cart-item').length;
+                    document.getElementById('itemCount').textContent = remainingItems;
+                    updateCartTotals();
+                });
+            });
+
+            document.getElementById('shippingMethod').addEventListener('change', updateCartTotals);
+
+            document.getElementById('clearCart').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear your cart?')) {
+                    document.querySelectorAll('.cart-item').forEach(item => item.remove());
+                    document.getElementById('itemCount').textContent = '0';
+                    updateCartTotals();
+                }
+            });
+
+            document.getElementById('saveCart').addEventListener('click', function() {
+                alert('Cart saved! (This is a demo feature)');
+            });
+        });
+    </script>
+</body>
+</html>

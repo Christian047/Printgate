@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container p-4">
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    
+<form id="printOrderForm" action="{% url 'create_order' product.pk %}" method="POST" enctype="multipart/form-data" novalidate>
+
+        {% csrf_token %}
+        <h2 class="display-5 mb-4">Upload Your Design</h2>
+
+        <!-- Quantity and Pricing Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input 
+                        type="number" 
+                        class="form-control" 
+                        id="quantity" 
+                        name="quantity"
+                        min="1" 
+                        max="1000" 
+                        required 
+                        placeholder="Enter quantity"
+                    >
+                    <div class="invalid-feedback">
+                        Please enter a valid quantity between 1 and 1000.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-dark text-white p-3 rounded">
+                    <span>Item Price: </span>
+                    <strong id="totalPrice">N5,000</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dimensions Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h3 class="h4 mb-3">Dimensions</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" id="height" name="height" placeholder="Height" min="1" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" id="width" name="width" placeholder="Width" min="1" required>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" id="dimensionUnit" name="dimensionUnit">
+                            <option value="inches" selected>Inches</option>
+                            <option value="feet">Feet</option>
+                        </select>
+                    </div>
+                </div>
+                <small id="dimensionConversion" class="form-text text-muted mt-2"></small>
+            </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fileUpload" class="form-label">Upload Design File</label>
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        id="fileUpload" 
+                        name="fileUpload"
+                        accept=".jpg,.jpeg,.png,.pdf,.ai,.psd,.cdr" 
+                        required
+                    >
+                    <div class="text-muted mt-2">
+                        <small>Accepted Formats:</small>
+                        <div class="print_icons mt-2">
+                            <img src="{% static 'assets/img/Icons/image.png' %}" alt="Image" data-bs-toggle="tooltip" title="JPG/PNG">
+                            <img src="{% static 'assets/img/Icons/pdf.png' %}" alt="PDF" data-bs-toggle="tooltip" title="PDF">
+                            <img src="{% static 'assets/img/Icons/illus.png' %}" alt="Illustrator" data-bs-toggle="tooltip" title="Adobe Illustrator">
+                            <img src="{% static 'assets/img/Icons/coreldraw.png' %}" alt="CorelDraw" data-bs-toggle="tooltip" title="CorelDRAW">
+                            <img src="{% static 'assets/img/Icons/photoshop.png' %}" alt="Photoshop" data-bs-toggle="tooltip" title="Adobe Photoshop">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="specialInstructions" class="form-label">Special Instructions</label>
+                    <textarea 
+                        class="form-control" 
+                        id="specialInstructions" 
+                        name="specialInstructions"
+                        rows="3" 
+                        placeholder="Any specific design or printing requirements"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-secondary me-md-2" type="button" id="saveDraftBtn">Save Draft</button>
+            <button class="btn btn-primary" type="submit">Submit Order</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('printOrderForm');
+    const quantityInput = document.getElementById('quantity');
+    const heightInput = document.getElementById('height');
+    const widthInput = document.getElementById('width');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+
+    // Enable Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Dynamic Price Calculation
+    function calculatePrice() {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const basePrice = 5000;
+        const totalPrice = quantity * basePrice;
+        totalPriceElement.textContent = `N${totalPrice.toLocaleString()}`;
+    }
+
+    // Form Validation
+    function validateForm() {
+        let isValid = true;
+        
+        // Check quantity
+        if (!quantityInput.value || quantityInput.value < 1 || quantityInput.value > 1000) {
+            isValid = false;
+            quantityInput.classList.add('is-invalid');
+        } else {
+            quantityInput.classList.remove('is-invalid');
+        }
+
+        // Check dimensions
+        if (!heightInput.value || heightInput.value < 1) {
+            isValid = false;
+            heightInput.classList.add('is-invalid');
+        } else {
+            heightInput.classList.remove('is-invalid');
+        }
+
+        if (!widthInput.value || widthInput.value < 1) {
+            isValid = false;
+            widthInput.classList.add('is-invalid');
+        } else {
+            widthInput.classList.remove('is-invalid');
+        }
+
+        // Check file upload
+        const fileUpload = document.getElementById('fileUpload');
+        if (!fileUpload.files || !fileUpload.files[0]) {
+            isValid = false;
+            fileUpload.classList.add('is-invalid');
+        } else {
+            fileUpload.classList.remove('is-invalid');
+        }
+
+        return isValid;
+    }
+
+    // Event Listeners
+    quantityInput.addEventListener('input', function() {
+        calculatePrice();
+        this.classList.remove('is-invalid');
+    });
+
+    heightInput.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+        convertDimensions();
+    });
+
+    widthInput.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+        convertDimensions();
+    });
+    
+    form.addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
+
+    saveDraftBtn.addEventListener('click', function() {
+        const draftData = {
+            quantity: quantityInput.value,
+            height: heightInput.value,
+            width: widthInput.value,
+            dimensionUnit: document.getElementById('dimensionUnit').value,
+            specialInstructions: document.getElementById('specialInstructions').value
+        };
+        localStorage.setItem('printOrderDraft', JSON.stringify(draftData));
+        alert('Draft saved successfully!');
+    });
+
+    // Load draft if exists
+    const savedDraft = localStorage.getItem('printOrderDraft');
+    if (savedDraft) {
+        try {
+            const draftData = JSON.parse(savedDraft);
+            quantityInput.value = draftData.quantity || '';
+            heightInput.value = draftData.height || '';
+            widthInput.value = draftData.width || '';
+            if (draftData.dimensionUnit) {
+                document.getElementById('dimensionUnit').value = draftData.dimensionUnit;
+            }
+            if (draftData.specialInstructions) {
+                document.getElementById('specialInstructions').value = draftData.specialInstructions;
+            }
+            calculatePrice();
+            convertDimensions();
+        } catch (e) {
+            console.error('Error loading draft:', e);
+        }
+    }
+
+    // Dimension conversion
+    const dimensionUnit = document.getElementById('dimensionUnit');
+    const dimensionConversion = document.getElementById('dimensionConversion');
+
+    function convertDimensions() {
+        const height = parseFloat(heightInput.value) || 0;
+        const width = parseFloat(widthInput.value) || 0;
+        const currentUnit = dimensionUnit.value;
+
+        if (height > 0 && width > 0) {
+            if (currentUnit === 'inches') {
+                const heightInFeet = (height / 12).toFixed(2);
+                const widthInFeet = (width / 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInFeet} ft, Width ${widthInFeet} ft`;
+            } else if (currentUnit === 'feet') {
+                const heightInInches = (height * 12).toFixed(2);
+                const widthInInches = (width * 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInInches} inches, Width ${widthInInches} inches`;
+            }
+        } else {
+            dimensionConversion.textContent = '';
+        }
+    }
+
+    dimensionUnit.addEventListener('change', convertDimensions);
+});
+</script>
+{% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container p-4">
+         <form id="printOrderForm" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <h2 class="display-5 mb-4">Upload Your Design</h2>
+
+        <!-- Quantity and Pricing Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input 
+                        type="number" 
+                        class="form-control" 
+                        id="quantity"
+                        name="quantity" 
+                        min="1" 
+                        max="1000" 
+                        required 
+                        placeholder="Enter quantity"
+                    >
+                    <div class="invalid-feedback">
+                        Please enter a valid quantity between 1 and 1000.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-dark text-white p-3 rounded">
+                    <span>Item Price: </span>
+                    <strong id="totalPrice">N5,000</strong>
+                </div>
+            </div>
+        </div>
+
+<!-- Dimensions Section -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3 class="h4 mb-3">Dimensions</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="number" class="form-control" id="height" name="height" placeholder="Height" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <input type="number" class="form-control" id="width" name="width" placeholder="Width" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="dimensionUnit" name="dimensionUnit">
+                    <option value="inches" selected>Inches</option>
+                    <option value="feet">Feet</option>
+                </select>
+            </div>
+        </div>
+        <small id="dimensionConversion" class="form-text text-muted mt-2"></small>
+    </div>
+</div>
+        <!-- File Upload Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fileUpload" class="form-label">Upload Design File</label>
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        name="fileUpload"
+                        id="fileUpload" 
+                        accept=".jpg,.jpeg,.png,.pdf,.ai,.psd,.cdr" 
+                        required
+                    >
+                    <div class="text-muted mt-2">
+                        <small>Accepted Formats:</small>
+                        <div class="print_icons mt-2">
+                            <img src="{% static 'assets/img/Icons/image.png' %}" alt="Image" data-bs-toggle="tooltip" title="JPG/PNG">
+                            <img src="{% static 'assets/img/Icons/pdf.png' %}" alt="PDF" data-bs-toggle="tooltip" title="PDF">
+                            <img src="{% static 'assets/img/Icons/illus.png' %}" alt="Illustrator" data-bs-toggle="tooltip" title="Adobe Illustrator">
+                            <img src="{% static 'assets/img/Icons/coreldraw.png' %}" alt="CorelDraw" data-bs-toggle="tooltip" title="CorelDRAW">
+                            <img src="{% static 'assets/img/Icons/photoshop.png' %}" alt="Photoshop" data-bs-toggle="tooltip" title="Adobe Photoshop">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="specialInstructions" class="form-label">Special Instructions</label>
+                    <textarea 
+                        class="form-control" 
+                        id="specialInstructions" 
+                        name="specialInstructions"
+                        rows="3" 
+                        placeholder="Any specific design or printing requirements"
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+
+  <a href="{% url "cart" %}">Proceed</a>
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-secondary me-md-2" type="button" id="saveDraftBtn">Save Draft</button>
+            <button class="btn btn-primary" type="submit">Submit Order</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('printOrderForm');
+    const quantityInput = document.getElementById('quantity');
+    const heightInput = document.getElementById('height');
+    const widthInput = document.getElementById('width');
+    const totalPriceElement = document.getElementById('totalPrice');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+
+    // Enable Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
+    // Dynamic Price Calculation
+    function calculatePrice() {
+        const quantity = quantityInput.value || 0;
+        const basePrice = 5000;
+        const totalPrice = quantity * basePrice;
+        totalPriceElement.textContent = `N${totalPrice.toLocaleString()}`;
+    }
+
+    // Form Validation
+    function validateForm() {
+        let isValid = form.checkValidity();
+        form.classList.add('was-validated');
+        return isValid;
+    }
+
+    // Event Listeners
+    quantityInput.addEventListener('input', calculatePrice);
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (validateForm()) {
+            // Submit form logic here
+            alert('Order submitted successfully!');
+        }
+    });
+
+    saveDraftBtn.addEventListener('click', function() {
+        // Local storage draft save logic
+        localStorage.setItem('printOrderDraft', JSON.stringify({
+            quantity: quantityInput.value,
+            height: heightInput.value,
+            width: widthInput.value,
+            email: document.getElementById('emailAddress').value
+        }));
+        alert('Draft saved successfully!');
+    });
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const heightInput = document.getElementById('height');
+    const widthInput = document.getElementById('width');
+    const dimensionUnit = document.getElementById('dimensionUnit');
+    const dimensionConversion = document.getElementById('dimensionConversion');
+
+    function convertDimensions() {
+        const height = parseFloat(heightInput.value) || 0;
+        const width = parseFloat(widthInput.value) || 0;
+        const currentUnit = dimensionUnit.value;
+
+        if (height > 0 && width > 0) {
+            if (currentUnit === 'inches') {
+                // Convert inches to feet
+                const heightInFeet = (height / 12).toFixed(2);
+                const widthInFeet = (width / 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInFeet} ft, Width ${widthInFeet} ft`;
+            } else if (currentUnit === 'feet') {
+                // Convert feet to inches
+                const heightInInches = (height * 12).toFixed(2);
+                const widthInInches = (width * 12).toFixed(2);
+                dimensionConversion.textContent = `Equivalent: Height ${heightInInches} inches, Width ${widthInInches} inches`;
+            }
+        } else {
+            dimensionConversion.textContent = '';
+        }
+    }
+
+    heightInput.addEventListener('input', convertDimensions);
+    widthInput.addEventListener('input', convertDimensions);
+    dimensionUnit.addEventListener('change', convertDimensions);
+});
+
+// [Previous JavaScript remains the same]
+</script>
+{% endblock content %} {% endcomment %}

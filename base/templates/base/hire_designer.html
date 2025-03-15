@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<div class="container mb-5">
+
+    
+    <!-- Main content -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h1>Order {{ product.title }}</h1>
+                    <p>{{ product.description }}</p>
+                    
+                    {% if product.image %}
+                    <img src="{{ product.imageURL }}" style= "height: 100px; overflow: hidden;" class="img-fluid mb-4" alt="{{ product.title }}">
+                    {% endif %}
+                    
+                    <p class= 'text-muted'>Base price: N{{ product.base_price }}</p>
+                    
+                    <!-- Design service information -->
+                    <div class="alert alert-info">
+                        <h5>Professional Design Service</h5>
+                        <p><strong>Design fee: N{{ product.design_fee|default:"5000.00" }}</strong></p>
+                    </div>
+            
+                    <!-- Added explanatory content -->
+                    <div class="card mt-4 border-0 bg-light">
+                        <div class="card-body">
+                            <h5>How Our Design Process Works</h5>
+                            <ol>
+                                <li><strong>Submit your design brief</strong> - Tell us what you're looking for</li>
+                                <li><strong>Designer assignment</strong> - We'll match you with the right designer</li>
+                                <li><strong>Final delivery</strong> - Receive your completed design files</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+
+        <!-- ------------------------------------------------------------------ -->
+<div class="col-md-6">
+    <div class="card border-0 rounded-4 p-4 option-card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="order-form">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group mb-3">
+                    {{ field.label_tag }}
+
+                    {% if field.name == 'variant' %}
+                    <!-- Special handling for variant field -->
+                    <select name="{{ field.name }}" id="{{ field.id_for_label }}"
+                        class="form-control price-affecting-field">
+                        <option value="">Select a variant</option>
+                        {% for choice in field.field.choices %}
+                        {% if choice.0 %}
+                        {% for variant in product.variants.all %}
+                        {% if variant.id == choice.0 %}
+                        <option value="{{ choice.0 }}" data-price-adjustment="{{ variant.price_adjustment }}">
+                            {{ choice.1 }}
+                            {% if variant.price_adjustment != 0 %}
+                            ({% if variant.price_adjustment > 0 %}+{% endif %}${{ variant.price_adjustment }})
+                            {% endif %}
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    {% elif "spec_" in field.name and field.field.widget.input_type == 'file' %}
+                    <!-- Special handling for file upload fields -->
+                    <div class="custom-file">
+                        {{ field }}
+                        <label class="custom-file-label" for="{{ field.id_for_label }}">Choose file</label>
+                    </div>
+
+                    {% elif "spec_" in field.name and field.field.widget.input_type == 'color' %}
+                    <!-- Special handling for color picker fields -->
+                    <div class="d-flex align-items-center">
+                        {{ field }}
+                        <span class="ms-2">Selected color</span>
+                    </div>
+
+                    {% elif "spec_" in field.name and "form-select spec-field" in field.field.widget.attrs.class %}
+                    <!-- Special handling for select fields -->
+                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select spec-field">
+                        {% for choice in field.field.choices %}
+                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
+                            {{ choice.1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    {% else %}
+                    <!-- Standard field rendering -->
+                    {{ field }}
+                    {% endif %}
+
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% if field.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+<div class="mb-4">
+    
+    <div class="form-group mb-4">
+        <label for="id_designer_instructions"><span class="text-muted">Design Instructions</span> </label>
+        <div class="alert alert-info my-2">
+            <small>The more details you provide, the better the design will match your vision. Include information about colors, style, text content, and layout preferences.</small>
+        </div>
+
+    </div>
+    
+    <div class="form-group mb-4">
+        <label for="id_reference_images">Reference Images</label>
+        <div class="alert alert-info mb-2">
+            <small>Upload examples, inspiration, or brand assets to help our designer understand your vision. You can select multiple files.</small>
+        </div>
+        <input type="file" id="id_reference_images" name="reference_images" class="form-control" multiple>
+    </div>
+</div>             
+              
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Continue to Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Footer for Order Summary -->
+<footer class="fixed-bottom bg-dark text-white border-top shadow-sm py-3">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-7 col-md-8">
+                <div class="d-flex flex-column flex-md-row text-white align-items-md-center">
+                    <h5 class="mb-0 me-md-3">Order Summary</h5>
+                    <span class="d-none d-md-inline text-muted">{{ product.title }} + Design Service</span>
+                    <div class="ms-md-3 d-none d-md-block">
+                        <span id="variant-display" class="badge bg-secondary"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5 col-md-4 text-end">
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="me-3">
+                        <span class="text-muted d-none d-sm-inline">Total:</span>
+                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">${{ product.base_price }}</span>
+                    </div>
+                    <button type="submit" form="order-form" class="btn btn-success">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Add this script to update order total dynamically -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form and base price
+        const form = document.getElementById('order-form');
+        const basePrice = {{ product.base_price }};
+        const designFee = {{ product.design_fee|default:"25.00" }};
+        const totalDisplay = document.getElementById('total-price');
+        const variantDisplay = document.getElementById('variant-display');
+        
+        // Handle dimensions
+        const widthField = document.getElementById('id_width');
+        const heightField = document.getElementById('id_height');
+        const dimensionUnitField = document.getElementById('id_dimension_unit');
+        
+        // Function to calculate and update the total price
+        function updateTotalPrice() {
+            let total = basePrice + designFee;
+            let priceBreakdown = [
+                `Base: $${basePrice.toFixed(2)}`,
+                `Design fee: $${designFee.toFixed(2)}`
+            ];
+            
+            // Get selected variant and its price adjustment
+            const variantField = document.getElementById('id_variant');
+            if (variantField) {
+                const selectedOption = variantField.options[variantField.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    const priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
+                    total += priceAdjustment;
+                    
+                    // Update variant display in footer
+                    variantDisplay.textContent = selectedOption.text;
+                    
+                    if (priceAdjustment !== 0) {
+                        priceBreakdown.push(`Variant: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
+                    }
+                } else {
+                    variantDisplay.textContent = '';
+                }
+            }
+            
+            // Calculate price based on dimensions if applicable
+            if (widthField && heightField) {
+                const width = parseFloat(widthField.value) || 0;
+                const height = parseFloat(heightField.value) || 0;
+                
+                if (width > 0 && height > 0) {
+                    // Calculate area and any price adjustments based on size
+                    const area = width * height;
+                    const unit = dimensionUnitField ? dimensionUnitField.value : 'inches';
+                    
+                    // This is just an example - adjust based on your pricing model
+                    let sizePriceAdjustment = 0;
+                    if (unit === 'feet') {
+                        // Example: $10 per square foot
+                        sizePriceAdjustment = area * 10;
+                    } else {
+                        // Example: $0.10 per square inch
+                        sizePriceAdjustment = area * 0.10;
+                    }
+                    
+                    total += sizePriceAdjustment;
+                    priceBreakdown.push(`Size (${width} × ${height} ${unit}): +$${sizePriceAdjustment.toFixed(2)}`);
+                }
+            }
+            
+
+
+            
+            // Process other spec fields that might affect price
+            document.querySelectorAll('.price-affecting-field').forEach(field => {
+                if (field.id !== 'id_variant' && field.id !== 'id_design_timeline' && field.id !== 'id_revisions') {
+                    const fieldName = field.getAttribute('name');
+                    const fieldType = field.getAttribute('type') || field.tagName.toLowerCase();
+                    
+                    let priceAdjustment = 0;
+                    
+                    // Handle different field types
+                    if (fieldType === 'select-one') {
+                        const selectedOption = field.options[field.selectedIndex];
+                        if (selectedOption && selectedOption.value) {
+                            priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
+                        }
+                    } else if (fieldType === 'checkbox' && field.checked) {
+                        priceAdjustment = parseFloat(field.getAttribute('data-price-adjustment') || 0);
+                    } else if (fieldType === 'radio' && field.checked) {
+                        priceAdjustment = parseFloat(field.getAttribute('data-price-adjustment') || 0);
+                    }
+                    
+                    if (priceAdjustment !== 0) {
+                        total += priceAdjustment;
+                        const fieldLabel = field.getAttribute('data-label') || fieldName;
+                        priceBreakdown.push(`${fieldLabel}: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
+                    }
+                }
+            });
+            
+            // Update the total display
+            totalDisplay.textContent = '$' + total.toFixed(2);
+            
+            // Set a hidden input with the calculated total price
+            let totalInput = document.getElementById('calculated_total_price');
+            if (!totalInput) {
+                totalInput = document.createElement('input');
+                totalInput.type = 'hidden';
+                totalInput.name = 'calculated_total_price';
+                totalInput.id = 'calculated_total_price';
+                form.appendChild(totalInput);
+            }
+            totalInput.value = total.toFixed(2);
+            
+            // For debugging or detailed breakdown
+            console.log('Price breakdown:', priceBreakdown);
+        }
+        
+        // Add event listeners to all form elements that might affect price
+        form.querySelectorAll('select, input').forEach(element => {
+            element.addEventListener('change', updateTotalPrice);
+            element.addEventListener('input', updateTotalPrice);
+        });
+        
+        // Initial calculation
+        updateTotalPrice();
+    });
+</script>
+{% endblock content %}
