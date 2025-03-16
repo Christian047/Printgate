@@ -63,6 +63,9 @@ class Login(View):
 class Logout(View):
 
     def get(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+            messages.success(request, 'Logout successful.')
         return redirect('home')
 
     def post(self, request):
