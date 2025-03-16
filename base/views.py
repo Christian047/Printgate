@@ -18,7 +18,7 @@ import json
 def Home(request,pk=None):
     
  
-    cart = request.COOKIES['cart']
+    cart = request.COOKIES.get('cart',{})
     print(f'cart: {cart}')
 
     cats = Categories.objects.all()

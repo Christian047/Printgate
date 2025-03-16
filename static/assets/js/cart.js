@@ -58,7 +58,7 @@ function updateUserOrder(productId, action, variantId) {
 
     console.log("📤 Sending data:", JSON.stringify(data));
 
-    fetch("/update_item/", {
+    fetch("/store/update_item/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -84,11 +84,12 @@ function updateUserOrder(productId, action, variantId) {
         });
 }
 
-/**
- * Handle cart updates for unauthenticated users using cookies
- */
+
+//  * Handle cart updates for unauthenticated users using cookies
+//     */
 function addCookieItem(productId, action, variantId) {
     console.log("⚠️ User is not authenticated, modifying cart via cookies");
+    console.log(`📊 Product: ${productId}, Action: ${action}, Variant: ${variantId}`);
 
     let cart = {};
     if (document.cookie.includes("cart=")) {
@@ -107,7 +108,8 @@ function addCookieItem(productId, action, variantId) {
     }
 
     // Generate a consistent cart key for product+variant combination
-    const cartKey = variantId ? `${productId}_${variantId}` : productId;
+    const cartKey = variantId ? `${productId}_${variantId}` : `${productId}`;
+    console.log(`🔑 Using cart key: ${cartKey}`);
 
     // Handle "add" action
     if (action === "add") {
@@ -139,12 +141,16 @@ function addCookieItem(productId, action, variantId) {
         }
     }
 
-    // Update cookies
+    // Update cookies with proper JSON formatting
     console.log("📦 Updated cart:", cart);
     document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
 
-    location.reload();
+    // Add a slight delay before reloading to ensure cookie is saved
+    setTimeout(() => {
+        location.reload();
+    }, 100);
 }
+
 
 /**
  * Debug function to inspect cart contents

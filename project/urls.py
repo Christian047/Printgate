@@ -7,9 +7,9 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('b/', include('base.urls')),
+    path('', include('base.urls')),
     path('custom', include('custom_design.urls')),
-    path('', include('store.urls')), 
+    path('store/', include('store.urls')), 
     path('payments/', include('payments.urls')), 
     path('auth/', include('authentication.urls')), 
     path('order/', include('order_view.urls')), 
