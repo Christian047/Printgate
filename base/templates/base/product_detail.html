@@ -9,29 +9,21 @@
         <!-- Product Image Section -->
         <div class="col-md-6">
             <div class="border rounded p-3 bg-light">
-                <img src="{{ product.image.url }}" class="img-fluid rounded w-100" alt="{{ product.title }}" style="max-height: 450px; object-fit: cover;">
+                <img src="{{ product.image.url }}" class="img-fluid rounded-3 w-100" alt="{{ product.title }}" style="max-height: 450px; object-fit: cover;">
             </div>
         </div>
 
         <!-- Product Details Section -->
-        <div class="col-md-6">
+        <div class="col-md-6 py-2">
             <h1 class="fw-bold">{{ product.title }}</h1>
             <p class="text-muted">Category: <strong>{{ product.category.name }}</strong></p>
 
             <!-- Price -->
             <div class="py-2">
-                <h2 class="text-primary fw-bold">₦{{ product.base_price|floatformat:2 }}</h2>
+                <h2 class="text-dark fw-bold">₦{{ product.base_price|floatformat:2 }}</h2>
             </div>
 
-            <!-- Digital or Physical Indicator -->
-            <div class="mb-3">
-                {% if product.digital %}
-                <span class="badge bg-success fs-6">Digital Product</span>
-                {% else %}
-                <span class="badge bg-secondary fs-6">Physical Product</span>
-                {% endif %}
-            </div>
-
+    
             <!-- Description Section -->
             <div class="py-3">
                 <h5 class="fw-semibold">Product Description</h5>
@@ -43,7 +35,7 @@
                 <a href="{% url 'options' product.pk %}" class="btn btn-primary px-5 py-3 fw-semibold">
                     <i class="fas fa-shopping-cart"></i> Print
                 </a>
-                <a href="#" class="btn btn-outline-dark px-5 py-3 fw-semibold">
+                <a href="{% url 'home' %}" class="btn btn-outline-dark px-5 py-3 fw-semibold">
                     <i class="fas fa-arrow-left"></i> Back to Products
                 </a>
             </div>

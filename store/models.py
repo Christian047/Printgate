@@ -38,7 +38,7 @@ class Product(models.Model):
         upload_to='product/', default='default.jpg', null=True, blank=True
         
     )
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE, null=True, blank=True, related_name= 'product_category')
+    category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True, blank=True, related_name= 'product_category')
 
     def __str__(self):
         return self.title

@@ -14,5 +14,6 @@ urlpatterns = [
     path('create_order/<int:pk>/', views.create_print_order, name='create_order'),
     path('hire-designer/<int:pk>/', views.hire_designer, name='hire_designer'),
     path('design/', views.design_options_page, name='design'),
+    path('convert/', views.covert_size, name='convert'),
     path('autocomplete/', views.autocomplete, name='autocomplete'),
 ]

@@ -63,22 +63,37 @@ def cat(request):
 
 
 
+# def autocomplete(request):
+#     if 'term' in request.GET:
+#         qs = Product.objects.filter(title__icontains=request.GET.get('term'))
+#         titles = list()
+#         for product in qs:
+#             titles.append(product.title)
+
+#         return JsonResponse(titles, safe=False)
+#     return render(request, 'base/Home2.html')
+
+
 def autocomplete(request):
     if 'term' in request.GET:
         qs = Product.objects.filter(title__icontains=request.GET.get('term'))
-        titles = list()
+        titles = []
         for product in qs:
-            titles.append(product.title)
-
+            titles.append({
+                'id': product.id,  # Assuming you have an id field
+                'label': product.title,  # What shows in the dropdown
+                'value': product.title   # What fills the input after selection
+            })
         return JsonResponse(titles, safe=False)
     return render(request, 'base/Home2.html')
 
 
-
-
-
 def design_options_page(request):
     return render(request, 'base/upload.html')
+
+
+def covert_size(request):
+    return render(request, 'base/convert_size.html')
 
 
 def create_print_order(request, pk):
@@ -96,8 +111,16 @@ def create_print_order(request, pk):
                              'email': request.user.email}
                 )
             
-            # Save the pending order
-            pending_order = form.save(customer=customer)
+            try:
+                # Save the pending order
+                pending_order = form.save(customer=customer)
+                messages.success(request, "Your order has been successfully created.")
+            except Exception as e:
+                messages.error(request, f"An error occurred while saving your order: {str(e)}")
+                return render(request, 'base/create_order2.html', {
+                    'product': product,
+                    'form': form
+                })
             
             # Store pending order ID in session for anonymous users
             if not request.user.is_authenticated:
@@ -108,6 +131,15 @@ def create_print_order(request, pk):
             
             # Redirect to order review page
             return redirect('order_confirmation', order_id=pending_order.id)
+        else:
+            # Handle specific form errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
+            
+            # Check if image file is missing
+            if 'spec_file' in form.errors:
+                messages.error(request, "Image upload is required. Please select an image file.")
     else:
         form = BaseOrderForm(product)
     

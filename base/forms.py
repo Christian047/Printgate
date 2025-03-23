@@ -7,16 +7,6 @@ from store.models import *
 
 
 class BaseOrderForm(forms.Form):
-    special_instructions = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'rows': 3,
-            'class': 'form-control',
-            'placeholder': 'Enter any special instructions...'
-        }),
-        required=False,
-        label="Special Instructions"
-    )
-
     def __init__(self, product, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.product = product
@@ -105,8 +95,17 @@ class BaseOrderForm(forms.Form):
                 required=True,
                 widget=forms.Select(attrs={'class': 'form-select'})
             )
-
-
+        
+        # Move special_instructions to the end
+        self.fields['special_instructions'] = forms.CharField(
+            widget=forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-control',
+                'placeholder': 'Enter any special instructions...'
+            }),
+            required=False,
+            label="Special Instructions"
+        )
 
     def save(self, customer=None):
         # Calculate total price based on product, variant, and any other factors
@@ -125,14 +124,13 @@ class BaseOrderForm(forms.Form):
                 design_file = self.cleaned_data.get(field_name)
                 break
         
-
         if variant_id:
             try:
                 variant = product.variants.get(id=variant_id)
                 total_price += variant.price_adjustment
             except:
                 pass
- 
+    
         # Create pending order
         pending_order = PendingOrder.objects.create(
             customer=customer,
@@ -141,7 +139,6 @@ class BaseOrderForm(forms.Form):
             special_instructions=self.cleaned_data.get('special_instructions', ''),
             total_price=total_price,
             design_file=design_file
-      
         )
         
         # Save specifications
@@ -168,10 +165,8 @@ class BaseOrderForm(forms.Form):
         
         return pending_order
     
-    
-    
-    
 class DesignerOrderForm(BaseOrderForm):
+
         def __init__(self, product, *args, **kwargs):
             super().__init__(product, *args, **kwargs)
             

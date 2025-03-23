@@ -155,8 +155,8 @@
         <div class="row align-items-center">
             <div class="col-7 col-md-8">
                 <div class="d-flex flex-column flex-md-row text-white align-items-md-center">
-                    <h5 class="mb-0 me-md-3">Order Summary</h5>
-                    <span class="d-none d-md-inline text-muted">{{ product.title }} + Design Service</span>
+                    <h5 class="mb-0 me-md-3 text-white">Order Summary</h5>
+                    <span class="d-none d-md-inline ">{{ product.title }} + Design Service</span>
                     <div class="ms-md-3 d-none d-md-block">
                         <span id="variant-display" class="badge bg-secondary"></span>
                     </div>
@@ -165,8 +165,8 @@
             <div class="col-5 col-md-4 text-end">
                 <div class="d-flex justify-content-end align-items-center">
                     <div class="me-3">
-                        <span class="text-muted d-none d-sm-inline">Total:</span>
-                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">${{ product.base_price }}</span>
+                        <span class=" d-none d-sm-inline">Total:</span>
+                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">N{{ product.base_price }}</span>
                     </div>
                     <button type="submit" form="order-form" class="btn btn-success">
                         Continue

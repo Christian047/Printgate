@@ -1,0 +1,85 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br>
+<br>
+
+    <script>
+        function convertUnits() {
+            let height = parseFloat(document.getElementById("height").value);
+            let width = parseFloat(document.getElementById("width").value);
+            let fromUnit = document.getElementById("fromUnit").value;
+            let toUnit = document.getElementById("toUnit").value;
+
+            if (isNaN(height) || isNaN(width)) {
+                document.getElementById("result").innerHTML = "<p class='text-danger'>Please enter valid numbers.</p>";
+                return;
+            }
+
+            let conversionFactors = {
+                "inches": { "inches": 1, "feet": 1 / 12, "cm": 2.54, "meters": 0.0254 },
+                "feet": { "inches": 12, "feet": 1, "cm": 30.48, "meters": 0.3048 },
+                "cm": { "inches": 0.393701, "feet": 0.0328084, "cm": 1, "meters": 0.01 },
+                "meters": { "inches": 39.3701, "feet": 3.28084, "cm": 100, "meters": 1 }
+            };
+
+            let convertedHeight = height * conversionFactors[fromUnit][toUnit];
+            let convertedWidth = width * conversionFactors[fromUnit][toUnit];
+
+            document.getElementById("result").innerHTML = `
+                <div class="alert alert-info mt-3">
+                    <strong>Converted Dimensions:</strong><br>
+                    Height: ${convertedHeight.toFixed(2)} ${toUnit}<br>
+                    Width: ${convertedWidth.toFixed(2)} ${toUnit}
+                </div>
+            `;
+        }
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-white text-center">
+                <h3 class="fw-bold">Unit Converter</h3>
+                <p class="text-muted">Convert height & width between inches, feet, cm, and meters</p>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="height" class="form-label">Height</label>
+                        <input type="number" class="form-control" id="height" placeholder="Enter height">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="width" class="form-label">Width</label>
+                        <input type="number" class="form-control" id="width" placeholder="Enter width">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fromUnit" class="form-label">From</label>
+                        <select class="form-select" id="fromUnit">
+                            <option value="inches">Inches</option>
+                            <option value="feet">Feet</option>
+                            <option value="cm">Centimeters</option>
+                            <option value="meters">Meters</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="toUnit" class="form-label">To</label>
+                        <select class="form-select" id="toUnit">
+                            <option value="inches">Inches</option>
+                            <option value="feet">Feet</option>
+                            <option value="cm">Centimeters</option>
+                            <option value="meters">Meters</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-center">
+                        <button onclick="convertUnits()" class="btn btn-dark w-100 mt-3">Convert</button>
+                    </div>
+                </div>
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

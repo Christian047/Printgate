@@ -150,7 +150,11 @@
 
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+      <div class="offcanvas-title" id="offcanvasExampleLabel"><h5>Contact</h5> <h6 class="fw-bold">0812 345 6789 <br> 0803 987 6543</h6> </div>
+    
+
+        
+    
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -159,21 +163,24 @@
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
 
-       
-         {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-          </li>
-          {% else %}
-           <li class="nav-item">
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'register' %}">Register</a>
         </li>
-           <li class="nav-item">
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
         {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'orders' %}">Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%  url 'convert' %}">Unit Converter</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -206,39 +213,40 @@
   </div>
 
 
-<!-- Flash Messages Container -->
-<div class="container">
-  {% if messages %}
-  <div class="messages-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-    {% for message in messages %}
-    <div
-      class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
-      role="alert">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <!-- Flash Messages Container -->
+  <div class="container">
+    {% if messages %}
+    <div class="messages-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+      {% for message in messages %}
+      <div
+        class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+
+      {% endif %}
+
     </div>
-    {% endfor %}
-
-    {% endif %}
-
   </div>
-</div>
 
 
 
-    {% block content %}
+  {% block content %}
 
 
 
-    {% endblock content %}
+  {% endblock content %}
 
 
 
   <div class="row">
-    <a href="https:/wa.me/+2348027989868" target="_blank" class="whatsapp_float"><i
-        class="bi bi-whatsapp whatsapp_float"></i></a>
-    <div class="whatsapp-background"> Chat with us <a href="https:/wa.me/+2348027989868" target="_blank"
-        class="whatsapp_float"><i class="bi bi-whatsapp whatsapp_float"></i></a></div>
+    <div class="whatsapp-background"> <a href="https:/wa.me/+2348027989868" target="_blank" class="text-decoration-none text-white">Chat with us </a>
+      <a href="https:/wa.me/+2348027989868" target="_blank"
+        class="whatsapp_float">
+        <i class="fa-brands fa-whatsapp whatsapp-icon">
+    </div>
   </div>
 
 
@@ -417,16 +425,31 @@
   <script type="text/javascript" src="{% static 'assets/js/cart.js' %}"></script>
 
 
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-  <script>
-    $(function () {
-      $("#product").autocomplete({
-        source: '{% url 'autocomplete' %}',
-        minLength: 2
-      });
-    });
-  </script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<script>
+  $(function () {
+    $("#product").autocomplete({
+      source: "{% url 'autocomplete' %}",
+      minLength: 2,
+      select: function (event, ui) {
+        // Redirect to product detail page when an item is selected
+        window.location.href = "/product/" + ui.item.id + "/";  // Adjust URL pattern to match your product detail URL
+        return false;  // Prevents the default behavior of filling the input
+      },
+      focus: function (event, ui) {
+        // Optional: Update the input with the focused item's label
+        $("#product").val(ui.item.label);
+        return false;
+      }
+    }).autocomplete("instance")._renderItem = function (ul, item) {
+      // Optional: Custom rendering of autocomplete items
+      return $("<li>")
+        .append("<div>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  });
+</script>
 
 
 
