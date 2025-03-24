@@ -21,14 +21,15 @@ def store(request):
 
 
 def cart(request):
-	data = cartData(request)
+    data = cartData(request)
 
-	cartItems = data['cartItems']
-	order = data['order']
-	items = data['items']
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+        
 
-	context = {'items':items, 'order':order, 'cartItems':cartItems}
-	return render(request, 'store/cart.html', context)
+    context = {'items':items, 'order':order, 'cartItems':cartItems}
+    return render(request, 'store/cart.html', context)
 
 def checkout(request):
 	data = cartData(request)
@@ -48,8 +49,6 @@ def updateItem(request):
         print("Request received")  # Debug print
         print("Request body:", request.body)  # Debug print
         
-        
-
         data = json.loads(request.body)
         print("Parsed data:", data)  # Debug print
         
@@ -57,12 +56,14 @@ def updateItem(request):
         action = data['action']
         variantId = data.get('variantId')  # Get variant ID if available
         
+        # Normalize variant ID - treat None, "null", "undefined" as None
+        if variantId in [None, "null", "undefined", ""]:
+            variantId = None
+        
         print('Action:', action)
         print('Product:', productId)
         print('Variant:', variantId)
         
-        
-
         customer = request.user.customer
         product = Product.objects.get(id=productId)
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -73,7 +74,8 @@ def updateItem(request):
             try:
                 variant = ProductVariant.objects.get(id=variantId)
             except ProductVariant.DoesNotExist:
-                pass
+                print(f"❌ Variant with ID {variantId} not found")
+                variant = None
         
         # Check if an order item with this product and variant already exists
         orderItem = OrderItem.objects.filter(
@@ -108,9 +110,10 @@ def updateItem(request):
         return JsonResponse({
             'error': str(e),
             'traceback': traceback.format_exc()
-        }, status=500)
-        
-        
+        }, status=500)    
+
+
+
 def processOrder(request):
 	transaction_id = datetime.datetime.now().timestamp()
 	data = json.loads(request.body)
@@ -139,3 +142,27 @@ def processOrder(request):
 		)
 
 	return JsonResponse('Payment submitted..', safe=False)
+
+
+
+
+def clearCart(request):
+    try:
+        if request.method == 'POST':
+            if request.user.is_authenticated:
+                # Handle logged-in user
+                customer = request.user.customer
+                order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            else:
+                # Handle guest user
+                device_id = request.COOKIES.get('device')
+                order, created = Order.objects.get_or_create(device=device_id, complete=False)
+            
+            # Delete all items in the cart
+            order.orderitem_set.all().delete()
+            
+            return JsonResponse({'status': 'success', 'message': 'Cart cleared'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})

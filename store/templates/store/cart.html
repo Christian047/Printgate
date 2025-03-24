@@ -1,54 +1,720 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
+
 {% block content %}
 <br>
 <br>
-	<div class="row p-4 pt-4">
-		<div class="col-lg-12">
-			<div class="box-element py-4">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Calculate design fee and total with design fee -->
+            {% with has_designer_service=False %}
+            {% for item in items %}
+                {% if item.designer_service %}
+                    {% with has_designer_service=True %}{% endwith %}
+                {% endif %}
+            {% endfor %}
 
-				<a  class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+            {% with designer_fee=5000 %}
+            {% with total_with_design_fee=order.get_cart_total|add:designer_fee %}
+            
+            <!-- Cart Header with Enhanced Styling -->
+            <div class="box-element py-4 shadow-sm rounded">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <a class="btn btn-outline-dark" href="{% url 'store' %}">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                    
+                    <div class="d-flex flex-column flex-md-row gap-3 align-items-center mt-3 mt-md-0">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-dark rounded-pill me-2">{{order.get_cart_items}}</span>
+                            <span>{% if order.get_cart_items == 1 %}Item{% else %}Items{% endif %}</span>
+                        </div>
+                        <div class="fw-bold fs-5">
+                            Total: 
+                            <span class="text-success">
+                                {% if has_designer_service %}
+                                N{{total_with_design_fee|intcomma}}
+                                <small class="text-muted">(includes N5000 design fee)</small>
+                                {% else %}
+                                N{{order.get_cart_total|intcomma}}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <a class="btn btn-dark" href="{% url 'checkout' %}">
+                            <i class="fas fa-shopping-cart me-2"></i>Checkout
+                        </a>
+                   <button id="clear-cart-btn" class="btn btn-dark">
+    <i class="fas fa-trash me-2"></i>Clear Cart
+</button>
 
-				<br>
-				<br>
-				<table class="table">
-					<tr>
-						<th><h5>Items: <strong>{{order.get_cart_items}}</strong></h5></th>
-						<th><h5>Total:<strong> N{{order.get_cart_total|floatformat:2}}</strong></h5></th>
-						<th>
-							<a  style="float:right; margin:5px;" class="btn btn-dark" href="{% url 'checkout' %}">Checkout</a>
-						</th>
-					</tr>
-				</table>
+                    </div>
+                </div>
+            </div>
 
-			</div>
+            <br>
+            
+            <!-- Empty Cart State -->
+            {% if items|length == 0 %}
+            <div class="text-center py-5 box-element shadow-sm rounded">
+                <img src="/media/images/empty-cart.png" alt="Empty Cart" style="max-width: 150px; opacity: 0.5;" class="mb-4">
+                <h4 class="mb-3">Your cart is empty</h4>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="{% url 'store' %}" class="btn btn-primary">Browse Products</a>
+            </div>
+            {% else %}
+            
+            <!-- Desktop view (hidden on small screens) -->
+            <div class="d-none d-md-block">
+                <div class="box-element py-4 shadow-sm rounded">
+                    <div class="cart-row border-bottom pb-2 mb-2">
+                        <div style="flex:2"></div>
+                        <div style="flex:2"><strong>Item</strong></div>
+                        <div style="flex:1"><strong>Price</strong></div>
+                        <div style="flex:1"><strong>Quantity</strong></div>
+                        <div style="flex:1"><strong>Total</strong></div>
+                        <div style="flex:0.5"></div>
+                    </div>
+                    
+                    {% for item in items %}
+                    <div class="cart-row py-3 align-items-center {% if not forloop.last %}border-bottom{% endif %}">
+                        <div style="flex:2">
+                            <div class="position-relative">
+                                <img class="row-image rounded" src="{{item.product.imageURL}}">
+                                {% if item.variant %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary" style="margin-left: -10px;">
+                                    {{item.variant.name}}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="flex:2">
+                            <p class="mb-0 fw-bold">{{item.product.title}}</p>
+                            {% if item.variant %}
+                            <small class="text-muted">Option: {{item.variant.name}}</small>
+                            {% endif %}
+                            
+                            {% if item.designer_service %}
+                            <div class="badge bg-info text-dark mt-1">Designer Service</div>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1">
+                            <p class="mb-0">N{{item.unit_price|intcomma}}</p>
+                            {% if item.designer_service %}
+                            <small class="text-muted">+N5000 design fee</small>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1">
+                            <div class="quantity-control d-flex align-items-center">
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    data-action="remove" 
+                                    class="btn btn-sm btn-outline-secondary update-cart">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="mx-2 fw-bold">{{item.quantity}}</span>
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    data-action="add" 
+                                    class="btn btn-sm btn-outline-secondary update-cart">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <p class="mb-0 fw-bold">
+                                {% if item.designer_service %}
+                                N{{item.get_total|add:designer_fee|intcomma}}
+                                <small class="text-muted d-block">Includes N5000 design fee</small>
+                                {% else %}
+                                N{{item.get_total|intcomma}}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div style="flex:0.5" class="text-end">
+                            <button 
+                                data-product="{{item.product.id}}" 
+                                {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                data-action="remove-all" 
+                                class="btn btn-sm text-danger remove-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- If there's a designer service, show design fee row -->
+                    {% if has_designer_service %}
+                    <div class="cart-row py-3 align-items-center border-top mt-3">
+                        <div style="flex:2"></div>
+                        <div style="flex:2">
+                            <p class="mb-0 fw-bold">Design Service Fee</p>
+                        </div>
+                        <div style="flex:1">
+                            <p class="mb-0">N5000</p>
+                        </div>
+                        <div style="flex:1"></div>
+                        <div style="flex:1">
+                            <p class="mb-0 fw-bold">N5000</p>
+                        </div>
+                        <div style="flex:0.5"></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Mobile view (visible only on small screens) -->
+            <div class="d-md-none">
+                {% for item in items %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="me-3 position-relative">
+                                <img class="img-fluid rounded" src="{{item.product.imageURL}}" alt="{{item.product.title}}" style="width: 80px; height: 80px; object-fit: cover;">
+                                {% if item.variant %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary" style="font-size: 0.6rem; margin-left: -10px;">
+                                    {{item.variant.name}}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-1">{{item.product.title}}</h5>
+                                    <button 
+                                        data-product="{{item.product.id}}" 
+                                        {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                        data-action="remove-all" 
+                                        class="btn btn-sm text-danger remove-item">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                {% if item.variant %}
+                                <p class="small text-muted mb-1">Option: {{item.variant.name}}</p>
+                                {% endif %}
+                                {% if item.designer_service %}
+                                <div class="badge bg-info text-dark mb-1">Designer Service</div>
+                                {% endif %}
+                                <p class="mb-0 fw-bold">
+                                    N{{item.unit_price|intcomma}}
+                                    {% if item.designer_service %}
+                                    <span class="text-muted">+N5000 design fee</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="input-group" style="max-width: 130px;">
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    data-action="remove" 
+                                    class="btn btn-outline-secondary update-cart">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="form-control text-center fw-bold">{{item.quantity}}</span>
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    data-action="add" 
+                                    class="btn btn-outline-secondary update-cart">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Subtotal:</span>
+                                <div class="fw-bold">
+                                    {% if item.designer_service %}
+                                    N{{item.get_total|add:designer_fee|intcomma}}
+                                    <small class="text-muted d-block">Includes design fee</small>
+                                    {% else %}
+                                    N{{item.get_total|intcomma}}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Show design fee card on mobile if needed -->
+                {% if has_designer_service %}
+                <div class="card mb-3 shadow-sm bg-light">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="mb-0">Design Service Fee</h6>
+                            </div>
+                            <div class="fw-bold">N5000</div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Sticky Checkout Bar for Mobile -->
+                <div class="fixed-bottom bg-white shadow-lg p-3 d-md-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small">Total:</span>
+                            <span class="fw-bold fs-5">
+                                {% if has_designer_service %}
+                                N{{total_with_design_fee|intcomma}}
+                                {% else %}
+                                N{{order.get_cart_total|intcomma}}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <a href="{% url 'checkout' %}" class="btn btn-dark">
+                            Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
 
-			<br>
-			<div class="box-element py-4">
-				<div class="cart-row">
-					<div style="flex:2"></div>
-					<div style="flex:2"><strong>Item</strong></div>
-					<div style="flex:1"><strong>Price</strong></div>
-					<div style="flex:1"><strong>Quantity</strong></div>
-					<div style="flex:1"><strong>Total</strong></div>
-				</div>
-				{% for item in items %}
-				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
-					<div style="flex:2"><p>{{item.product.title}}</p></div>
-					<div style="flex:1"><p>N{{item.get_unit_price|floatformat:2}}</p></div>
-					<div style="flex:1">
-						<p class="quantity">{{item.quantity}}</p>
-						<div class="quantity">
-							<img data-product="{{item.product.id}}" data-action="add" class="chg-quantity update-cart" src="/media/images/arrow-up.png">
-					
-							<img data-product="{{item.product.id}}" data-action="remove" class="chg-quantity update-cart" src="/media/images/arrow-down.png">
-						</div>
-					</div>
-					<div style="flex:1"><p>${{item.get_total|floatformat:2}}</p></div>
-				</div>
-				{% endfor %}
-			</div>
-		</div>
-	</div>
+<!-- Add this script at the end of your content block -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Replace image buttons with styled buttons
+    const images = document.querySelectorAll('.chg-quantity');
+    images.forEach(img => {
+        const action = img.dataset.action;
+        const productId = img.dataset.product;
+        const variantId = img.dataset.variant;
+        
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline-secondary update-cart';
+        btn.dataset.product = productId;
+        btn.dataset.action = action;
+        if (variantId) {
+            btn.dataset.variant = variantId;
+        }
+        
+        const icon = document.createElement('i');
+        icon.className = action === 'add' ? 'fas fa-plus' : 'fas fa-minus';
+        btn.appendChild(icon);
+        
+        img.parentNode.replaceChild(btn, img);
+    });
+    
+    // Add loading indicators
+    const updateBtns = document.querySelectorAll('.update-cart');
+    updateBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Store original content
+            const originalContent = this.innerHTML;
+            
+            // Add loading spinner
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            this.disabled = true;
+            
+            // Restore after a short delay (in a real app, this would happen after the AJAX request completes)
+            setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.disabled = false;
+            }, 700);
+        });
+    });
+    
+    // Add "remove item entirely" functionality
+    const removeButtons = document.querySelectorAll('.remove-item');
+    removeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('Remove this item from your cart?')) {
+                // Here you'd connect to your existing cart update functionality
+                console.log('Removing item', this.dataset.product, this.dataset.variant);
+                
+                // Show loading state
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                this.disabled = true;
+                
+                // In a real implementation, you'd make an AJAX call to remove the item
+                // For demo purposes, just reload after a delay
+                setTimeout(() => {
+                    location.reload();
+                }, 700);
+            }
+        });
+    });
+});
+
+
+
+document.getElementById('clear-cart-btn').addEventListener('click', function() {
+    if (confirm('Are you sure you want to clear your cart?')) {
+        fetch('{% url "clearCart" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+});
+</script>
+
+
 {% endblock content %}
+
+
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<br>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Cart Header with Enhanced Styling -->
+            <div class="box-element py-4 shadow-sm rounded">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <a class="btn btn-outline-dark" href="{% url 'store' %}">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                    
+                    <div class="d-flex flex-column flex-md-row gap-3 align-items-center mt-3 mt-md-0">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-dark rounded-pill me-2">{{order.get_cart_items}}</span>
+                            <span>{% if order.get_cart_items == 1 %}Item{% else %}Items{% endif %}</span>
+                        </div>
+                        <div class="fw-bold fs-5">Total: <span class="text-success">N{{order.get_cart_total|intcomma}}</span></div>
+                        <a class="btn btn-dark" href="{% url 'checkout' %}">
+                            <i class="fas fa-shopping-cart me-2"></i>Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            
+            <!-- Empty Cart State -->
+            {% if items|length == 0 %}
+            <div class="text-center py-5 box-element shadow-sm rounded">
+                <img src="/media/images/empty-cart.png" alt="Empty Cart" style="max-width: 150px; opacity: 0.5;" class="mb-4">
+                <h4 class="mb-3">Your cart is empty</h4>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="{% url 'store' %}" class="btn btn-primary">Browse Products</a>
+            </div>
+            {% else %}
+            
+            <!-- Desktop view (hidden on small screens) -->
+            <div class="d-none d-md-block">
+                <div class="box-element py-4 shadow-sm rounded">
+                    <div class="cart-row border-bottom pb-2 mb-2">
+                        <div style="flex:2"></div>
+                        <div style="flex:2"><strong>Item</strong></div>
+                        <div style="flex:1"><strong>Price</strong></div>
+                        <div style="flex:1"><strong>Quantity</strong></div>
+                        <div style="flex:1"><strong>Total</strong></div>
+                        <div style="flex:0.5"></div>
+                    </div>
+                    
+                    {% for item in items %}
+                    <div class="cart-row py-3 align-items-center {% if not forloop.last %}border-bottom{% endif %}">
+                        <div style="flex:2">
+                            <div class="position-relative">
+                                <img class="row-image rounded" src="{{item.product.imageURL}}">
+                                {% if item.variant %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary" style="margin-left: -10px;">
+                                    {{item.variant.name}}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="flex:2">
+                            <p class="mb-0 fw-bold">{{item.product.title}}</p>
+                            {% if item.variant %}
+                            <small class="text-muted">Option: {{item.variant.name}}</small>
+                            {% endif %}
+                            {% if item.designer_service %}
+                            <div class="badge bg-info text-dark mt-1">Designer Service</div>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1">
+                            <p class="mb-0">N{{item.unit_price|intcomma}}</p>
+                            {% if item.designer_service %}
+                            <small class="text-muted">+N5000 design fee</small>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1">
+                            <div class="quantity-control d-flex align-items-center">
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    {% if item.designer_service %}data-designer="true"{% endif %}
+                                    data-action="remove" 
+                                    class="btn btn-sm btn-outline-secondary update-cart">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="mx-2 fw-bold">{{item.quantity}}</span>
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    {% if item.designer_service %}data-designer="true"{% endif %}
+                                    data-action="add" 
+                                    class="btn btn-sm btn-outline-secondary update-cart">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <p class="mb-0 fw-bold">
+                                N{{item.get_total|intcomma}}
+                                {% if item.designer_service %}
+                                <small class="text-muted d-block">Includes N5000 design fee</small>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div style="flex:0.5" class="text-end">
+                            <button 
+                                data-product="{{item.product.id}}" 
+                                {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                {% if item.designer_service %}data-designer="true"{% endif %}
+                                data-action="remove-all" 
+                                class="btn btn-sm text-danger remove-item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Mobile view (visible only on small screens) -->
+            <div class="d-md-none">
+                {% for item in items %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="me-3 position-relative">
+                                <img class="img-fluid rounded" src="{{item.product.imageURL}}" alt="{{item.product.title}}" style="width: 80px; height: 80px; object-fit: cover;">
+                                {% if item.variant %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary" style="font-size: 0.6rem; margin-left: -10px;">
+                                    {{item.variant.name}}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-1">{{item.product.title}}</h5>
+                                    <button 
+                                        data-product="{{item.product.id}}" 
+                                        {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                        {% if item.designer_service %}data-designer="true"{% endif %}
+                                        data-action="remove-all" 
+                                        class="btn btn-sm text-danger remove-item">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                {% if item.variant %}
+                                <p class="small text-muted mb-1">Option: {{item.variant.name}}</p>
+                                {% endif %}
+                                {% if item.designer_service %}
+                                <div class="badge bg-info text-dark mb-1">Designer Service</div>
+                                {% endif %}
+                                <p class="mb-0 fw-bold">
+                                    N{{item.unit_price|intcomma}}
+                                    {% if item.designer_service %}
+                                    <span class="text-muted">+N5000 design fee</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="input-group" style="max-width: 130px;">
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    {% if item.designer_service %}data-designer="true"{% endif %}
+                                    data-action="remove" 
+                                    class="btn btn-outline-secondary update-cart">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="form-control text-center fw-bold">{{item.quantity}}</span>
+                                <button 
+                                    data-product="{{item.product.id}}" 
+                                    {% if item.variant_id %}data-variant="{{item.variant_id}}"{% endif %}
+                                    {% if item.designer_service %}data-designer="true"{% endif %}
+                                    data-action="add" 
+                                    class="btn btn-outline-secondary update-cart">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <span class="text-muted small">Subtotal:</span>
+                                <div class="fw-bold">
+                                    N{{item.get_total|intcomma}}
+                                    {% if item.designer_service %}
+                                    <small class="text-muted d-block">Includes design fee</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Sticky Checkout Bar for Mobile -->
+                <div class="fixed-bottom bg-white shadow-lg p-3 d-md-none">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small">Total:</span>
+                            <span class="fw-bold fs-5">N{{order.get_cart_total|intcomma}}</span>
+                        </div>
+                        <a href="{% url 'checkout' %}" class="btn btn-dark">
+                            Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add this script at the end of your content block -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Replace image buttons with styled buttons
+    const images = document.querySelectorAll('.chg-quantity');
+    images.forEach(img => {
+        const action = img.dataset.action;
+        const productId = img.dataset.product;
+        const variantId = img.dataset.variant;
+        const isDesigner = img.dataset.designer;
+        
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline-secondary update-cart';
+        btn.dataset.product = productId;
+        btn.dataset.action = action;
+        if (variantId) {
+            btn.dataset.variant = variantId;
+        }
+        if (isDesigner) {
+            btn.dataset.designer = isDesigner;
+        }
+        
+        const icon = document.createElement('i');
+        icon.className = action === 'add' ? 'fas fa-plus' : 'fas fa-minus';
+        btn.appendChild(icon);
+        
+        img.parentNode.replaceChild(btn, img);
+    });
+    
+    // Add loading indicators
+    const updateBtns = document.querySelectorAll('.update-cart');
+    updateBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Store original content
+            const originalContent = this.innerHTML;
+            
+            // Add loading spinner
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            this.disabled = true;
+            
+            const productId = this.dataset.product;
+            const action = this.dataset.action;
+            const variantId = this.dataset.variant || '';
+            const isDesigner = this.dataset.designer === 'true';
+            
+            console.log('productId:', productId, 'action:', action, 'variantId:', variantId, 'isDesigner:', isDesigner);
+            
+            // Send data to the server for processing
+            const url = '/update_cart/';
+            const data = {
+                product_id: productId,
+                action: action,
+                variant_id: variantId,
+                designer_service: isDesigner
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Restore button state on error
+                this.innerHTML = originalContent;
+                this.disabled = false;
+            });
+        });
+    });
+    
+    // Add "remove item entirely" functionality
+    const removeButtons = document.querySelectorAll('.remove-item');
+    removeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (confirm('Remove this item from your cart?')) {
+                // Show loading state
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                this.disabled = true;
+                
+                const productId = this.dataset.product;
+                const variantId = this.dataset.variant || '';
+                const isDesigner = this.dataset.designer === 'true';
+                
+                // Send data to the server for processing
+                const url = '/update_cart/';
+                const data = {
+                    product_id: productId,
+                    action: 'remove-all',
+                    variant_id: variantId,
+                    designer_service: isDesigner
+                };
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    this.innerHTML = '<i class="fas fa-trash"></i>';
+                    this.disabled = false;
+                });
+            }
+        });
+    });
+});
+</script>
+
+
+{% endblock content %} {% endcomment %}

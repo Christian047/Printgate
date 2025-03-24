@@ -20,13 +20,22 @@ def cookieCart(request):
             if cart[key]['quantity'] > 0:
                 cartItems += cart[key]['quantity']
 
-                # ✅ Ensure we're directly using the stored productId and variantId
+                # Extract product ID and variant ID from the cart
                 product_id = cart[key].get('productId')
                 variant_id = cart[key].get('variantId')
                 
+                # Normalize variant ID - treat None, "null", "undefined" as None
+                if variant_id in [None, "null", "undefined", ""]:
+                    variant_id = None
+                
                 # Fallback to key parsing only if necessary
                 if not product_id:
-                    product_id = key.split('_')[0] if '_' in key else key
+                    parts = key.split('_')
+                    product_id = parts[0]
+                    if len(parts) > 1 and parts[1] not in ["null", "undefined", ""]:
+                        variant_id = parts[1]
+                    else:
+                        variant_id = None
                 
                 # Make sure product_id is valid
                 if not str(product_id).isdigit():
@@ -82,6 +91,8 @@ def cookieCart(request):
             print(traceback.format_exc())
     
     return {'cartItems': cartItems, 'order': order, 'items': items}
+
+
 def cartData(request):
     """
     Retrieves cart data based on whether the user is logged in or a guest.

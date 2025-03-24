@@ -7,8 +7,6 @@
 <br>
 <br>
 <div class="container mb-5">
-
-    
     <!-- Main content -->
     <div class="row">
         <div class="col-md-6">
@@ -18,15 +16,14 @@
                     <p>{{ product.description }}</p>
                     
                     {% if product.image %}
-                    <img src="{{ product.imageURL }}" style= "height: 100px; overflow: hidden;" class="img-fluid mb-4" alt="{{ product.title }}">
+                    <img src="{{ product.imageURL }}" style= "height: 200px; object-fit: contain;" class="img-fluid mb-4" alt="{{ product.title }}">
                     {% endif %}
-                    
-                    <p class= 'text-muted'>Base price: N{{ product.base_price }}</p>
                     
                     <!-- Design service information -->
                     <div class="alert alert-info">
                         <h5>Professional Design Service</h5>
-                        <p><strong>Design fee: N{{ product.design_fee|default:"5000.00" }}</strong></p>
+                        <p><strong>Design fee: ₦{{ product.design_fee|default:"5000.00" }}</strong></p>
+                        <p class="mb-0 small text-muted">This one-time fee will be added to your cart at checkout</p>
                     </div>
             
                     <!-- Added explanatory content -->
@@ -34,9 +31,9 @@
                         <div class="card-body">
                             <h5>How Our Design Process Works</h5>
                             <ol>
-                                <li><strong>Submit your design brief</strong> - Tell us what you're looking for</li>
-                                <li><strong>Designer assignment</strong> - We'll match you with the right designer</li>
-                                <li><strong>Final delivery</strong> - Receive your completed design files</li>
+                                <li>Submit your design brief</li>
+                                <li>We'll match you with the right designer</li>
+                                <li>Receive your completed design files</li>
                             </ol>
                         </div>
                     </div>
@@ -44,104 +41,132 @@
             </div>
         </div>
         
-
-
-        <!-- ------------------------------------------------------------------ -->
-<div class="col-md-6">
-    <div class="card border-0 rounded-4 p-4 option-card">
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data" id="order-form">
-                {% csrf_token %}
-
-                {% for field in form %}
-                <div class="form-group mb-3">
-                    {{ field.label_tag }}
-
-                    {% if field.name == 'variant' %}
-                    <!-- Special handling for variant field -->
-                    <select name="{{ field.name }}" id="{{ field.id_for_label }}"
-                        class="form-control price-affecting-field">
-                        <option value="">Select a variant</option>
-                        {% for choice in field.field.choices %}
-                        {% if choice.0 %}
-                        {% for variant in product.variants.all %}
-                        {% if variant.id == choice.0 %}
-                        <option value="{{ choice.0 }}" data-price-adjustment="{{ variant.price_adjustment }}">
-                            {{ choice.1 }}
-                            {% if variant.price_adjustment != 0 %}
-                            ({% if variant.price_adjustment > 0 %}+{% endif %}${{ variant.price_adjustment }})
-                            {% endif %}
-                        </option>
-                        {% endif %}
-                        {% endfor %}
-                        {% else %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
-
-                    {% elif "spec_" in field.name and field.field.widget.input_type == 'file' %}
-                    <!-- Special handling for file upload fields -->
-                    <div class="custom-file">
-                        {{ field }}
-                        <label class="custom-file-label" for="{{ field.id_for_label }}">Choose file</label>
-                    </div>
-
-                    {% elif "spec_" in field.name and field.field.widget.input_type == 'color' %}
-                    <!-- Special handling for color picker fields -->
-                    <div class="d-flex align-items-center">
-                        {{ field }}
-                        <span class="ms-2">Selected color</span>
-                    </div>
-
-                    {% elif "spec_" in field.name and "form-select spec-field" in field.field.widget.attrs.class %}
-                    <!-- Special handling for select fields -->
-                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select spec-field">
-                        {% for choice in field.field.choices %}
-                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
-                            {{ choice.1 }}
-                        </option>
-                        {% endfor %}
-                    </select>
-
-                    {% else %}
-                    <!-- Standard field rendering -->
-                    {{ field }}
-                    {% endif %}
-
-                    {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-
-                    {% if field.errors %}
-                    <div class="alert alert-danger mt-1">
-                        {{ field.errors }}
-                    </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-
-<div class="mb-4">
-    
-    <div class="form-group mb-4">
-        <label for="id_designer_instructions"><span class="text-muted">Design Instructions</span> </label>
-        <div class="alert alert-info my-2">
-            <small>The more details you provide, the better the design will match your vision. Include information about colors, style, text content, and layout preferences.</small>
-        </div>
-
-    </div>
-    
-    <div class="form-group mb-4">
-        <label for="id_reference_images">Reference Images</label>
-        <div class="alert alert-info mb-2">
-            <small>Upload examples, inspiration, or brand assets to help our designer understand your vision. You can select multiple files.</small>
-        </div>
-        <input type="file" id="id_reference_images" name="reference_images" class="form-control" multiple>
-    </div>
-</div>             
-              
+        <!-- Form Column -->
+        <div class="col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="order-form">
+                        {% csrf_token %}
                         
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Continue to Review</button>
+                        <!-- Hidden field to indicate designer service -->
+                        <input type="hidden" name="designer_service" value="true">
+                        <!-- Hidden field to store selected variant ID -->
+                        <input type="hidden" id="selected-variant-id" name="selected_variant_id" value="">
+                        
+                        <!-- Part 1: Design Instructions -->
+                        <div class="mb-4">
+                            <h4 class="mb-3 pb-2 border-bottom">Design Instructions</h4>
+                            
+                            <div class="form-group mb-4">
+                                <label for="id_designer_instructions" class="fw-bold mb-2">What would you like us to design?</label>
+                                <textarea id="id_designer_instructions" name="designer_instructions" class="form-control" rows="4" placeholder="Describe what you need designed..."></textarea>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="id_reference_images" class="fw-bold mb-2">Reference Images</label>
+                                <input type="file" id="id_reference_images" name="reference_images" class="form-control" multiple>
+                                <div id="reference-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Part 2: Customize Product -->
+                        <div>
+                            <h4 class="mb-3 mt-4 pb-2 border-bottom">Customize Product</h4>
+                            
+                            {% for field in form %}
+                                {% if field.name != 'designer_instructions' and field.name != 'reference_images' %}
+                                <div class="form-group mb-3">
+                                    <label for="{{ field.id_for_label }}" class="fw-bold mb-2">{{ field.label }}</label>
+
+                                    {% if field.name == 'variant' %}
+                                    <!-- Special handling for variant field -->
+                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                        class="form-control price-affecting-field">
+                                        <option value="">Select a variant</option>
+                                        {% for choice in field.field.choices %}
+                                        {% if choice.0 %}
+                                        {% for variant in product.variants.all %}
+                                        {% if variant.id == choice.0 %}
+                                        <option value="{{ choice.0 }}" data-price-adjustment="{{ variant.price_adjustment }}">
+                                            {{ choice.1 }}
+                                            {% if variant.price_adjustment != 0 %}
+                                            ({% if variant.price_adjustment > 0 %}+{% endif %}₦{{ variant.price_adjustment }})
+                                            {% endif %}
+                                        </option>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+
+                                    {% elif "spec_" in field.name and field.field.widget.input_type == 'file' %}
+                                    <!-- Special handling for file upload fields -->
+                                    <div class="input-group">
+                                        {{ field }}
+                                        <label class="input-group-text" for="{{ field.id_for_label }}">Upload</label>
+                                    </div>
+                                    <div id="{{ field.id_for_label }}-preview" class="mt-2 d-none">
+                                        <img src="" class="img-thumbnail" style="max-height: 100px;">
+                                    </div>
+
+                                    {% elif "spec_" in field.name and field.field.widget.input_type == 'color' %}
+                                    <!-- Special handling for color picker fields -->
+                                    <div class="d-flex align-items-center">
+                                        {{ field }}
+                                        <span class="ms-2" id="{{ field.id_for_label }}-color-name">Selected color</span>
+                                    </div>
+
+                                    {% elif "spec_" in field.name and "form-select spec-field" in field.field.widget.attrs.class %}
+                                    <!-- Special handling for select fields -->
+                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select spec-field">
+                                        {% for choice in field.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
+                                            {{ choice.1 }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    {% else %}
+                                    <!-- Standard field rendering -->
+                                    {{ field }}
+                                    {% endif %}
+
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+
+                                    {% if field.errors %}
+                                    <div class="alert alert-danger mt-1">
+                                        {{ field.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Add quantity field if it doesn't exist -->
+                            {% if not form.quantity %}
+                            <div class="form-group mb-4">
+                                <label for="id_quantity" class="fw-bold mb-2">Quantity</label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary" id="decrease-quantity">-</button>
+                                    <input type="number" class="form-control text-center" id="id_quantity" name="quantity" min="1" value="1">
+                                    <button type="button" class="btn btn-outline-secondary" id="increase-quantity">+</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+ <button 
+    type="button" 
+    id="add-to-cart-btn" 
+    data-product="{{ product.id }}" 
+    data-action="add"
+    data-designer="true"
+    class="btn btn-success update-cart">
+    Add to Cart
+</button>
                     </form>
                 </div>
             </div>
@@ -156,34 +181,34 @@
             <div class="col-7 col-md-8">
                 <div class="d-flex flex-column flex-md-row text-white align-items-md-center">
                     <h5 class="mb-0 me-md-3 text-white">Order Summary</h5>
-                    <span class="d-none d-md-inline ">{{ product.title }} + Design Service</span>
+                    <span class="d-none d-md-inline ">{{ product.title }}</span>
                     <div class="ms-md-3 d-none d-md-block">
                         <span id="variant-display" class="badge bg-secondary"></span>
                     </div>
+                </div>
+                <div class="small text-light mt-1 d-none d-md-block">
+                    <em>Design fee (₦{{ product.design_fee|default:"5000.00" }}) will be added at checkout</em>
                 </div>
             </div>
             <div class="col-5 col-md-4 text-end">
                 <div class="d-flex justify-content-end align-items-center">
                     <div class="me-3">
-                        <span class=" d-none d-sm-inline">Total:</span>
-                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">N{{ product.base_price }}</span>
+                        <span class="d-none d-sm-inline">Product Total:</span>
+                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">₦{{ product.base_price }}</span>
+                        <span>+N5000</span>
                     </div>
-                    <button type="submit" form="order-form" class="btn btn-success">
-                        Continue
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 </footer>
 
-<!-- Add this script to update order total dynamically -->
+<!-- Updated script to handle product price and cart functionality -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Get form and base price
         const form = document.getElementById('order-form');
         const basePrice = {{ product.base_price }};
-        const designFee = {{ product.design_fee|default:"25.00" }};
         const totalDisplay = document.getElementById('total-price');
         const variantDisplay = document.getElementById('variant-display');
         
@@ -192,30 +217,91 @@
         const heightField = document.getElementById('id_height');
         const dimensionUnitField = document.getElementById('id_dimension_unit');
         
+        // Get the variant related elements
+        const variantField = document.getElementById('id_variant');
+        const hiddenVariantField = document.getElementById('selected-variant-id');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        
+        // Handle quantity - ensure it starts at 1
+        const quantityField = document.getElementById('id_quantity');
+        const decreaseBtn = document.getElementById('decrease-quantity');
+        const increaseBtn = document.getElementById('increase-quantity');
+        
+        // Ensure quantity is always set to 1 on page load
+        if (quantityField) {
+            quantityField.value = 1;
+        }
+        
+        // Add designer service flag to the Add to Cart button
+        if (addToCartBtn) {
+            addToCartBtn.setAttribute('data-designer', 'true');
+        }
+        
+        // Set up quantity controls
+        if (decreaseBtn && increaseBtn && quantityField) {
+            decreaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityField.value) || 1;
+                if (currentValue > 1) {
+                    quantityField.value = currentValue - 1;
+                    quantityField.dispatchEvent(new Event('change'));
+                }
+            });
+            
+            increaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityField.value) || 1;
+                quantityField.value = currentValue + 1;
+                quantityField.dispatchEvent(new Event('change'));
+            });
+        }
+        
         // Function to calculate and update the total price
         function updateTotalPrice() {
-            let total = basePrice + designFee;
-            let priceBreakdown = [
-                `Base: $${basePrice.toFixed(2)}`,
-                `Design fee: $${designFee.toFixed(2)}`
-            ];
+            // Start with base price
+            let itemPrice = basePrice;
+            let quantity = 1; // Default quantity
+            
+            // Get actual quantity if field exists
+            if (quantityField && quantityField.value) {
+                quantity = parseInt(quantityField.value) || 1;
+                
+                // Ensure quantity is not a weird number
+                if (isNaN(quantity) || quantity < 1) {
+                    quantity = 1;
+                    quantityField.value = 1;
+                }
+            }
             
             // Get selected variant and its price adjustment
-            const variantField = document.getElementById('id_variant');
+            let variantAdjustment = 0;
+            
             if (variantField) {
                 const selectedOption = variantField.options[variantField.selectedIndex];
                 if (selectedOption && selectedOption.value) {
-                    const priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
-                    total += priceAdjustment;
+                    variantAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
+                    itemPrice += variantAdjustment;
+                    
+                    // Update hidden variant field and add to cart button
+                    if (hiddenVariantField) {
+                        hiddenVariantField.value = selectedOption.value;
+                    }
+                    
+                    if (addToCartBtn) {
+                        addToCartBtn.setAttribute('data-variant', selectedOption.value);
+                    }
                     
                     // Update variant display in footer
-                    variantDisplay.textContent = selectedOption.text;
-                    
-                    if (priceAdjustment !== 0) {
-                        priceBreakdown.push(`Variant: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
-                    }
+                    variantDisplay.textContent = selectedOption.text.split('(')[0].trim();
                 } else {
                     variantDisplay.textContent = '';
+                    
+                    // Clear variant data when no variant is selected
+                    if (hiddenVariantField) {
+                        hiddenVariantField.value = '';
+                    }
+                    
+                    if (addToCartBtn) {
+                        addToCartBtn.removeAttribute('data-variant');
+                    }
                 }
             }
             
@@ -232,24 +318,20 @@
                     // This is just an example - adjust based on your pricing model
                     let sizePriceAdjustment = 0;
                     if (unit === 'feet') {
-                        // Example: $10 per square foot
+                        // Example: N10 per square foot
                         sizePriceAdjustment = area * 10;
                     } else {
-                        // Example: $0.10 per square inch
+                        // Example: N0.10 per square inch
                         sizePriceAdjustment = area * 0.10;
                     }
                     
-                    total += sizePriceAdjustment;
-                    priceBreakdown.push(`Size (${width} × ${height} ${unit}): +$${sizePriceAdjustment.toFixed(2)}`);
+                    itemPrice += sizePriceAdjustment;
                 }
             }
             
-
-
-            
             // Process other spec fields that might affect price
             document.querySelectorAll('.price-affecting-field').forEach(field => {
-                if (field.id !== 'id_variant' && field.id !== 'id_design_timeline' && field.id !== 'id_revisions') {
+                if (field.id !== 'id_variant') {
                     const fieldName = field.getAttribute('name');
                     const fieldType = field.getAttribute('type') || field.tagName.toLowerCase();
                     
@@ -268,15 +350,25 @@
                     }
                     
                     if (priceAdjustment !== 0) {
-                        total += priceAdjustment;
-                        const fieldLabel = field.getAttribute('data-label') || fieldName;
-                        priceBreakdown.push(`${fieldLabel}: ${priceAdjustment > 0 ? '+' : ''}$${priceAdjustment.toFixed(2)}`);
+                        itemPrice += priceAdjustment;
                     }
                 }
             });
             
-            // Update the total display
-            totalDisplay.textContent = '$' + total.toFixed(2);
+            // Calculate total (itemPrice * quantity)
+            let total = itemPrice * quantity;
+            
+            // Display the design fee
+            const designFee = 5000; // Hard-coded design fee
+            
+            // Update the total display - showing product price only
+            // The design fee is shown separately on the page
+            totalDisplay.textContent = '₦' + total.toFixed(2);
+            
+            // Update quantity attribute on add to cart button
+            if (addToCartBtn && quantityField) {
+                addToCartBtn.setAttribute('data-quantity', quantity);
+            }
             
             // Set a hidden input with the calculated total price
             let totalInput = document.getElementById('calculated_total_price');
@@ -288,19 +380,166 @@
                 form.appendChild(totalInput);
             }
             totalInput.value = total.toFixed(2);
-            
-            // For debugging or detailed breakdown
-            console.log('Price breakdown:', priceBreakdown);
         }
+        
+        // Set up file upload previews
+        document.querySelectorAll('input[type="file"]').forEach(fileInput => {
+            fileInput.addEventListener('change', function(event) {
+                if (this.id === 'id_reference_images') {
+                    const previewContainer = document.getElementById('reference-preview');
+                    if (previewContainer) {
+                        previewContainer.innerHTML = '';
+                        
+                        if (this.files && this.files.length > 0) {
+                            for (let i = 0; i < this.files.length; i++) {
+                                const reader = new FileReader();
+                                const file = this.files[i];
+                                
+                                reader.onload = function(e) {
+                                    const previewItem = document.createElement('div');
+                                    previewItem.innerHTML = `
+                                        <img src="${e.target.result}" class="img-thumbnail" style="height: 80px; width: auto;">
+                                    `;
+                                    previewContainer.appendChild(previewItem);
+                                }
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }
+                    }
+                } else {
+                    const previewEl = document.getElementById(`${this.id}-preview`);
+                    if (previewEl) {
+                        if (this.files && this.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = previewEl.querySelector('img');
+                                if (img) {
+                                    img.src = e.target.result;
+                                    previewEl.classList.remove('d-none');
+                                }
+                            }
+                            reader.readAsDataURL(this.files[0]);
+                        } else {
+                            previewEl.classList.add('d-none');
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Color picker display names
+        document.querySelectorAll('input[type="color"]').forEach(colorInput => {
+            colorInput.addEventListener('change', function() {
+                const colorNameEl = document.getElementById(`${this.id}-color-name`);
+                if (colorNameEl) {
+                    colorNameEl.textContent = this.value;
+                }
+            });
+        });
         
         // Add event listeners to all form elements that might affect price
         form.querySelectorAll('select, input').forEach(element => {
             element.addEventListener('change', updateTotalPrice);
-            element.addEventListener('input', updateTotalPrice);
+            if (element.tagName.toLowerCase() === 'input' && 
+                element.type !== 'file' && 
+                element.type !== 'color') {
+                element.addEventListener('input', updateTotalPrice);
+            }
         });
+        
+        // Initialize the variant selection if it's already set
+        if (variantField && variantField.value) {
+            // Trigger the change event to set everything up
+            variantField.dispatchEvent(new Event('change'));
+        }
         
         // Initial calculation
         updateTotalPrice();
+        
+        // Setup Add to Cart functionality
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', function() {
+                // Get the CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Get product data
+                const productId = this.getAttribute('data-product');
+                const action = this.getAttribute('data-action');
+                const variantId = this.getAttribute('data-variant') || '';
+                const quantity = parseInt(this.getAttribute('data-quantity') || 1);
+                
+                // Add loading state to button
+                const originalText = this.textContent;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...';
+                this.disabled = true;
+                
+                // Prepare data for backend
+                const url = '/update_item/'; // Make sure this matches your Django URL
+                const data = {
+                    productId: productId,
+                    action: action,
+                    variantId: variantId,
+                    quantity: quantity,
+                    designer_service: true  // This is the flag for designer service
+                };
+                
+                // Send to server
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    
+                    // Show success message
+                    const successEl = document.createElement('div');
+                    successEl.className = 'alert alert-success mt-3';
+                    successEl.innerHTML = `
+                        <i class="fas fa-check-circle me-2"></i>
+                        Item added to cart! <a href="/cart/" class="alert-link">View Cart</a>
+                    `;
+                    this.parentElement.appendChild(successEl);
+                    
+                    // Restore button state
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // Optional: Update cart counter if you have one
+                    const cartCounter = document.querySelector('.cart-count');
+                    if (cartCounter) {
+                        const currentCount = parseInt(cartCounter.textContent) || 0;
+                        cartCounter.textContent = currentCount + quantity;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    
+                    // Show error message
+                    const errorEl = document.createElement('div');
+                    errorEl.className = 'alert alert-danger mt-3';
+                    errorEl.innerHTML = `
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Failed to add item to cart. Please try again.
+                    `;
+                    this.parentElement.appendChild(errorEl);
+                    
+                    // Restore button state
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                });
+            });
+        }
     });
 </script>
 {% endblock content %}

@@ -107,8 +107,11 @@ function addCookieItem(productId, action, variantId) {
         }
     }
 
+    // Normalize variant ID - treat null, undefined, "null", "undefined" as null
+    const normalizedVariantId = variantId && variantId !== "null" && variantId !== "undefined" ? variantId : null;
+    
     // Generate a consistent cart key for product+variant combination
-    const cartKey = variantId ? `${productId}_${variantId}` : `${productId}`;
+    const cartKey = normalizedVariantId ? `${productId}_${normalizedVariantId}` : `${productId}`;
     console.log(`🔑 Using cart key: ${cartKey}`);
 
     // Handle "add" action
@@ -118,13 +121,13 @@ function addCookieItem(productId, action, variantId) {
             cart[cartKey] = {
                 quantity: 1,
                 productId: productId,
-                variantId: variantId
+                variantId: normalizedVariantId
             };
-            console.log(`➕ Added new item: Product ${productId} with variant ${variantId}`);
+            console.log(`➕ Added new item: Product ${productId}${normalizedVariantId ? ` with variant ${normalizedVariantId}` : ' without variant'}`);
         } else {
             // Increase quantity of existing product+variant combination
             cart[cartKey]["quantity"] += 1;
-            console.log(`🔄 Increased quantity of Product ${productId} with variant ${variantId} to ${cart[cartKey]["quantity"]}`);
+            console.log(`🔄 Increased quantity of ${cartKey} to ${cart[cartKey]["quantity"]}`);
         }
     }
 
@@ -150,7 +153,6 @@ function addCookieItem(productId, action, variantId) {
         location.reload();
     }, 100);
 }
-
 
 /**
  * Debug function to inspect cart contents

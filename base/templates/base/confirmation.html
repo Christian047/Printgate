@@ -202,25 +202,33 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 {% csrf_token %}
                 {{variant.id}}
-                <button type="submit" class="btn1 btn-primary1 add-btn update-cart" 
-                data-product="{{product.id}}" 
-                data-variant="1"
-                    data-action="add">
-
-                    
 
 
-                    
-                    {% if dimension_warnings %}
-                    Proceed Despite Warnings
-                    {% else %}
-                    Confirm and Pay
-                    {% endif %}
-                </button>
-                <button type="submit" class="btn1 btn-primary1">
-                    Add more to Cart
-                </button>
-            </div>
+
+
+
+
+
+<button data-product="{{ product.id }}" {% if selected_variant %}data-variant="{{ selected_variant.id }}" {% endif %}
+    data-action="add" class="btn1 btn-primary1 add-btn update-cart" type="submit">
+    {% if selected_variant %}
+    Add to Cart with {{ selected_variant.name }}
+    {% else %}
+    Add to Cart
+    {% endif %}
+</button>
+
+<button type="submit" class="btn1 btn-primary1">
+    {% if dimension_warnings %}
+    Proceed Despite Warnings
+    {% else %}
+    Confirm and Pay
+    {% endif %}
+</button>
+
+
+
+
 
             <!-- JavaScript to handle showing and dismissing the cart message -->
             <script type="text/javascript">

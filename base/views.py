@@ -165,7 +165,6 @@ def hire_designer(request, pk):
         product = get_object_or_404(Product, pk=pk)
 
         if request.method == 'POST':
-            print('post')
             form = DesignerOrderForm(product, request.POST, request.FILES)
             
             if form.is_valid():
@@ -180,16 +179,46 @@ def hire_designer(request, pk):
                                      'email': request.user.email}
                         )
                     
-                    # Save the pending order
+                    # Save the pending order with designer service flag
                     pending_order = form.save(customer=customer)
-
+                    pending_order.order_type = 'designer'
+                    pending_order.designer_fee = 5000  # Set the designer fee
+                    pending_order.save()
+                    
+                    # Add to cart for display
+                    if customer:
+                        # Get or create an order
+                        order, created = Order.objects.get_or_create(
+                            customer=customer,
+                            complete=False
+                        )
+                        
+                        # Get variant if specified
+                        variant_id = form.cleaned_data.get('variant')
+                        variant = None
+                        if variant_id:
+                            variant = ProductVariant.objects.get(id=variant_id) 
+                        
+                        # Create or update OrderItem with designer_service=True
+                        order_item, created = OrderItem.objects.get_or_create(
+                            order=order,
+                            product=product,
+                            variant=variant,
+                            defaults={'quantity': 1, 'designer_service': True}
+                        )
+                        
+                        if not created:
+                            # If this exact product variant combination exists, mark it as designer service
+                            order_item.designer_service = True
+                            order_item.save()
+                    
                     # Handle guest users by storing order in session
                     if not request.user.is_authenticated:
                         request.session.setdefault('pending_orders', []).append(pending_order.id)
                         request.session.modified = True
 
-                    messages.success(request, "Your designer request has been submitted successfully!")
-                    return redirect('order_confirmation', order_id=pending_order.id)
+                    messages.success(request, "Your designer request has been submitted successfully and added to cart!")
+                    return redirect('cart')  # Redirect to cart instead of order confirmation
 
                 except (IntegrityError, DatabaseError) as db_err:
                     logger.error(f"Database error while saving designer order: {db_err}")
@@ -204,7 +233,6 @@ def hire_designer(request, pk):
                     messages.error(request, "Something went wrong. Please try again or contact support.")
         
         else:
-            print('not valid')
             form = DesignerOrderForm(product)
 
         return render(request, 'base/hire_designer.html', {
@@ -217,71 +245,6 @@ def hire_designer(request, pk):
         messages.error(request, "An error occurred while loading the page. Please try again.")
         return redirect('home')  # Redirect to a safe page (adjust as needed)
 
-
-
-def hire_designer(request, pk):
-
-    try:
-  
-        product = get_object_or_404(Product, pk=pk)
-
-        if request.method == 'POST':
-            print('post')
-            form = DesignerOrderForm(product, request.POST, request.FILES)
-            
-            if form.is_valid():
-                print('form valid')
-                customer = None
-                try:
-                    if request.user.is_authenticated:
-                        # Get or create the customer record
-                        customer, created = Customer.objects.get_or_create(
-                            user=request.user,
-                            defaults={'name': request.user.get_full_name() or request.user.username,
-                                    'email': request.user.email}
-                        )
-                    
-                    # Save the pending order
-                    pending_order = form.save(customer=customer)
-
-                    # Handle guest users by storing order in session
-                    if not request.user.is_authenticated:
-                        request.session.setdefault('pending_orders', []).append(pending_order.id)
-                        request.session.modified = True
-
-                    messages.success(request, "Your designer request has been submitted successfully!")
-                    return redirect('order_confirmation', order_id=pending_order.id)
-
-                except (IntegrityError, DatabaseError) as db_err:
-                    logger.error(f"Database error while saving designer order: {db_err}")
-                    messages.error(request, "An unexpected error occurred while processing your request. Please try again.")
-                
-                except ObjectDoesNotExist as obj_err:
-                    logger.error(f"Missing related object: {obj_err}")
-                    messages.error(request, "An error occurred. Some required data might be missing.")
-
-                except Exception as e:
-                    logger.exception(f"Unexpected error: {e}")
-                    messages.error(request, "Something went wrong. Please try again or contact support.")
-                        
-            else:
-                print('form invalid')
-          
-                logger.warning(f"Form validation failed: {form.errors}")
-       
-        else:
-            # Initialize empty form for GET requests
-            form = DesignerOrderForm(product)
-
-        return render(request, 'base/hire_designer.html', {
-            'product': product,
-            'form': form
-        })
-
-    except Exception as e:
-        logger.exception(f"Unexpected error in hire_designer view: {e}")
-        messages.error(request, "An error occurred while loading the page. Please try again.")
-        return redirect('home')
 
 
 

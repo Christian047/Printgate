@@ -232,12 +232,12 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=0, null=True, blank=True)
     variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    designer_service = models.BooleanField(default= False)
 
-    @property
-    def get_total(self):
-        total = self.product.base_price * self.quantity
-        return total
-
+    # @property
+    # def get_total(self):
+    #     total = self.product.base_price * self.quantity
+    #     return total
 
     @property
     def get_total(self):
@@ -245,8 +245,12 @@ class OrderItem(models.Model):
         variant_adjustment = 0
         if self.variant:
             variant_adjustment = self.variant.price_adjustment * self.quantity
-        return base_total + variant_adjustment
-    
+        
+        # Add design fee if this is a designer service
+        designer_fee = 5000 if self.designer_service else 0
+        
+        return base_total + variant_adjustment + designer_fee
+        
     
     @property
     def get_unit_price(self):

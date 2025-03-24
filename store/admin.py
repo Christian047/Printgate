@@ -57,4 +57,4 @@ class ReferenceImageAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("date_added", "variant", "quantity", "order", "product")
+    list_display = ("date_added", 'designer_service' ,"variant", "quantity", "order", "product")

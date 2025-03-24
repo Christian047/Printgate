@@ -18,7 +18,7 @@
                 <img src="{{ product.imageURL }}" class="img-fluid mb-4" alt="{{ product.title }}">
                 {% endif %}
         
-                <p><span class='text-muted'>Base price: N{{ product.base_price }}</span></p>
+    
             </div>
         
             <div class="col-md-6">
@@ -29,6 +29,9 @@
                     <div class="card-body">
                         <form method="post" enctype="multipart/form-data" id="order-form">
                             {% csrf_token %}
+                            
+                            <!-- Hidden field to store selected variant ID -->
+                            <input type="hidden" id="selected-variant-id" name="selected_variant_id" value="">
         
                             {% for field in form %}
                             <div class="form-group mb-3">
@@ -66,6 +69,16 @@
                             {% endfor %}
         
                             <button type="submit" class="btn btn-primary">Review Order</button>
+                            
+                            <!-- Add to Cart button with data attributes -->
+                            <button 
+                                type="button" 
+                                id="add-to-cart-btn" 
+                                data-product="{{ product.id }}" 
+                                data-action="add" 
+                                class="btn btn-success update-cart">
+                                Add to Cart
+                            </button>
                         </form>
         
                     </div>
@@ -117,18 +130,32 @@
         const heightField = document.getElementById('id_height');
         const dimensionUnitField = document.getElementById('id_dimension_unit');
         
+        // Get the variant related elements
+        const variantField = document.getElementById('id_variant');
+        const hiddenVariantField = document.getElementById('selected-variant-id');
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        
         // Function to calculate and update the total price
         function updateTotalPrice() {
             let total = basePrice;
             let priceBreakdown = [`Base: ₦${basePrice.toFixed(2)}`];
             
             // Get selected variant and its price adjustment
-            const variantField = document.getElementById('id_variant');
             if (variantField) {
                 const selectedOption = variantField.options[variantField.selectedIndex];
                 if (selectedOption && selectedOption.value) {
                     const priceAdjustment = parseFloat(selectedOption.getAttribute('data-price-adjustment') || 0);
                     total += priceAdjustment;
+                    
+                    // Update hidden variant field and add to cart button
+                    if (hiddenVariantField) {
+                        hiddenVariantField.value = selectedOption.value;
+                    }
+                    
+                    if (addToCartBtn) {
+                        addToCartBtn.setAttribute('data-variant', selectedOption.value);
+                        console.log('Set variant ID on cart button:', selectedOption.value);
+                    }
                     
                     // Update variant display in footer - only show variant name without price info
                     const variantText = selectedOption.text.split('(')[0].trim();
@@ -138,7 +165,17 @@
                         priceBreakdown.push(`Variant: ${priceAdjustment > 0 ? '+' : ''}₦${priceAdjustment.toFixed(2)}`);
                     }
                 } else {
+                    // Clear variant data when no variant is selected
                     variantDisplay.textContent = '';
+                    
+                    if (hiddenVariantField) {
+                        hiddenVariantField.value = '';
+                    }
+                    
+                    if (addToCartBtn) {
+                        addToCartBtn.removeAttribute('data-variant');
+                        console.log('Removed variant ID from cart button');
+                    }
                 }
             }
             
@@ -222,19 +259,16 @@
             element.addEventListener('input', updateTotalPrice);
         });
         
+        // Initialize the variant selection if it's already set
+        if (variantField && variantField.value) {
+            // Trigger the change event to set everything up
+            variantField.dispatchEvent(new Event('change'));
+            console.log('Initialized variant selection:', variantField.value);
+        }
+        
         // Initial calculation
         updateTotalPrice();
     });
 </script>
 
 {% endblock content %}
-
-
-
-
-
-
-
-
-
-
