@@ -34,6 +34,25 @@
                 </div>
             </div>
         </div>
+    <div class="row g-4">
+        <!-- Upload Design Option -->
+        <div class="col-md-6">
+            <div class="card h-100 border-0 rounded-4 option-card">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h2 class="card-title h3 fw-bold">Create Your Design</h2>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div class="image-container mb-4">
+                        <img src="/media/images/upload.jpeg" alt="Upload design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                    </div>
+                    <p class="text-muted mb-4">Already have a design ready to go? Upload your file and we'll prepare it for printing.</p>
+                    <a href="{% url 'create_order' product.pk %}" class="btn btn-primary w-100 py-3">
+                        <span>Upload Your Design</span>
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <!-- Hire Designer Option -->
         <div class="col-md-6">

@@ -18,8 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var productId = this.dataset.product;
             var action = this.dataset.action;
             var variantId = this.dataset.variant || null; // Handle cases where variant might be missing
+            var designerService = this.dataset.designer === 'true'; // Get designer service flag
 
-            console.log(`🛒 Button clicked - Product ID: ${productId}, Action: ${action}, Variant: ${variantId}`);
+            console.log(`🛒 Button clicked - Product ID: ${productId}, Action: ${action}, Variant: ${variantId}, Designer: ${designerService}`);
 
             // Ensure `user` is defined
             if (typeof user === "undefined") {
@@ -31,9 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Handle Authenticated vs Anonymous User
             if (user === "AnonymousUser") {
-                addCookieItem(productId, action, variantId);
+                addCookieItem(productId, action, variantId, designerService);
             } else {
-                updateUserOrder(productId, action, variantId);
+                updateUserOrder(productId, action, variantId, designerService);
             }
         });
     }
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * Update order for authenticated users
  */
-function updateUserOrder(productId, action, variantId) {
+function updateUserOrder(productId, action, variantId, designerService) {
     console.log("✅ User is authenticated, sending data...");
 
     if (typeof csrftoken === "undefined") {
@@ -54,6 +55,7 @@ function updateUserOrder(productId, action, variantId) {
         productId: productId,
         action: action,
         variantId: variantId,
+        designer_service: designerService // Include the designer service flag
     };
 
     console.log("📤 Sending data:", JSON.stringify(data));
@@ -84,12 +86,12 @@ function updateUserOrder(productId, action, variantId) {
         });
 }
 
-
-//  * Handle cart updates for unauthenticated users using cookies
-//     */
-function addCookieItem(productId, action, variantId) {
+/**
+ * Handle cart updates for unauthenticated users using cookies
+ */
+function addCookieItem(productId, action, variantId, designerService) {
     console.log("⚠️ User is not authenticated, modifying cart via cookies");
-    console.log(`📊 Product: ${productId}, Action: ${action}, Variant: ${variantId}`);
+    console.log(`📊 Product: ${productId}, Action: ${action}, Variant: ${variantId}, Designer: ${designerService}`);
 
     let cart = {};
     if (document.cookie.includes("cart=")) {
@@ -109,7 +111,7 @@ function addCookieItem(productId, action, variantId) {
 
     // Normalize variant ID - treat null, undefined, "null", "undefined" as null
     const normalizedVariantId = variantId && variantId !== "null" && variantId !== "undefined" ? variantId : null;
-    
+
     // Generate a consistent cart key for product+variant combination
     const cartKey = normalizedVariantId ? `${productId}_${normalizedVariantId}` : `${productId}`;
     console.log(`🔑 Using cart key: ${cartKey}`);
@@ -121,12 +123,17 @@ function addCookieItem(productId, action, variantId) {
             cart[cartKey] = {
                 quantity: 1,
                 productId: productId,
-                variantId: normalizedVariantId
+                variantId: normalizedVariantId,
+                designer_service: designerService // Add designer service flag
             };
-            console.log(`➕ Added new item: Product ${productId}${normalizedVariantId ? ` with variant ${normalizedVariantId}` : ' without variant'}`);
+            console.log(`➕ Added new item: Product ${productId}${normalizedVariantId ? ` with variant ${normalizedVariantId}` : ' without variant'}${designerService ? ', with designer service' : ''}`);
         } else {
             // Increase quantity of existing product+variant combination
             cart[cartKey]["quantity"] += 1;
+            // If designer service is true, set the flag (overwrite even if it was previously false)
+            if (designerService) {
+                cart[cartKey]["designer_service"] = true;
+            }
             console.log(`🔄 Increased quantity of ${cartKey} to ${cart[cartKey]["quantity"]}`);
         }
     }
@@ -175,11 +182,17 @@ function debugCart() {
 
             for (const key in cart) {
                 const item = cart[key];
+                let description = `🔹 Item ${key}: Product ${item.productId}`;
                 if (item.variantId) {
-                    console.log(`🔹 Item ${key}: Product ${item.productId} with variant ${item.variantId}, Quantity: ${item.quantity}`);
+                    description += ` with variant ${item.variantId}`;
                 } else {
-                    console.log(`🔹 Item ${key}: Product ${item.productId} with NO variant, Quantity: ${item.quantity}`);
+                    description += ` with NO variant`;
                 }
+                description += `, Quantity: ${item.quantity}`;
+                if (item.designer_service) {
+                    description += ", WITH DESIGNER SERVICE";
+                }
+                console.log(description);
             }
         } catch (e) {
             console.error("❌ Error parsing cart:", e);
@@ -191,231 +204,3 @@ function debugCart() {
 
 // Call debug function when page loads
 debugCart();
-
-
-
-
-
-//  Wait for DOM to be fully loaded before running script
-// No 1
-// document.addEventListener('DOMContentLoaded', function () {
-//     console.log("DOM fully loaded");
-
-//     // Find all update cart buttons
-//     var updateBtns = document.getElementsByClassName("update-cart");
-//     console.log("Found update buttons:", updateBtns.length);
-
-//     // Check if buttons exist before adding event listeners
-//     if (updateBtns.length > 0) {
-//         for (var i = 0; i < updateBtns.length; i++) {
-//             updateBtns[i].addEventListener("click", function () {
-//                 var productId = this.dataset.product;
-//                 var action = this.dataset.action;
-//                 var variantId = this.dataset.variant;
-
-//                 console.log("Button clicked - productId:", productId, "Action:", action, "Variant:", variantId);
-//                 console.log("USER:", user);
-
-//                 if (user == "AnonymousUser") {
-//                     addCookieItem(productId, action, variantId);
-//                 } else {
-//                     updateUserOrder(productId, action, variantId);
-//                 }
-//             });
-//         }
-//     } else {
-//         console.warn("No update-cart buttons found on page");
-//     }
-// });
-
-// function updateUserOrder(productId, action, variantId) {
-//     console.log("User is authenticated, sending data...");
-//     console.log("Sending data:", { productId, action, variantId });
-
-//     fetch('update_item/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': csrftoken,
-//         },
-//         body: JSON.stringify({
-//             'productId': productId,
-//             'action': action,
-//             'variantId': variantId
-//         })
-//     })
-//         .then(response => {
-//             if (!response.ok) {
-//                 return response.text().then(text => {
-//                     console.error('Server Response:', text);
-//                     throw new Error(`Server error: ${text}`);
-//                 });
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             console.log('Success:', data);
-//             location.reload();
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//         });
-// }
-
-// function addCookieItem(productId, action, variantId) {
-//     console.log("User is not authenticated");
-//     console.log("Processing: Product:", productId, "Action:", action, "Variant:", variantId);
-
-//     // First, get the current cart from the cookie
-//     let cart = {};
-//     if (document.cookie.includes('cart=')) {
-//         const cookieValue = document.cookie
-//             .split('; ')
-//             .find(row => row.startsWith('cart='))
-//             .split('=')[1];
-
-//         try {
-//             cart = JSON.parse(cookieValue);
-//             console.log("Existing cart:", cart);
-//         } catch (error) {
-//             console.error("Error parsing cart cookie:", error);
-//             cart = {};
-//         }
-//     }
-
-//     if (action == "add") {
-//         if (cart[productId] == undefined) {
-//             cart[productId] = {
-//                 quantity: 1
-//             };
-//             // Only add variantId if it exists
-//             if (variantId) {
-//                 cart[productId].variantId = variantId;
-//                 console.log(`Added new item with variant: ${variantId}`);
-//             } else {
-//                 console.log("Added new item without variant");
-//             }
-//         } else {
-//             cart[productId]["quantity"] += 1;
-//             // Update variant ID if provided
-//             if (variantId) {
-//                 cart[productId]["variantId"] = variantId;
-//                 console.log(`Updated existing item with variant: ${variantId}`);
-//             }
-//         }
-//     }
-
-//     if (action == "remove") {
-//         cart[productId]["quantity"] -= 1;
-
-//         if (cart[productId]["quantity"] <= 0) {
-//             console.log("Removing item from cart");
-//             delete cart[productId];
-//         }
-//     }
-
-//     console.log("Updated cart:", cart);
-//     document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
-
-//     location.reload();
-// }
-
-// // Debug helper function - call this to inspect cart contents
-// function debugCart() {
-//     let cartStr = '';
-//     if (document.cookie.includes('cart=')) {
-//         cartStr = document.cookie
-//             .split('; ')
-//             .find(row => row.startsWith('cart='))
-//             .split('=')[1];
-
-//         console.log("Raw cart cookie:", cartStr);
-
-//         try {
-//             const cart = JSON.parse(decodeURIComponent(cartStr));
-//             console.log("Parsed cart:", cart);
-
-//             // Check for variant info
-//             for (const key in cart) {
-//                 if (cart[key].variantId) {
-//                     console.log(`Item ${key} has variant: ${cart[key].variantId}`);
-//                 } else {
-//                     console.log(`Item ${key} has NO variant`);
-//                 }
-//             }
-//         } catch (e) {
-//             console.error("Error parsing cart:", e);
-//         }
-//     } else {
-//         console.log("No cart cookie found");
-//     }
-// }
-
-// // Call debug function when page loads
-// debugCart();
-
-
-
-
-// var updateBtns = document.getElementsByClassName("update-cart");
-// No 2 old
-// for (i = 0; i < updateBtns.length; i++) {
-//     updateBtns[i].addEventListener("click", function () {
-//         var productId = this.dataset.product;
-//         var action = this.dataset.action;
-//         console.log("productId:", productId, "Action:", action);
-//         console.log("USER:", user);
-
-//         if (user == "AnonymousUser") {
-//             addCookieItem(productId, action);
-//         } else {
-//             updateUserOrder(productId, action);
-//         }
-//     });
-// }
-
-// function updateUserOrder(productId, action) {
-//     console.log("User is authenticated, sending data...");
-
-//     var url = "/update_item/";
-
-//     fetch(url, {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "X-CSRFToken": csrftoken,
-//         },
-//         body: JSON.stringify({ productId: productId, action: action }),
-//     })
-//         .then((response) => {
-//             return response.json();
-//         })
-//         .then((data) => {
-//             location.reload();
-//         });
-// }
-
-// function addCookieItem(productId, action) {
-//     console.log("User is not authenticated");
-
-//     if (action == "add") {
-//         if (cart[productId] == undefined) {
-//             cart[productId] = { quantity: 1 };
-//         } else {
-//             cart[productId]["quantity"] += 1;
-//         }
-//     }
-
-//     if (action == "remove") {
-//         cart[productId]["quantity"] -= 1;
-
-//         if (cart[productId]["quantity"] <= 0) {
-//             console.log("Item should be deleted");
-//             delete cart[productId];
-//         }
-//     }
-//     console.log("CART:", cart);
-//     document.cookie = "cart=" + JSON.stringify(cart) + ";domain=;path=/";
-
-//     location.reload();
-// }

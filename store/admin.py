@@ -17,7 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):  
-    list_display = ('customer', 'product', 'width', 'height', 'dimension_unit', 'special_instructions', 'total_price', 'date_ordered', 'complete', 'transaction_id', )
+    list_display = ('customer', 'product', 'pending_order', 'dimension_unit', 'special_instructions', 'total_price', 'date_ordered', 'complete', 'transaction_id', )
     
     
 @admin.register(PendingOrder)

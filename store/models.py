@@ -32,7 +32,7 @@ allowed_files = FileExtensionValidator(
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
-    base_price = models.FloatField(null=True, blank=True)
+    base_price = models.IntegerField(null=True, blank=True)
     digital = models.BooleanField(default=False,null=True, blank=True)
     image =  models.ImageField(
         upload_to='product/', default='default.jpg', null=True, blank=True
@@ -149,6 +149,9 @@ class PendingOrder(models.Model):
             )
         
         return order
+    
+        class Meta:
+              ordering = ['-date_ordered']
 
 
 class PendingOrderSpecification(models.Model):
@@ -176,6 +179,7 @@ class ReferenceImage(models.Model):
 
 
 class Order(models.Model):
+    pending_order = models.OneToOneField(PendingOrder,  on_delete=models.SET_NULL, null=True, blank=True,related_name='confirmed_order')
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True) 
     width = models.FloatField(null=True)
@@ -211,19 +215,12 @@ class Order(models.Model):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+    
+    class Meta:
+        ordering = ['-date_ordered']
 
 
 # ----------------------------------------------------------------------------------------------------------------
-
-
-class OrderSpecification(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='specifications')
-    field_name = models.CharField(max_length=100)
-    field_value = models.TextField(blank=True, null=True)
-    field_file = models.FileField(upload_to='order_specs/', validators=[allowed_files], null=True, blank=True)
-    
-    def __str__(self):
-        return f"{self.order.id} - {self.field_name}"
 
 
 class OrderItem(models.Model):
@@ -234,10 +231,6 @@ class OrderItem(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     designer_service = models.BooleanField(default= False)
 
-    # @property
-    # def get_total(self):
-    #     total = self.product.base_price * self.quantity
-    #     return total
 
     @property
     def get_total(self):
@@ -261,6 +254,16 @@ class OrderItem(models.Model):
         return base_price + variant_adjustment
     
 
+
+class OrderSpecification(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='specifications')
+    field_name = models.CharField(max_length=100)
+    field_value = models.TextField(blank=True, null=True)
+    field_file = models.FileField(upload_to='order_specs/', validators=[allowed_files], null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.order.id} - {self.field_name}"
+    
 
 class ShippingAddress(models.Model):
 	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)

@@ -6,168 +6,188 @@
 <br>
 <br>
 <br>
-<div class="container mb-5">
-    <!-- Main content -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <h1>Order {{ product.title }}</h1>
-                    <p>{{ product.description }}</p>
-                    
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold">Design Service: {{ product.title }}</h1>
+            <p class="lead text-secondary">Work with our professional designers to create your custom design</p>
+        </div>
+    </div>
+
+    <div class="card border-0 rounded-4 option-card">
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-6">
                     {% if product.image %}
-                    <img src="{{ product.imageURL }}" style= "height: 200px; object-fit: contain;" class="img-fluid mb-4" alt="{{ product.title }}">
+                    <div class="image-container mb-4">
+                        <img src="{{ product.imageURL }}" class="img-fluid rounded-3" alt="{{ product.title }}" style="height: 200px; object-fit: contain; width: 100%;">
+                    </div>
                     {% endif %}
                     
                     <!-- Design service information -->
-                    <div class="alert alert-info">
-                        <h5>Professional Design Service</h5>
-                        <p><strong>Design fee: ₦{{ product.design_fee|default:"5000.00" }}</strong></p>
-                        <p class="mb-0 small text-muted">This one-time fee will be added to your cart at checkout</p>
+                    <div class="card border-0 rounded-4 bg-light mb-4">
+                        <div class="card-body p-4">
+                            <h3 class="h5 fw-bold mb-3">Professional Design Service</h3>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="fas fa-pencil-ruler"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <p class="fw-bold mb-0">Design fee: ₦{{ product.design_fee|default:"5000.00" }}</p>
+                                    <p class="small text-muted mb-0">One-time fee added at checkout</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
             
-                    <!-- Added explanatory content -->
-                    <div class="card mt-4 border-0 bg-light">
-                        <div class="card-body">
-                            <h5>How Our Design Process Works</h5>
-                            <ol>
-                                <li>Submit your design brief</li>
-                                <li>We'll match you with the right designer</li>
+                    <!-- Design process -->
+                    <div class="card border-0 rounded-4 bg-light mb-4">
+                        <div class="card-body p-4">
+                            <h3 class="h5 fw-bold mb-3">How Our Design Process Works</h3>
+                            <ol class="ps-3">
+                                <li class="mb-2">Submit your design brief</li>
+                                <li class="mb-2">We'll match you with the right designer</li>
+                                <li class="mb-2">Review design concepts (includes 2 revisions)</li>
                                 <li>Receive your completed design files</li>
                             </ol>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Form Column -->
-        <div class="col-md-6">
-            <div class="card border-0 rounded-4 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <form method="post" enctype="multipart/form-data" id="order-form">
-                        {% csrf_token %}
-                        
-                        <!-- Hidden field to indicate designer service -->
-                        <input type="hidden" name="designer_service" value="true">
-                        <!-- Hidden field to store selected variant ID -->
-                        <input type="hidden" id="selected-variant-id" name="selected_variant_id" value="">
-                        
-                        <!-- Part 1: Design Instructions -->
-                        <div class="mb-4">
-                            <h4 class="mb-3 pb-2 border-bottom">Design Instructions</h4>
-                            
-                            <div class="form-group mb-4">
-                                <label for="id_designer_instructions" class="fw-bold mb-2">What would you like us to design?</label>
-                                <textarea id="id_designer_instructions" name="designer_instructions" class="form-control" rows="4" placeholder="Describe what you need designed..."></textarea>
-                            </div>
-                            
-                            <div class="form-group mb-4">
-                                <label for="id_reference_images" class="fw-bold mb-2">Reference Images</label>
-                                <input type="file" id="id_reference_images" name="reference_images" class="form-control" multiple>
-                                <div id="reference-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
-                            </div>
+                
+                <!-- Form Column -->
+                <div class="col-md-6">
+                    <div class="card border-0 rounded-4 shadow-sm">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h2 class="card-title h4 fw-bold">Tell Us About Your Design</h2>
                         </div>
+                        <div class="card-body p-4">
+                            <form method="post" enctype="multipart/form-data" id="order-form">
+                                {% csrf_token %}
+                                
+                                <!-- Hidden fields -->
+                                <input type="hidden" name="designer_service" value="true">
+                                <input type="hidden" id="selected-variant-id" name="selected_variant_id" value="">
+                                
+                                <!-- Part 1: Design Instructions -->
+                                <div class="mb-4">
+                                    <h4 class="h6 mb-3 pb-2 border-bottom">Design Instructions</h4>
+                                    
+                                    <div class="form-group mb-4">
+                                        <label for="id_designer_instructions" class="form-label fw-bold">What would you like us to design?</label>
+                                        <textarea id="id_designer_instructions" name="designer_instructions" class="form-control" rows="4" placeholder="Describe what you need designed..."></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group mb-4">
+                                        <label for="id_reference_images" class="form-label fw-bold">Reference Images</label>
+                                        <input type="file" id="id_reference_images" name="reference_images" class="form-control" multiple>
+                                        <div class="form-text text-muted small">Upload images to help us understand your vision (optional)</div>
+                                        <div id="reference-preview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Part 2: Customize Product -->
+                                <div>
+                                    <h4 class="h6 mb-3 pb-2 border-bottom">Product Details</h4>
+                                    
+                                    {% for field in form %}
+                                        {% if field.name != 'reference_images' and field.name != 'design_file' and 'design_' not in field.name %}
+                                        <div class="form-group mb-3">
+                                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
                         
-                        <!-- Part 2: Customize Product -->
-                        <div>
-                            <h4 class="mb-3 mt-4 pb-2 border-bottom">Customize Product</h4>
-                            
-                            {% for field in form %}
-                                {% if field.name != 'designer_instructions' and field.name != 'reference_images' %}
-                                <div class="form-group mb-3">
-                                    <label for="{{ field.id_for_label }}" class="fw-bold mb-2">{{ field.label }}</label>
-
-                                    {% if field.name == 'variant' %}
-                                    <!-- Special handling for variant field -->
-                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}"
-                                        class="form-control price-affecting-field">
-                                        <option value="">Select a variant</option>
-                                        {% for choice in field.field.choices %}
-                                        {% if choice.0 %}
-                                        {% for variant in product.variants.all %}
-                                        {% if variant.id == choice.0 %}
-                                        <option value="{{ choice.0 }}" data-price-adjustment="{{ variant.price_adjustment }}">
-                                            {{ choice.1 }}
-                                            {% if variant.price_adjustment != 0 %}
-                                            ({% if variant.price_adjustment > 0 %}+{% endif %}₦{{ variant.price_adjustment }})
+                                            {% if field.name == 'variant' %}
+                                            <!-- Special handling for variant field -->
+                                            <select name="{{ field.name }}" id="{{ field.id_for_label }}"
+                                                class="form-select price-affecting-field">
+                                                <option value="">Select a variant</option>
+                                                {% for variant in product.variants.all %}
+                                                <option value="{{ variant.id }}" data-price-adjustment="{{ variant.price_adjustment }}">
+                                                    {{ variant.name }} {% if variant.price_adjustment != 0 %}({% if variant.price_adjustment > 0 %}+{% endif %}₦{{ variant.price_adjustment }}){% endif %}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                        
+                                            {% elif "spec_" in field.name and field.field.widget.input_type == 'file' %}
+                                            <!-- Special handling for file upload fields -->
+                                            <div class="input-group">
+                                                {{ field }}
+                                                <label class="input-group-text" for="{{ field.id_for_label }}">Upload</label>
+                                            </div>
+                                            <div id="{{ field.id_for_label }}-preview" class="mt-2 d-none">
+                                                <img src="" class="img-thumbnail" style="max-height: 100px;">
+                                            </div>
+                        
+                                            {% elif "spec_" in field.name and field.field.widget.input_type == 'color' %}
+                                            <!-- Special handling for color picker fields -->
+                                            <div class="d-flex align-items-center">
+                                                {{ field }}
+                                                <span class="ms-2" id="{{ field.id_for_label }}-color-name">Selected color</span>
+                                            </div>
+                        
+                                            {% elif "spec_" in field.name and "form-select spec-field" in field.field.widget.attrs.class %}
+                                            <!-- Special handling for select fields -->
+                                            <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select spec-field">
+                                                {% for choice in field.field.choices %}
+                                                <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
+                                                    {{ choice.1 }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                        
+                                            {% else %}
+                                            <!-- Standard field rendering with updated styling -->
+                                            {{ field }}
                                             {% endif %}
-                                        </option>
+                        
+                                            {% if field.help_text %}
+                                            <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                            {% endif %}
+                        
+                                            {% if field.errors %}
+                                            <div class="alert alert-danger mt-1 small">
+                                                {{ field.errors }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
                                         {% endif %}
-                                        {% endfor %}
-                                        {% else %}
-                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </select>
-
-                                    {% elif "spec_" in field.name and field.field.widget.input_type == 'file' %}
-                                    <!-- Special handling for file upload fields -->
-                                    <div class="input-group">
-                                        {{ field }}
-                                        <label class="input-group-text" for="{{ field.id_for_label }}">Upload</label>
+                                    {% endfor %}
+                                    
+                                    <!-- Quantity field -->
+                                    <div class="form-group mb-4">
+                                        <label for="id_quantity" class="form-label fw-bold">Quantity</label>
+                                        <div class="input-group">
+                                            <button type="button" class="btn btn-outline-secondary" id="decrease-quantity">-</button>
+                                            <input type="number" class="form-control text-center price-affecting-field" id="id_quantity" name="quantity" min="1" value="1">
+                                            <button type="button" class="btn btn-outline-secondary" id="increase-quantity">+</button>
+                                        </div>
                                     </div>
-                                    <div id="{{ field.id_for_label }}-preview" class="mt-2 d-none">
-                                        <img src="" class="img-thumbnail" style="max-height: 100px;">
-                                    </div>
-
-                                    {% elif "spec_" in field.name and field.field.widget.input_type == 'color' %}
-                                    <!-- Special handling for color picker fields -->
-                                    <div class="d-flex align-items-center">
-                                        {{ field }}
-                                        <span class="ms-2" id="{{ field.id_for_label }}-color-name">Selected color</span>
-                                    </div>
-
-                                    {% elif "spec_" in field.name and "form-select spec-field" in field.field.widget.attrs.class %}
-                                    <!-- Special handling for select fields -->
-                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select spec-field">
-                                        {% for choice in field.field.choices %}
-                                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
-                                            {{ choice.1 }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-
-                                    {% else %}
-                                    <!-- Standard field rendering -->
-                                    {{ field }}
-                                    {% endif %}
-
-                                    {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                    {% endif %}
-
-                                    {% if field.errors %}
-                                    <div class="alert alert-danger mt-1">
-                                        {{ field.errors }}
-                                    </div>
-                                    {% endif %}
                                 </div>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            <!-- Add quantity field if it doesn't exist -->
-                            {% if not form.quantity %}
-                            <div class="form-group mb-4">
-                                <label for="id_quantity" class="fw-bold mb-2">Quantity</label>
-                                <div class="input-group">
-                                    <button type="button" class="btn btn-outline-secondary" id="decrease-quantity">-</button>
-                                    <input type="number" class="form-control text-center" id="id_quantity" name="quantity" min="1" value="1">
-                                    <button type="button" class="btn btn-outline-secondary" id="increase-quantity">+</button>
+
+                                <!-- Price summary -->
+                                <div class="bg-light p-3 rounded-3 mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Product Price:</span>
+                                        <span class="fw-bold" id="product-price">₦{{ product.base_price }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Design Fee:</span>
+                                        <span class="fw-bold">₦{{ product.design_fee|default:"5000.00" }}</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Total:</span>
+                                        <span class="h4 fw-bold mb-0" id="total-price">₦{{ product.base_price|add:5000 }}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            {% endif %}
+                        
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary py-3">
+                                        Continue to Review Design Request
+                                    </button>
+                                </div>
+                            </form>
                         </div>
- <button 
-    type="button" 
-    id="add-to-cart-btn" 
-    data-product="{{ product.id }}" 
-    data-action="add"
-    data-designer="true"
-    class="btn btn-success update-cart">
-    Add to Cart
-</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,13 +195,13 @@
 </div>
 
 <!-- Fixed Footer for Order Summary -->
-<footer class="fixed-bottom bg-dark text-white border-top shadow-sm py-3">
+<footer class="fixed-bottom bg-dark text-white border-top shadow-sm py-3 d-none d-md-block">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-7 col-md-8">
                 <div class="d-flex flex-column flex-md-row text-white align-items-md-center">
                     <h5 class="mb-0 me-md-3 text-white">Order Summary</h5>
-                    <span class="d-none d-md-inline ">{{ product.title }}</span>
+                    <span class="d-none d-md-inline">{{ product.title }}</span>
                     <div class="ms-md-3 d-none d-md-block">
                         <span id="variant-display" class="badge bg-secondary"></span>
                     </div>
@@ -193,9 +213,9 @@
             <div class="col-5 col-md-4 text-end">
                 <div class="d-flex justify-content-end align-items-center">
                     <div class="me-3">
-                        <span class="d-none d-sm-inline">Product Total:</span>
-                        <span class="h5 mb-0 ms-md-2 fw-bold" id="total-price">₦{{ product.base_price }}</span>
-                        <span>+N5000</span>
+                        <span class="d-none d-sm-inline">Total:</span>
+                        <span class="h5 mb-0 ms-md-2 fw-bold" id="footer-total-price">₦{{ product.base_price }}</span>
+                        <span>+₦5000</span>
                     </div>
                 </div>
             </div>
@@ -212,10 +232,10 @@
         const totalDisplay = document.getElementById('total-price');
         const variantDisplay = document.getElementById('variant-display');
         
-        // Handle dimensions
-        const widthField = document.getElementById('id_width');
-        const heightField = document.getElementById('id_height');
-        const dimensionUnitField = document.getElementById('id_dimension_unit');
+        // Handle dimensions - check if these fields exist in the form
+        const widthField = document.getElementById('id_spec_width') || document.getElementById('id_width');
+        const heightField = document.getElementById('id_spec_height') || document.getElementById('id_height');
+        const dimensionUnitField = document.getElementById('id_spec_dimension_unit') || document.getElementById('id_dimension_unit');
         
         // Get the variant related elements
         const variantField = document.getElementById('id_variant');
@@ -229,7 +249,12 @@
         
         // Ensure quantity is always set to 1 on page load
         if (quantityField) {
-            quantityField.value = 1;
+            // Force the value to be 1 regardless of any pre-filled value
+            setTimeout(function() {
+                quantityField.value = 1;
+                // Trigger change event to update calculations
+                quantityField.dispatchEvent(new Event('change'));
+            }, 0);
         }
         
         // Add designer service flag to the Add to Cart button
@@ -306,23 +331,29 @@
             }
             
             // Calculate price based on dimensions if applicable
-            if (widthField && heightField) {
+            if (widthField && heightField && widthField.value && heightField.value) {
                 const width = parseFloat(widthField.value) || 0;
                 const height = parseFloat(heightField.value) || 0;
                 
                 if (width > 0 && height > 0) {
                     // Calculate area and any price adjustments based on size
                     const area = width * height;
-                    const unit = dimensionUnitField ? dimensionUnitField.value : 'inches';
+                    const unit = dimensionUnitField && dimensionUnitField.value ? dimensionUnitField.value : 'inches';
                     
-                    // This is just an example - adjust based on your pricing model
+                    // Apply pricing based on unit type
                     let sizePriceAdjustment = 0;
-                    if (unit === 'feet') {
-                        // Example: N10 per square foot
+                    if (unit.toLowerCase() === 'feet' || unit.toLowerCase() === 'ft') {
+                        // ₦10 per square foot
                         sizePriceAdjustment = area * 10;
-                    } else {
-                        // Example: N0.10 per square inch
+                        console.log(`Area pricing: ${area} sq ft × ₦10 = ₦${sizePriceAdjustment}`);
+                    } else if (unit.toLowerCase() === 'inches' || unit.toLowerCase() === 'in') {
+                        // ₦0.10 per square inch
                         sizePriceAdjustment = area * 0.10;
+                        console.log(`Area pricing: ${area} sq in × ₦0.10 = ₦${sizePriceAdjustment}`);
+                    } else if (unit.toLowerCase() === 'cm' || unit.toLowerCase() === 'centimeters') {
+                        // ₦0.025 per square cm
+                        sizePriceAdjustment = area * 0.025;
+                        console.log(`Area pricing: ${area} sq cm × ₦0.025 = ₦${sizePriceAdjustment}`);
                     }
                     
                     itemPrice += sizePriceAdjustment;
@@ -364,6 +395,12 @@
             // Update the total display - showing product price only
             // The design fee is shown separately on the page
             totalDisplay.textContent = '₦' + total.toFixed(2);
+            
+            // Update footer price display
+            const footerTotalPrice = document.getElementById('footer-total-price');
+            if (footerTotalPrice) {
+                footerTotalPrice.textContent = '₦' + total.toFixed(2);
+            }
             
             // Update quantity attribute on add to cart button
             if (addToCartBtn && quantityField) {

@@ -43,7 +43,6 @@ def checkout(request):
 
 
 
-
 def updateItem(request):
     try:
         print("Request received")  # Debug print
@@ -55,6 +54,7 @@ def updateItem(request):
         productId = data['productId']
         action = data['action']
         variantId = data.get('variantId')  # Get variant ID if available
+        designer_service = data.get('designer_service', False)  # Get designer service flag
         
         # Normalize variant ID - treat None, "null", "undefined" as None
         if variantId in [None, "null", "undefined", ""]:
@@ -63,12 +63,10 @@ def updateItem(request):
         print('Action:', action)
         print('Product:', productId)
         print('Variant:', variantId)
+        print('Designer Service:', designer_service)
         
-        customer = request.user.customer
+        # Get product information
         product = Product.objects.get(id=productId)
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        
-        # Get or create order item with the correct variant
         variant = None
         if variantId:
             try:
@@ -77,43 +75,172 @@ def updateItem(request):
                 print(f"❌ Variant with ID {variantId} not found")
                 variant = None
         
-        # Check if an order item with this product and variant already exists
-        orderItem = OrderItem.objects.filter(
-            order=order, 
-            product=product,
-            variant=variant
-        ).first()
-        
-        if not orderItem:
-            orderItem = OrderItem.objects.create(
+        # Check if user is authenticated
+        if request.user.is_authenticated:
+            # Use the existing logic for authenticated users
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            
+            # Check if an order item with this product and variant already exists
+            orderItem = OrderItem.objects.filter(
                 order=order, 
                 product=product,
-                variant=variant,
-                quantity=0
-            )
+                variant=variant
+            ).first()
+            
+            if not orderItem:
+                orderItem = OrderItem.objects.create(
+                    order=order, 
+                    product=product,
+                    variant=variant,
+                    quantity=0,
+                    designer_service=designer_service
+                )
 
-        if action == 'add':
-            orderItem.quantity = (orderItem.quantity + 1)
-        elif action == 'remove':
-            orderItem.quantity = (orderItem.quantity - 1)
+            if action == 'add':
+                orderItem.quantity = (orderItem.quantity + 1)
+            elif action == 'remove':
+                orderItem.quantity = (orderItem.quantity - 1)
+            
+            # Make sure we preserve the designer service flag when updating
+            if designer_service:
+                orderItem.designer_service = True
+            
+            orderItem.save()
 
-        orderItem.save()
+            if orderItem.quantity <= 0:
+                orderItem.delete()
+                
+            return JsonResponse({'status': 'success', 'message': 'Item was updated'})
+        else:
+            # Handle anonymous users with cookie cart
+            print("🔎 Anonymous user, using cookie cart")
+            
+            # Get or create cart cookie
+            cart = {}
+            try:
+                cart_cookie = request.COOKIES.get('cart')
+                if cart_cookie:
+                    cart = json.loads(cart_cookie)
+            except json.JSONDecodeError:
+                print("❌ Invalid cart cookie, creating new one")
+                cart = {}
+            
+            # Create a unique key for this product+variant combination
+            item_key = f"{productId}_{variantId}" if variantId else f"{productId}_null"
+            
+            # Update the cart based on the action
+            if action == 'add':
+                if item_key in cart:
+                    cart[item_key]['quantity'] += 1
+                else:
+                    cart[item_key] = {
+                        'quantity': 1,
+                        'productId': productId,
+                        'variantId': variantId,
+                        'designer_service': designer_service
+                    }
+            elif action == 'remove':
+                if item_key in cart:
+                    cart[item_key]['quantity'] -= 1
+                    if cart[item_key]['quantity'] <= 0:
+                        del cart[item_key]
+            
+            print(f"🔎 Cart cookie being set: {cart}")
+            
+            # Return the response with the updated cookie
+            response = JsonResponse({'status': 'success', 'message': 'Item was updated'})
+            response.set_cookie('cart', json.dumps(cart), max_age=86400*7)  # Cookie expires in 7 days
+            return response
 
-        if orderItem.quantity <= 0:
-            orderItem.delete()
-
-        return JsonResponse({'status': 'success', 'message': 'Item was updated'})
-    
     except Exception as e:
         print("Error:", str(e))  # Debug print
         print("Traceback:", traceback.format_exc())  # Full traceback
         return JsonResponse({
             'error': str(e),
             'traceback': traceback.format_exc()
-        }, status=500)    
+        }, status=500)
+        
+        
 
 
+# def updateItem(request):
+#     try:
+#         print("Request received")  # Debug print
+#         print("Request body:", request.body)  # Debug print
+        
+#         data = json.loads(request.body)
+#         print("Parsed data:", data)  # Debug print
+        
+#         productId = data['productId']
+#         action = data['action']
+#         variantId = data.get('variantId')  # Get variant ID if available
+#         designer_service = data.get('designer_service', False)  # Get designer service flag
+        
+#         # Normalize variant ID - treat None, "null", "undefined" as None
+#         if variantId in [None, "null", "undefined", ""]:
+#             variantId = None
+        
+#         print('Action:', action)
+#         print('Product:', productId)
+#         print('Variant:', variantId)
+#         print('Designer Service:', designer_service)
+        
+#         customer = request.user.customer
+#         product = Product.objects.get(id=productId)
+#         order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        
+#         # Get or create order item with the correct variant
+#         variant = None
+#         if variantId:
+#             try:
+#                 variant = ProductVariant.objects.get(id=variantId)
+#             except ProductVariant.DoesNotExist:
+#                 print(f"❌ Variant with ID {variantId} not found")
+#                 variant = None
+        
+#         # Check if an order item with this product and variant already exists
+#         orderItem = OrderItem.objects.filter(
+#             order=order, 
+#             product=product,
+#             variant=variant
+#         ).first()
+        
+#         if not orderItem:
+#             orderItem = OrderItem.objects.create(
+#                 order=order, 
+#                 product=product,
+#                 variant=variant,
+#                 quantity=0,
+#                 designer_service=designer_service  # Set designer service when creating
+#             )
 
+#         if action == 'add':
+#             orderItem.quantity = (orderItem.quantity + 1)
+#         elif action == 'remove':
+#             orderItem.quantity = (orderItem.quantity - 1)
+        
+#         # Make sure we preserve the designer service flag when updating
+#         if designer_service:
+#             orderItem.designer_service = True
+        
+#         orderItem.save()
+
+#         if orderItem.quantity <= 0:
+#             orderItem.delete()
+
+#         return JsonResponse({'status': 'success', 'message': 'Item was updated'})
+    
+#     except Exception as e:
+#         print("Error:", str(e))  # Debug print
+#         print("Traceback:", traceback.format_exc())  # Full traceback
+#         return JsonResponse({
+#             'error': str(e),
+#             'traceback': traceback.format_exc()
+#         }, status=500)
+        
+        
+        
 def processOrder(request):
 	transaction_id = datetime.datetime.now().timestamp()
 	data = json.loads(request.body)

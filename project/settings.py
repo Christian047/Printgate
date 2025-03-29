@@ -21,8 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$w_k8b_okbj_80p3f-v!py^!*1kg*p&$v7)res!rvqq4de*!2j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
-DEBUG = True
+DEBUG = False
+# DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -192,8 +192,8 @@ PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY')
 
 
 
-# print("Loaded Paystack Secret Key:", PAYSTACK_SECRET_KEY)
-# print("Loaded Paystack Public Key:", PAYSTACK_PUBLIC_KEY)
+# 
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {

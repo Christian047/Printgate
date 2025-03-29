@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load humanize %}
 {% block content %}
 
 
@@ -307,11 +308,11 @@
       
       <!-- Added explicit overlay for better text visibility -->
       <div class="carousel-overlay"></div>
-
+{% comment %} 
       <!-- Contact Numbers -->
       <div class="carousel-contact">
         0812 345 6789 | 0803 987 6543
-      </div>
+      </div> {% endcomment %}
 
       <div class="carousel-caption">
         <div class="container">
@@ -326,7 +327,7 @@
               <div class="search-wrapper">
                 <div class="search-container">
                   <input type="text" id="product" class="search-input" 
-                    placeholder="Enter keyword like 'souvenir' or 'flyer'" autocomplete="off" name="product">
+                    placeholder="Enter keyword like 'banner' or 'flyer'" autocomplete="off" name="product">
                   <div class="search-icon">
                     <i class="bi bi-search"></i>
                   </div>
@@ -374,6 +375,7 @@
 <section id="portfolio" class="portfolio">
   <div class="container my-4" data-aos="fade-up">
     <header class="text-center">
+      hello {{request.user}}
       <h1 class="display-5 fw-bold">What do you want to print?</h1>
     </header>
 
@@ -439,7 +441,7 @@
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <div class="text-muted small">Base Price:</div>
-          <h3 class="fw-bold text-success mb-0">N{{ product.base_price }}</h3>
+          <h3 class="fw-bold text-success mb-0">₦{{ product.base_price|intcomma }}</h3>
           <div class="text-muted small">per 100</div>
         </div>
         <div class="d-flex gap-2">

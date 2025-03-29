@@ -356,6 +356,7 @@
 }
 
 
+
 .whatsapp_float {
   width: 10px;
   height: 10px;
@@ -369,7 +370,6 @@
   display: flex;
   justify-content: center;
   align-content: center;
-
 }
 
 .whatsapp-background {
@@ -378,7 +378,7 @@
   height: 40px;
   bottom: 20px;
   right: 20px;
-  background-color: rgb(114, 1, 52);
+  background-color: rgb(15, 15, 15);
   color: #fff;
   text-align: center;
   font-size: 40px;
@@ -388,10 +388,32 @@
   display: block;
   justify-content: center;
   align-content: center;
-  border-radius: 18px;
+  border-radius: 8px;
+  /* Add the bounce animation */
+  animation: whatsapp-bounce 2s infinite;
 }
 
-/* for mobile */
+/* Bouncing animation keyframes */
+@keyframes whatsapp-bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-10px);
+  }
+
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* For mobile */
 @media screen and (max-width: 767px) {
   .whatsapp-icon {}
 

@@ -8,12 +8,9 @@ from store.utils import *
 from base.models import *  # Import all models from base app
 
 
-
-
 def initiate_payment(request):
-
     data = cartData(request)
-	
+    
     cartItems = data['cartItems']
     order = data['order']
     items = data['items']
@@ -23,32 +20,55 @@ def initiate_payment(request):
 
     if request.method == "POST":
         if isinstance(order, dict):
-            amount = order['get_cart_total']  # Dictionary access
-        else:
-            amount = order.get_cart_total  # Object property access
+            # For anonymous users, create an actual Order object first
+            email = request.POST['email']
             
-        email = request.POST['email']  # Get email from POST data
+            # Use the guestOrder function to create a customer and order
+            customer, real_order = guestOrder(request, {
+                'form': {
+                    'name': request.POST.get('name', 'Guest User'),  # Provide a default name if not in POST
+                    'email': email
+                }
+            })
+            
+            # Now use the real Order object
+            amount = real_order.get_cart_total
+            order_to_use = real_order
+            
+            # Store order ID in session for verification process
+            request.session['pending_order_id'] = real_order.id
+            request.session.modified = True
+            print(f"Stored order ID {real_order.id} in session")
+        else:
+            # For logged-in users, use the existing Order object
+            amount = order.get_cart_total
+            order_to_use = order
+            email = request.POST['email']
 
         try:
-            # Create new payment record in database
+            # Create new payment record in database with the proper Order object
             payment = Payment.objects.create(
-                   amount=amount,
-                   email=email,
-                   payment_order=order, 
-                   session_id=request.session.session_key 
-                #    or uuid.uuid4().hex       
-           )
+                amount=amount,
+                email=email,
+                payment_order=order_to_use,  # Use the real Order object, not the dictionary
+                session_id=request.session.session_key 
+            )
             
             context = {
                 'payment': payment,
                 'paystack_pub_key': settings.PAYSTACK_PUBLIC_KEY,
                 'amount_value': payment.amount_value(),
-                'order': order,
-                'items': items,  # Add items to context
-                'cartItems':cartItems
+                'order': order_to_use,
+                'items': items,
+                'cartItems': cartItems
             }
             response = render(request, 'make_payment.html', context)
             response.set_cookie('payment_ref', payment.ref, httponly=True)
+            
+            # For anonymous users, also store order ID in cookie as backup
+            if isinstance(order, dict):
+                response.set_cookie('pending_order_id', str(order_to_use.id), max_age=86400)
+            
             return response
 
         except Exception as e:
@@ -58,8 +78,6 @@ def initiate_payment(request):
 
     # If not POST, render initial payment form
     return render(request, 'payment.html', {'order': order, 'items': items})
-
-
 
 
 
@@ -143,17 +161,78 @@ def verify_payment(request, ref):
                 return redirect('cart')
 
         # Check if pending order exists before verifying payment
+                # In verify_payment function, replace this part:
+
+        # With this code:
         try:
             pending_order = PendingOrder.objects.get(id=pending_order_id)
             print(f"\nPre-verification check: Found pending order {pending_order_id}")
-            print(f"  Customer: {pending_order.customer.name if pending_order.customer else 'None'}")
-            print(f"  Product: {pending_order.product.title if pending_order.product else 'None'}")
-            print(f"  Complete: {pending_order.complete}")
-            print(f"  Total Price: {pending_order.total_price}")
+            # ... continue with your existing pending order code ...
         except PendingOrder.DoesNotExist:
-            print(f"ERROR: Pending order with ID {pending_order_id} does not exist in database!")
-            messages.error(request, f"Pending order #{pending_order_id} not found")
-            return redirect('cart')
+            print(f"Pending order with ID {pending_order_id} not found, checking Order table...")
+            try:
+                # Check if it exists in the Order table instead
+                order = Order.objects.get(id=pending_order_id)
+                print(f"\nFound order in Order table: {order.id}")
+                print(f"  Customer: {order.customer.name if order.customer else 'None'}")
+                print(f"  Complete: {order.complete}")
+                
+                # Verify the payment
+                verified = payment.verify_payment()
+                print(f"\nPayment verification result: {verified}")
+                
+                if verified:
+                    # Update the order
+                    order.transaction_id = payment.ref
+                    order.complete = True
+                    order.save()
+                    print(f"Updated order with transaction ID: {payment.ref}")
+                    
+                    # For logged-in users, mark all their incomplete orders as complete
+                    if request.user.is_authenticated:
+                        updated_count = Order.objects.filter(
+                            customer=request.user.customer, 
+                            complete=False
+                        ).update(complete=True)
+                        print(f"Marked {updated_count} additional incomplete orders as complete")
+                    
+                    # Clear cookies and show success page
+                    print("\nRendering success page...")
+                    response = render(request, "success.html", {
+                        'message': "Payment verified successfully!",
+                        'order': order
+                    })
+                    
+                    # Clear cookies
+                    cookies_to_delete = ['cart', 'payment_ref', 'pending_order_id', 'shipping_info']
+                    for cookie in cookies_to_delete:
+                        if cookie in request.COOKIES:
+                            response.delete_cookie(cookie)
+                            print(f"Deleted cookie: {cookie}")
+                    
+                    # Clear session data
+                    session_keys_to_delete = ['pending_order_id', 'cart']
+                    for key in session_keys_to_delete:
+                        if key in request.session:
+                            del request.session[key]
+                            print(f"Deleted session key: {key}")
+                    
+                    request.session.modified = True
+                    print("Session marked as modified")
+                    
+                    print("DEBUG COMPLETE: Returning success response.")
+                    print("==========================================\n")
+                    return response
+                    
+                else:
+                    print("\nERROR: Payment verification failed.")
+                    messages.error(request, "Payment verification failed")
+                    return render(request, "failure.html")
+                    
+            except Order.DoesNotExist:
+                print(f"ERROR: Order with ID {pending_order_id} does not exist in either table!")
+                messages.error(request, f"Order #{pending_order_id} not found")
+                return redirect('cart')
 
         verified = payment.verify_payment()
         print(f"\nPayment verification result: {verified}")
@@ -182,6 +261,12 @@ def verify_payment(request, ref):
                 # Convert pending order to confirmed order
                 print("\nCONVERTING: Pending order to confirmed order...")
                 order = pending_order.convert_to_order()
+                
+                # NEW CODE: Link the order back to the pending order
+                order.pending_order = pending_order
+                order.save()
+                print(f"Set foreign key link: Order {order.id} -> PendingOrder {pending_order.id}")
+                
                 print(f"Confirmed order created with ID: {order.id}")
                 
                 # Set order as complete and save transaction ID
@@ -189,6 +274,7 @@ def verify_payment(request, ref):
                 order.transaction_id = payment.ref
                 order.save()
                 print("Confirmed order marked as complete and saved with transaction ID")
+                
                 
                 # Copy specifications from pending order to confirmed order
                 print("\nCopying specifications from pending order...")
@@ -220,6 +306,15 @@ def verify_payment(request, ref):
                 pending_order.complete = True
                 pending_order.save()
                 print("Pending order marked as complete")
+                
+                # For logged-in users, mark all their incomplete orders as complete
+                if request.user.is_authenticated:
+                    # Find any other incomplete orders for this customer and mark them complete
+                    updated_count = Order.objects.filter(
+                        customer=request.user.customer, 
+                        complete=False
+                    ).update(complete=True)
+                    print(f"Marked {updated_count} additional incomplete orders as complete for user {request.user.username}")
                 
                 # Clear cookies and show success page
                 print("\nRendering success page...")
@@ -274,8 +369,6 @@ def verify_payment(request, ref):
         traceback.print_exc()
         messages.error(request, f"An error occurred: {str(e)}")
         return redirect('cart')
-
-
 
 
 

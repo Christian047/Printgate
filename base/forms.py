@@ -55,9 +55,12 @@ class BaseOrderForm(forms.Form):
                     label=field.name,
                     required=field.required,
                     help_text=field.help_text,
-                    widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+                    widget=forms.ClearableFileInput(attrs={
+                        'class': 'form-control',  # Bootstrap 5 class for form controls
+                        'accept': '.jpg,.jpeg,.png,.pdf'  # Optional: limit file types
+                    })
                 )
-            
+                        
             elif field.field_type == 'color':
                 self.fields[field_name] = forms.CharField(
                     label=field.name,

@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load humanize %}
+
 {% block content %}
 
 <br>
@@ -18,7 +20,7 @@
                 <!-- Payment Info -->
                 <h4 class="mb-3">Confirm Your Payment</h4>
                 <p class="">
-                    You are about to make a payment of <div class='display-6 fw-bold'>₦{{ payment.amount }}</div>
+                    You are about to make a payment of <div class='display-6 fw-bold'>₦{{ payment.amount|floatformat:0|intcomma }}</div>
                     Transaction Reference: <b>{{ payment.ref|slice:":6" }}</b>
                 </p>
 <br>

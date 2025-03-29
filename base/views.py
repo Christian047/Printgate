@@ -63,16 +63,6 @@ def cat(request):
 
 
 
-# def autocomplete(request):
-#     if 'term' in request.GET:
-#         qs = Product.objects.filter(title__icontains=request.GET.get('term'))
-#         titles = list()
-#         for product in qs:
-#             titles.append(product.title)
-
-#         return JsonResponse(titles, safe=False)
-#     return render(request, 'base/Home2.html')
-
 
 def autocomplete(request):
     if 'term' in request.GET:
@@ -95,58 +85,117 @@ def design_options_page(request):
 def covert_size(request):
     return render(request, 'base/convert_size.html')
 
-
 def create_print_order(request, pk):
-    """Display the form to order a specific product"""
+  
+    
     product = get_object_or_404(Product, pk=pk)
+    print(f"Found product: {product.title} (ID: {product.id})")
+    
+    # Determine if this is a designer service order
+    is_designer_service = request.GET.get('designer', 'false').lower() == 'true'
+    print(f"Is designer service (from GET): {is_designer_service}")
     
     if request.method == 'POST':
-        form = BaseOrderForm(product, request.POST, request.FILES)
+        print("\n-- Processing POST request --")
+        print(f"POST data: {request.POST}")
+        print(f"FILES data: {request.FILES}")
+        
+        # Check for order_type in POST data
+        post_order_type = request.POST.get('order_type')
+        print(f"Order type from POST: {post_order_type}")
+        
+        # Choose the appropriate form class based on order type
+        if is_designer_service or post_order_type == 'designer':
+            print("Creating DesignerOrderForm")
+            form = DesignerOrderForm(product, request.POST, request.FILES)
+        else:
+            print("Creating BaseOrderForm")
+            form = BaseOrderForm(product, request.POST, request.FILES)
+        
+        print("\n-- Validating form --")    
         if form.is_valid():
+            print("Form is valid!")
+            print(f"Cleaned data: {form.cleaned_data}")
+            
+            print("\n-- Processing customer info --")
             customer = None
             if request.user.is_authenticated:
+                print(f"Authenticated user: {request.user.username}")
                 customer, created = Customer.objects.get_or_create(
                     user=request.user,
                     defaults={'name': request.user.get_full_name() or request.user.username,
                              'email': request.user.email}
                 )
+                print(f"Customer: {customer}, Created: {created}")
+            else:
+                print("User is not authenticated (guest checkout)")
             
             try:
+                print("\n-- Saving pending order --")
                 # Save the pending order
                 pending_order = form.save(customer=customer)
+                print(f"Successfully created pending order with ID: {pending_order.id}")
+                print(f"Order details: Type={pending_order.order_type}, Total={pending_order.total_price}")
+                
                 messages.success(request, "Your order has been successfully created.")
             except Exception as e:
+                print(f"\n!! ERROR saving order: {str(e)}")
+                print(traceback.format_exc())  # Print full traceback for debugging
                 messages.error(request, f"An error occurred while saving your order: {str(e)}")
                 return render(request, 'base/create_order2.html', {
                     'product': product,
-                    'form': form
+                    'form': form,
+                    'is_designer_service': is_designer_service
                 })
             
             # Store pending order ID in session for anonymous users
             if not request.user.is_authenticated:
+                print("\n-- Storing pending order ID in session --")
                 if 'pending_orders' not in request.session:
                     request.session['pending_orders'] = []
                 request.session['pending_orders'].append(pending_order.id)
                 request.session.modified = True
+                print(f"Session pending orders: {request.session['pending_orders']}")
             
             # Redirect to order review page
+            print("\n-- Redirecting to order confirmation --")
             return redirect('order_confirmation', order_id=pending_order.id)
         else:
+            # Debug form errors
+            print("\n!! Form validation failed !!")
+            print(f"Form errors: {form.errors}")
+            print(f"Form data: {form.data}")
+            
             # Handle specific form errors
             for field, errors in form.errors.items():
                 for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
+                    error_message = f"{field.capitalize()}: {error}"
+                    print(f"Adding error message: {error_message}")
+                    messages.error(request, error_message)
             
-            # Check if image file is missing
-            if 'spec_file' in form.errors:
-                messages.error(request, "Image upload is required. Please select an image file.")
+            # Only check for design file errors if this is a print order
+            if not is_designer_service and 'design_file' in form.errors:
+                print("Adding specific design file error message")
+                messages.error(request, "Design file upload is required for print orders. Please select a file.")
     else:
-        form = BaseOrderForm(product)
+        print("\n-- Processing GET request --")
+        # For GET requests, create the appropriate form
+        if is_designer_service:
+            print("Creating new DesignerOrderForm (GET)")
+            form = DesignerOrderForm(product)
+        else:
+            print("Creating new BaseOrderForm (GET)")
+            form = BaseOrderForm(product)
+        
+        print(f"Form fields: {form.fields.keys()}")
     
+    print("\n-- Rendering template --")
     return render(request, 'base/create_order2.html', {
         'product': product,
-        'form': form
+        'form': form,
+        'is_designer_service': is_designer_service
     })
+
 
 
 
@@ -181,44 +230,21 @@ def hire_designer(request, pk):
                     
                     # Save the pending order with designer service flag
                     pending_order = form.save(customer=customer)
+                    
+                    # Ensure designer attributes are set properly
                     pending_order.order_type = 'designer'
                     pending_order.designer_fee = 5000  # Set the designer fee
                     pending_order.save()
-                    
-                    # Add to cart for display
-                    if customer:
-                        # Get or create an order
-                        order, created = Order.objects.get_or_create(
-                            customer=customer,
-                            complete=False
-                        )
-                        
-                        # Get variant if specified
-                        variant_id = form.cleaned_data.get('variant')
-                        variant = None
-                        if variant_id:
-                            variant = ProductVariant.objects.get(id=variant_id) 
-                        
-                        # Create or update OrderItem with designer_service=True
-                        order_item, created = OrderItem.objects.get_or_create(
-                            order=order,
-                            product=product,
-                            variant=variant,
-                            defaults={'quantity': 1, 'designer_service': True}
-                        )
-                        
-                        if not created:
-                            # If this exact product variant combination exists, mark it as designer service
-                            order_item.designer_service = True
-                            order_item.save()
                     
                     # Handle guest users by storing order in session
                     if not request.user.is_authenticated:
                         request.session.setdefault('pending_orders', []).append(pending_order.id)
                         request.session.modified = True
 
-                    messages.success(request, "Your designer request has been submitted successfully and added to cart!")
-                    return redirect('cart')  # Redirect to cart instead of order confirmation
+                    messages.success(request, "Your designer request has been created. Please review the details.")
+                    
+                    # Redirect to order confirmation page with the pending order ID
+                    return redirect('order_confirmation', order_id=pending_order.id)
 
                 except (IntegrityError, DatabaseError) as db_err:
                     logger.error(f"Database error while saving designer order: {db_err}")
@@ -231,6 +257,12 @@ def hire_designer(request, pk):
                 except Exception as e:
                     logger.exception(f"Unexpected error: {e}")
                     messages.error(request, "Something went wrong. Please try again or contact support.")
+            else:
+                # Debug form validation errors
+                print("Form errors:", form.errors)
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.capitalize()}: {error}")
         
         else:
             form = DesignerOrderForm(product)
@@ -244,9 +276,6 @@ def hire_designer(request, pk):
         logger.exception(f"Unexpected error in hire_designer view: {e}")
         messages.error(request, "An error occurred while loading the page. Please try again.")
         return redirect('home')  # Redirect to a safe page (adjust as needed)
-
-
-
 
 
 def cart(request):

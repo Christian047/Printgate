@@ -1,99 +1,165 @@
-
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
-<br>
-<br>
-<div class="container p-4">
-    <div class="card border-0 rounded-4 option-card pt-4 p-4">
-        <div class="card-header bg-dark text-white">
-            <h2 class="display-5 mb-0 text-white">{{ product.title }} Order Confirmation</h2>
+<div class="container py-5">
+    <div class="card border-0 rounded-4 shadow-sm option-card">
+        <div class="card-header bg-dark text-white p-4 rounded-top-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h3 mb-0 text-white">{{ product.title }} Order Confirmation</h2>
+                <span class="badge {% if order.order_type == 'designer' %}bg-info{% else %}bg-primary{% endif %} px-3 py-2">
+                    {% if order.order_type == 'designer' %}Designer Service{% else %}Print Order{% endif %}
+                </span>
+            </div>
         </div>
-        <div class="card-body">
+        
+        <div class="card-body p-4">
             <!-- Order Type Indicator -->
             {% if order.order_type == 'designer' %}
             <div class="alert alert-info mb-4">
-                <h4 class="alert-heading">Design Service Order</h4>
-                <p>You've requested our professional design service. Our team will be in touch within 24 hours to discuss your design requirements.</p>
-            </div>
-            {% else %}
-            <div class="alert alert-info mb-4">
-                <h4 class="alert-heading">Custom Design Upload</h4>
-                <p>You've uploaded your own design. Our team will review your file to ensure it meets our production requirements.</p>
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-pencil-ruler fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="alert-heading">Design Service Order</h4>
+                        <p class="mb-0">You've requested our professional design service. Our team will be in touch within 24 hours to discuss your design requirements.</p>
+                    </div>
+                </div>
             </div>
             {% endif %}
             
-            <!-- Order Details -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h3 class="h4">Order Details</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <strong>Order ID:</strong> {{ order.id }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Quantity:</strong> {{ order.quantity }}
-                        </li>
-                        {% if order.width and order.height %}
-                        <li class="list-group-item">
-                            <strong>Dimensions:</strong> {{ order.width }} × {{ order.height }} {{ order.dimension_unit }}
-                        </li>
-                        {% endif %}
-                        <li class="list-group-item">
-                            <strong>Total Price:</strong> N{{ order.total_price|floatformat:2 }}
-                        </li>
-                        {% if order.order_type == 'designer' %}
-                        <li class="list-group-item">
-                            <strong>Design Service Fee:</strong> N{{ order.designer_fee|floatformat:2 }}
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-                <div class="col-md-6">
+     <!-- Order Details with Price Breakdown -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <h3 class="h5 mb-3 border-bottom pb-2">Order Details</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Order ID:</span>
+                        <span class="fw-bold">{{ order.id }}</span>
+                    </li>
+                    
+                    {% if order.variant %}
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Variant:</span>
+                        <span class="fw-bold">{{ order.variant.name }}</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% if order.width and order.height %}
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Dimensions:</span>
+                        <span class="fw-bold">{{ order.width }} × {{ order.height }} {{ order.dimension_unit }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Price Breakdown -->
+                <h4 class="h6 mt-4 mb-2 border-bottom pb-2">Price Calculation</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Base Price:</span>
+                        <span class="fw-bold">₦{{ product.base_price|floatformat:0|intcomma }}</span>
+                    </li>
+                    
+                    {% if order.variant and order.variant.price_adjustment != 0 %}
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">{{ order.variant.name }}:</span>
+                        <span class="fw-bold">{% if order.variant.price_adjustment > 0 %}+{% endif %}₦{{ order.variant.price_adjustment|floatformat:0|intcomma }}</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% if order.quantity and order.quantity > 1 %}
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Quantity:</span>
+                        <span class="fw-bold">× {{ order.quantity }}</span>
+                    </li>
+                    
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Subtotal:</span>
+                        <span class="fw-bold">₦{{ order.subtotal|default:order.total_price|floatformat:2 }}</span>
+                    </li>
+                    {% endif %}
+                    
                     {% if order.order_type == 'designer' %}
-                    <!-- Design Service Information -->
-                    {% comment %} <h3 class="h4">Design Service Details</h3> {% endcomment %}
-
-                    {% else %}
-                    <!-- Uploaded Design Information -->
-                    <h3 class="h4 my-3">Uploaded Design</h3>
-                    <div class="position-relative">
-                        {% if order.design_file %}
-                        <img src="{{ order.design_file.url }}" class="img-fluid border rounded" alt="Uploaded design">
-                        {% if file_size %}<br><span class="mt-2 text-muted">File Size: <span class="fw-bold">{{ file_size }}</span></span>{% endif %}<br>
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Design Service Fee:</span>
+                        <span class="fw-bold">₦{{ order.designer_fee|floatformat:0|intcomma }}</span>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
+                        <span class="text-muted">Total Price:</span>
+                        <span class="fw-bold text-primary fs-5">₦{{ order.total_price|floatformat:0|intcomma }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mt-4 mt-md-0">
+        {% if order.order_type == 'designer' %}
+        <!-- Design Service Information -->
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <h3 class="h5 mb-3 border-bottom pb-2">Design Service</h3>
+                <p>Our professional designers will create a custom design based on your instructions.</p>
+                <p class="mb-0"><i class="fas fa-clock me-2 text-muted"></i> Expected design proof: 3-5 business days</p>
+            </div>
+        </div>
+        {% else %}
+        <!-- Uploaded Design Information -->
+        <div class="card h-100 border-0 bg-light">
+            <div class="card-body">
+                <h3 class="h5 mb-3 border-bottom pb-2">Uploaded Design</h3>
+                <div class="position-relative text-center">
+                    {% if order.design_file %}
+                    <a href="{{ order.design_file.url }}" target="_blank" class="d-inline-block mb-2">
+                        <img src="{{ order.design_file.url }}" class="img-fluid border rounded" alt="Uploaded design" style="max-height: 200px;">
+                    </a>
+                    <div class="small text-muted">
+                        {% if file_size %}<span class="me-2">File Size: <span class="fw-bold">{{ file_size }}</span></span>{% endif %}
                         {% if file_dimensions %}Dimensions: {{ file_dimensions }}{% endif %}
-                        {% else %}
-                        <div class="alert alert-info">No design file uploaded</div>
-                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-0">No design file uploaded</div>
+                    {% endif %}
 
-                        {% if dimension_warnings %}
+                    {% if dimension_warnings %}
+                    <div class="mt-3">
                         {% for warning in dimension_warnings %}
-                        <div class="alert alert-warning mt-2">
-                            <h4 class="alert-heading h5">Dimension Mismatch Warning</h4>
-                            <p>{{ warning.message }}</p>
-                            <hr>
-                            <p class="mb-0">
-                                <strong>Specified dimensions:</strong> {{ warning.specified }}<br>
-                                <strong>Actual image dimensions:</strong> {{ warning.actual }}
-                            </p>
+                        <div class="alert alert-warning mb-0 text-start">
+                            <div class="d-flex">
+                                <div class="me-2"><i class="fas fa-exclamation-triangle text-warning"></i></div>
+                                <div>
+                                    <h6 class="alert-heading">Dimension Mismatch</h6>
+                                    <p class="small mb-1">{{ warning.message }}</p>
+                                    <div class="small">
+                                        <span class="d-block"><strong>Specified:</strong> {{ warning.specified }}</span>
+                                        <span class="d-block"><strong>Actual:</strong> {{ warning.actual }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         {% endfor %}
-                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
             </div>
-
+        </div>
+        {% endif %}
+    </div>
+</div>
             <!-- Design Instructions (for design service) -->
             {% if order.order_type == 'designer' and order.designer_instructions %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Design Instructions</h3>
-                    <div class="card">
-                        <div class="card-body bg-light">
-                            {{ order.designer_instructions|linebreaks }}
-                        </div>
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3 border-bottom pb-2">Design Instructions</h3>
+                    <div class="p-3 bg-white rounded">
+                        {{ order.designer_instructions|linebreaks }}
                     </div>
                 </div>
             </div>
@@ -101,13 +167,13 @@
 
             <!-- Reference Images (for design service) -->
             {% if order.order_type == 'designer' and reference_images %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Reference Images</h3>
-                    <div class="row g-2">
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3 border-bottom pb-2">Reference Images</h3>
+                    <div class="row g-3">
                         {% for image in reference_images %}
                         <div class="col-6 col-md-3">
-                            <a href="{{ image.file.url }}" target="_blank">
+                            <a href="{{ image.file.url }}" target="_blank" class="d-block">
                                 <img src="{{ image.file.url }}" class="img-fluid border rounded" alt="Reference image">
                             </a>
                         </div>
@@ -119,304 +185,160 @@
 
             <!-- Text Specifications -->
             {% if text_specs %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Order Specifications</h3>
-                    <ul class="list-group">
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3 border-bottom pb-2">Order Specifications</h3>
+                    <div class="row">
                         {% for spec in text_specs %}
-                        <li class="list-group-item">
-                            <strong>{{ spec.field_name }}:</strong> {{ spec.field_value }}
-                        </li>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">{{ spec.field_name }}:</span>
+                                <span class="fw-bold">{{ spec.field_value }}</span>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- File Specifications -->
-            {% if file_specs %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4"> Uploaded Files</h3>
-                    <ul class="list-group">
-                        {% for spec in file_specs %}
-                        <li class="list-group-item">
-                            <strong>{{ spec.name }}:</strong>
-                            <a href="{{ spec.file_url }}" target="_blank">{{ spec.file_name }}</a>
-                            ({{ spec.file_size }})
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    </div>
                 </div>
             </div>
             {% endif %}
 
             <!-- Special Instructions (for customer uploads) -->
-            {% if order.order_type == 'print' and order.special_instructions %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Special Instructions</h3>
-                    <div class="card">
-                        <div class="card-body bg-light">
-                            {{ order.special_instructions|linebreaks }}
-                        </div>
+            {% if order.special_instructions %}
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3 border-bottom pb-2">{% if order.order_type == 'designer' %}Additional Notes{% else %}Special Instructions{% endif %}</h3>
+                    <div class="p-3 bg-white rounded">
+                        {{ order.special_instructions|linebreaks }}
                     </div>
                 </div>
             </div>
             {% endif %}
         
             <!-- Next Steps -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Next Steps</h3>
-                    <div class="card">
-                        <div class="card-body">
-                            {% if order.order_type == 'designer' %}
-                            <ol class="mb-0">
-                                <li>Our design team will review your request within 24 hours</li>
-                                <li>You'll receive an initial design proof via email within 3-5 business days</li>
-                                <li>Review and request revisions as needed (up to 2 rounds included)</li>
-                                <li>Once approved, your design will be sent for production</li>
-                                <li>Your completed order will be shipped according to your selected delivery method</li>
-                            </ol>
-                            {% else %}
-                            <ol class="mb-0">
-                                <li>Our team will review your uploaded design for production compatibility</li>
-                                <li>If there are any issues, we'll contact you</li>
-                                <li>Your design will be sent for production</li>
-                                <li>Your completed order will be shipped according to your selected delivery method</li>
-                            </ol>
-                            {% endif %}
-                        </div>
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3 border-bottom pb-2">Next Steps</h3>
+                    <div class="p-3 bg-white rounded">
+                        {% if order.order_type == 'designer' %}
+                        <ol class="mb-0">
+                            <li class="mb-2">Our design team will review your request within 24 hours</li>
+                            <li class="mb-2">You'll receive an initial design proof via email within 3-5 business days</li>
+                            <li class="mb-2">Review and request revisions as needed (up to 2 rounds included)</li>
+                            <li class="mb-2">Once approved, your design will be sent for production</li>
+                            <li>Your completed order will be shipped according to your selected delivery method</li>
+                        </ol>
+                        {% else %}
+                        <ol class="mb-0">
+                            <li class="mb-2">Our team will review your uploaded design for production compatibility</li>
+                            <li class="mb-2">If there are any issues, we'll contact you</li>
+                            <li class="mb-2">Your design will be sent for production</li>
+                            <li>Your completed order will be shipped according to your selected delivery method</li>
+                        </ol>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        
+            
+            <!-- Success Message -->
             <div id="cart-message" class="alert alert-success alert-dismissible fade" role="alert"
                 style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; min-width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <strong>Success!</strong> Your cart has been updated successfully.
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <div>
+                        <strong>Success!</strong> Your item has been added to cart.
+                    </div>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
                     onclick="dismissMessage()"></button>
             </div>
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                {% csrf_token %}
-                {{variant.id}}
-
-
-
-
-
-
-
-<button data-product="{{ product.id }}" {% if selected_variant %}data-variant="{{ selected_variant.id }}" {% endif %}
-    data-action="add" class="btn1 btn-primary1 add-btn update-cart" type="submit">
-    {% if selected_variant %}
-    Add to Cart with {{ selected_variant.name }}
-    {% else %}
-    Add to Cart
-    {% endif %}
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="{% url 'store' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+                
+                <div class="d-flex gap-2">
+                    {% csrf_token %}
+     <button 
+    data-product="{{ product.id }}" 
+    {% if order.variant %}data-variant="{{ order.variant.id }}"{% endif %}
+    data-action="add" 
+    data-designer="{% if order.order_type == 'designer' %}true{% else %}false{% endif %}"
+    class="btn btn-primary update-cart">
+    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
 </button>
-
-<button type="submit" class="btn1 btn-primary1">
-    {% if dimension_warnings %}
-    Proceed Despite Warnings
-    {% else %}
-    Confirm and Pay
-    {% endif %}
-</button>
-
-
-
-
-
-            <!-- JavaScript to handle showing and dismissing the cart message -->
-            <script type="text/javascript">
-                function dismissMessage() {
-                    let cartMessage = document.getElementById('cart-message');
-                    cartMessage.style.display = 'none';
-                    cartMessage.classList.remove('show');
-                }
-
-                document.addEventListener('DOMContentLoaded', function () {
-                    let updateCartButtons = document.querySelectorAll('.update-cart');
-
-                    updateCartButtons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            // Show the message with fade animation
-                            let cartMessage = document.getElementById('cart-message');
-                            cartMessage.style.display = 'block';
-
-                            // Trigger reflow/repaint to make the fade work properly
-                            void cartMessage.offsetWidth;
-
-                            // Add the show class to fade it in
-                            cartMessage.classList.add('show');
-                        });
-                    });
-                });
-            </script>
+                    
+                    <a href="{% url 'cart' %}" class="btn btn-success">
+                        <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{% endblock content %}
 
+<!-- JavaScript for handling the cart update -->
+<script type="text/javascript">
+    function dismissMessage() {
+        let cartMessage = document.getElementById('cart-message');
+        cartMessage.style.display = 'none';
+        cartMessage.classList.remove('show');
+    }
 
-{% comment %} <br>
-<br>
-<div class="container p-4">
-    <div class="card">
-        <div class="card-header">
-            <h2 class="display-5 mb-0">{{ product.title }} Order Confirmation</h2>
-        </div>
-        <div class="card-body">
-            <!-- Order Details -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h3 class="h4">Order Details</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <strong>Order ID:</strong> {{ order.id }}
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Quantity:</strong> {{ order.quantity }}
-                        </li>
-                        {% if order.width and order.height %}
-                        <li class="list-group-item">
-                            <strong>Dimensions:</strong> {{ order.width }} × {{ order.height }} {{ order.dimension_unit
-                            }}
-                        </li>
-                        {% endif %}
-                        <li class="list-group-item">
-                            <strong>Total Price:</strong> N{{ order.total_price|floatformat:2 }}
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h3 class="h4">Uploaded Design</h3>
-                    <div class="position-relative">
-                        {% if order.design_file %}
-                        <img src="{{ order.design_file.url }}" class="img-fluid border rounded" alt="Uploaded design">
-                        {% if file_size %}<p class="mt-2">File Size: {{ file_size }}</p>{% endif %}
-                        {% if file_dimensions %}<p>Dimensions: {{ file_dimensions }}</p>{% endif %}
-                        {% else %}
-                        <div class="alert alert-info">No design file uploaded</div>
-                        {% endif %}
+    document.addEventListener('DOMContentLoaded', function () {
+        let updateCartButtons = document.querySelectorAll('.update-cart');
 
-                        {% if dimension_warnings %}
-                        {% for warning in dimension_warnings %}
-                        <div class="alert alert-warning mt-2">
-                            <h4 class="alert-heading h5">Dimension Mismatch Warning</h4>
-                            <p>{{ warning.message }}</p>
-                            <hr>
-                            <p class="mb-0">
-                                <strong>Specified dimensions:</strong> {{ warning.specified }}<br>
-                                <strong>Actual image dimensions:</strong> {{ warning.actual }}
-                            </p>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Text Specifications -->
-            {% if text_specs %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Order Specifications</h3>
-                    <ul class="list-group">
-                        {% for spec in text_specs %}
-                        <li class="list-group-item">
-                            <strong>{{ spec.field_name }}:</strong> {{ spec.field_value }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- File Specifications -->
-            {% if file_specs %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Additional Uploaded Files</h3>
-                    <ul class="list-group">
-                        {% for spec in file_specs %}
-                        <li class="list-group-item">
-                            <strong>{{ spec.name }}:</strong>
-                            <a href="{{ spec.file_url }}" target="_blank">{{ spec.file_name }}</a>
-                            ({{ spec.file_size }})
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Special Instructions -->
-            {% if order.special_instructions %}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h3 class="h4">Special Instructions</h3>
-                    <div class="card">
-                        <div class="card-body bg-light">
-                            {{ order.special_instructions }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        
-            <div id="cart-message" class="alert alert-success alert-dismissible fade" role="alert"
-                style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050; min-width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <strong>Success!</strong> Your cart has been updated successfully.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                    onclick="dismissMessage()"></button>
-            </div>
-
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary add-btn update-cart" data-product="{{product.id}}"
-                    data-action="add">
-                    {% if dimension_warnings %}
-                    Proceed Despite Warnings
-                    {% else %}
-                    Confirm and Pay
-                    {% endif %}
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    Add more to Cart
-                </button>
-            </div>
-
-            <!-- JavaScript to handle showing and dismissing the cart message -->
-            <script type="text/javascript">
-                function dismissMessage() {
+        updateCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                let productId = this.dataset.product;
+                let action = this.dataset.action;
+                let variantId = this.dataset.variant || null;
+                let isDesigner = this.dataset.designer === 'true';
+                
+                console.log('productId:', productId);
+                console.log('action:', action);
+                console.log('variantId:', variantId);
+                console.log('isDesigner:', isDesigner);
+                
+                // Get CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Create data object with all necessary information
+                let data = {
+                    'productId': productId,
+                    'action': action,
+                    'variantId': variantId,
+                    'designer_service': isDesigner
+                };
+                
+                fetch('/store/update_item/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Success:', data);
+                    
+                    // Show success message
                     let cartMessage = document.getElementById('cart-message');
-                    cartMessage.style.display = 'none';
-                    cartMessage.classList.remove('show');
-                }
-
-                document.addEventListener('DOMContentLoaded', function () {
-                    let updateCartButtons = document.querySelectorAll('.update-cart');
-
-                    updateCartButtons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            // Show the message with fade animation
-                            let cartMessage = document.getElementById('cart-message');
-                            cartMessage.style.display = 'block';
-
-                            // Trigger reflow/repaint to make the fade work properly
-                            void cartMessage.offsetWidth;
-
-                            // Add the show class to fade it in
-                            cartMessage.classList.add('show');
-                        });
-                    });
+                    cartMessage.style.display = 'block';
+                    void cartMessage.offsetWidth; // Trigger reflow
+                    cartMessage.classList.add('show');
+                    
+                    // Auto dismiss after 3 seconds
+                    setTimeout(dismissMessage, 3000);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
                 });
-            </script>
-        </div>
-    </div>
-</div> {% endcomment %}
-{% comment %} {% endblock content %} {% endcomment %}
+            });
+        });
+    });
+</script>
+{% endblock content %}
