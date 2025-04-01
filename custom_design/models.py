@@ -5,6 +5,16 @@ from django.core.validators import MinValueValidator
 import uuid
 import os
 
+
+
+
+
+
+
+   # Add these models to your imports
+from store.models import Order
+from payments.models import Payment  # Adjust based on your actual path
+
 def product_template_path(instance, filename):
     """Generate file path for product base images"""
     ext = filename.split('.')[-1]
@@ -219,3 +229,89 @@ class UserDesign(models.Model):
     
     def __str__(self):
         return f"{self.name} by {self.user.username}"
+    
+    
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+#  ------------------------------------------------------------------------------------------------------------
+
+# Add this new model to your models.py file
+class TemplateTransaction(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    template = models.ForeignKey(DesignTemplate, on_delete=models.CASCADE)
+    payment_ref = models.CharField(max_length=200, unique=True, blank=True, null=True)
+    email = models.EmailField(null=True, blank=True,default="default@example.com")
+    amount = models.PositiveIntegerField(default=500)  # Default template price
+    is_verified = models.BooleanField(default=False)
+    purchased_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['user', 'template']
+        
+    def __str__(self):
+        return f"{self.user.username} - {self.template.name}"
+
+    def save(self, *args, **kwargs):
+        """Generate a unique payment reference if not provided"""
+        if not self.payment_ref:
+            self.payment_ref = f"tmp_{secrets.token_urlsafe(20)}"
+        super().save(*args, **kwargs)
+
+    def amount_value(self):
+        """Convert amount to kobo (for Paystack)"""
+        return int(self.amount) * 100
+        
+    def verify_payment(self):
+        """Verify payment using Paystack"""
+        paystack = Paystack()
+        status, result = paystack.verify_payment(self.payment_ref, self.amount)
+        
+        if status and result['amount'] / 100 == self.amount:
+            self.is_verified = True
+            self.save()
+        return self.is_verified
+    
+    
+    
+    
+class TemplatePayment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    template = models.ForeignKey(DesignTemplate, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=500)  # Or whatever your price is
+    ref = models.CharField(max_length=200, unique=True)
+    email = models.EmailField()
+    verified = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Template payment: {self.template.name} - {self.user.username}"
+    
+    def save(self, *args, **kwargs):
+        import secrets
+        if not self.ref:
+            self.ref = f"tmp_{secrets.token_urlsafe(20)}"
+        super().save(*args, **kwargs)
+    
+    def amount_value(self):
+        return int(self.amount) * 100
+        
+    def verify_payment(self):
+        # This will use your existing Paystack verification
+        from store.models import Paystack  # Adjust import as needed
+        paystack = Paystack()
+        status, result = paystack.verify_payment(self.ref, self.amount)
+        if status:
+            if result['amount'] / 100 == self.amount:
+                self.verified = True
+                self.save()
+        return self.verified

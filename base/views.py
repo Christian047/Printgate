@@ -349,6 +349,19 @@ def order_confirmation(request, order_id):
     # Group specifications by type for display
     text_specs = [spec for spec in specifications if not spec.field_file]
     
+    # Add user design information if available
+    user_design_info = None
+    if hasattr(order, 'user_design') and order.user_design:
+        try:
+            user_design = order.user_design
+            user_design_info = {
+                'name': user_design.name,
+                'created_at': user_design.created_at,
+                'preview_url': user_design.preview_image.url if user_design.preview_image else None,
+            }
+        except Exception as e:
+            print(f"Error processing user design: {str(e)}")
+    
     context = {
         'order': order,
         'variant': variant,
@@ -358,7 +371,100 @@ def order_confirmation(request, order_id):
         'product': product,
         'text_specs': text_specs,  # Text-based specifications
         'file_specs': file_specs,  # File-based specifications
+        'user_design_info': user_design_info,  # Information about the user's custom design
     }
     
     return render(request, 'base/confirmation.html', context)
 
+
+
+
+
+
+
+# ---------------------------------------------------------------------
+
+def create_design_order(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    if request.method == 'POST':
+        form = DesignOrderForm(product, request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            # Create customer if authenticated
+            customer = None
+            if request.user.is_authenticated:
+                customer, created = Customer.objects.get_or_create(
+                    user=request.user,
+                    defaults={'name': request.user.get_full_name() or request.user.username,
+                             'email': request.user.email}
+                )
+            
+            # Save the order
+            pending_order = form.save(customer=customer)
+            
+            # Store pending order ID in session for anonymous users
+            if not request.user.is_authenticated:
+                if 'pending_orders' not in request.session:
+                    request.session['pending_orders'] = []
+                request.session['pending_orders'].append(pending_order.id)
+                request.session.modified = True
+            
+            # Check if we need to create a new design or use existing
+            design_id = form.cleaned_data.get('design_id')
+            if design_id == 'new':
+                # Store pending order ID in session and redirect to design editor
+                request.session['pending_order_id'] = pending_order.id
+                
+                # Map the product to your design system's product type 
+                # You'll need to adjust this based on your actual relationship
+                # product_type_id = getattr(product, 'product_type_id', None)
+                # if product_type_id:
+                #     # return redirect('product_templates', product_type_id=product_type_id)
+                #     return redirect('product_templates', product_slug=product_type.slug)
+                
+                
+                product_type_id = getattr(product, 'product_type_id', None)
+                if product_type_id:
+                    # Get the ProductType object so we can access its slug
+                    product_type = ProductType.objects.get(id=product_type_id)
+                    
+                    # Store the pending order ID in session for later use
+                    request.session['pending_order_id'] = pending_order.id
+                    
+                    # Redirect to product templates page using the slug
+                    return redirect('product_templates', product_slug=product_type.slug)
+                else:
+                    # Fallback in case product type is not directly available
+                    messages.error(request, "Unable to determine product type for design creation.")
+                    return redirect('options', pk=product.id)
+            else:
+                # Using existing design, go straight to confirmation
+                return redirect('order_confirmation', order_id=pending_order.id)
+    else:
+        form = DesignOrderForm(product, user=request.user)
+    
+    context = {
+        'product': product,
+        'form': form,
+        'is_design_order': True
+    }
+    
+    return render(request, 'base/create_order_design.html', context)
+
+
+
+
+
+
+def user_designs(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "Please log in to view your saved designs.")
+        return redirect('login')
+    
+    designs = UserDesign.objects.filter(user=request.user).order_by('-updated_at')
+    
+    context = {
+        'designs': designs
+    }
+    
+    return render(request, 'base/user_designs.html', context)

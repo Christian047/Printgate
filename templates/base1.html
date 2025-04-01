@@ -78,9 +78,7 @@
     <header class="main-header">
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-                <a class="navbar-brand" href="{% url 'designs:home' %}">
-                    <strong>CustomDesign</strong>
-                </a>
+        
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -88,15 +86,15 @@
                 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
+                       {% comment %} <li class="nav-item">
                             <a class="nav-link" href="{% url 'designs:home' %}">Home</a>
-                        </li>
+                        </li>  {% endcomment %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'designs:new_design' %}">Create Design</a>
+                            <a class="nav-link" href="{% url 'new_design' %}">Create Design</a>
                         </li>
                         {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'designs:my_designs' %}">My Designs</a>
+                            <a class="nav-link" href="{% url 'my_designs' %}">My Designs</a>
                         </li>
                         {% endif %}
                     </ul>
@@ -109,7 +107,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="#">My Account</a></li>
-                                <li><a class="dropdown-item" href="{% url 'designs:my_designs' %}">My Designs</a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_designs' %}">My Designs</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             </ul>
@@ -140,10 +138,10 @@
                 <div class="col-md-3">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'designs:home' %}" class="text-light">Home</a></li>
-                        <li><a href="{% url 'designs:new_design' %}" class="text-light">Create Design</a></li>
+                        {% comment %} <li><a href="{% url 'designs:home' %}" class="text-light">Home</a></li> {% endcomment %}
+                        <li><a href="{% url 'new_design' %}" class="text-light">Create Design</a></li>
                         {% if user.is_authenticated %}
-                        <li><a href="{% url 'designs:my_designs' %}" class="text-light">My Designs</a></li>
+                        <li><a href="{% url 'my_designs' %}" class="text-light">My Designs</a></li>
                         {% endif %}
                     </ul>
                 </div>

@@ -101,7 +101,18 @@ def cartData(request):
 
     if request.user.is_authenticated:
         # Get the logged-in customer's cart
-        customer = request.user.customer  # Get the customer linked to the user
+        customer, created = Customer.objects.get_or_create(user=request.user) # Get the customer linked to the user
+        
+        
+        
+        #  customer, created = Customer.objects.get_or_create(user=request.user, defaults={
+        #             'name': request.user.username,
+        #             'email': request.user.email if request.user.email else "unknown@email.com"
+        #         })
+        
+        
+        
+        
         order, created = Order.objects.get_or_create(customer=customer, complete=False)  # Get or create an open order
         items = order.orderitem_set.all()  # Retrieve all items in the order
         cartItems = order.get_cart_items  # Get the total number of items in the cart

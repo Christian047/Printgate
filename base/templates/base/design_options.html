@@ -43,11 +43,11 @@
                 </div>
                 <div class="card-body text-center p-4">
                     <div class="image-container mb-4">
-                        <img src="/media/images/upload.jpeg" alt="Upload design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                        <img src="/media/images/design2.png" alt="Upload design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
                     </div>
                     <p class="text-muted mb-4">Already have a design ready to go? Upload your file and we'll prepare it for printing.</p>
-                    <a href="{% url 'create_order' product.pk %}" class="btn btn-primary w-100 py-3">
-                        <span>Upload Your Design</span>
+                    <a href="{% url 'create_design_order' product.id %}" class="btn btn-primary w-100 py-3">
+                        <span>Start Designing</span>
                         <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -62,14 +62,14 @@
                 </div>
                 <div class="card-body text-center p-4">
                     <div class="image-container mb-4">
-                        <img src="/media/images/design1.jpg" alt="Hire a designer" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                        <img src="/media/images/design1.png" alt="Hire a designer" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
                     </div>
                     <p class="text-muted mb-4">Need creative assistance? Our professional designers will create a custom design tailored to your needs.</p>
                     <div class="price-tag mb-4">
                         <span class="text-muted">Starting from</span>
                         <h3 class="fw-bold mb-0">₦5,000</h3>
                     </div>
-                    <a href="{% url 'hire_designer' product.pk %}" class="btn btn-outline-primary w-100 py-3">
+                    <a href="{% url 'hire_designer' product.pk %}" class="btn btn-primary w-100 py-3">
                         <span>Work with a designer</span>
                         <i class="bi bi-arrow-right ms-2"></i>
                     </a>

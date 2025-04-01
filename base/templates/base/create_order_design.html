@@ -1,0 +1,189 @@
+<!-- base/create_order_design.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<br>
+<br>
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">Design Your {{ product.title }}</h1>
+            <p class="lead text-secondary">Complete the information below to proceed to our design editor</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Product Preview Column -->
+        <div class="col-lg-5">
+            <div class="card border-0 rounded-4 shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <img src="{{ product.imageURL }}" class="img-fluid rounded-top-4 w-100"
+                        style="object-fit: cover; max-height: 200px;">
+                    <div class="p-4">
+                        <h4 class="fw-bold mb-3">Product Details</h4>
+                        <p>{{ product.description }}</p>
+
+                        <div class="d-flex align-items-center mt-4 py-3 border-top">
+                            <div class="bg-light rounded-circle p-3 me-3">
+                                <i class="bi bi-info-circle text-primary"></i>
+                            </div>
+                            <p class="mb-0 small text-secondary">You'll be able to customize your design in our
+                                interactive editor after completing this form.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+     
+        </div>
+
+        <!-- Order Form Column -->
+        <div class="col-lg-7">
+            <div class="card border-0 rounded-4 shadow-sm">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h3 class="card-title fw-bold">Order Information</h3>
+                    <p class="text-secondary mb-0">Please fill in all details before proceeding to the design editor</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.design_id.field.widget.input_type != 'hidden' %}
+                        <div class="mb-4">
+                            <label for="{{ form.design_id.id_for_label }}" class="form-label fw-medium">{{
+                                form.design_id.label }}</label>
+                            <div class="form-select-container">
+                                {{ form.design_id }}
+                            </div>
+                            {% if form.design_id.errors %}
+                            <div class="text-danger mt-1">{{ form.design_id.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Select an existing design or create a new one</div>
+                        </div>
+                        {% else %}
+                        {{ form.design_id }}
+                        <div class="alert alert-info border-0 rounded-3 mb-4">
+                            <div class="d-flex">
+                                <i class="bi bi-palette-fill fs-4 me-3 text-primary"></i>
+                                <div>
+                                    {% if user.is_authenticated %}
+                                    <p class="mb-0">You don't have any saved designs for this product yet. You'll be
+                                        taken to the design editor after submitting this form.</p>
+                                    {% else %}
+                                    <p class="mb-0">You'll be able to create a design in our editor after completing
+                                        this information.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Display rest of form fields -->
+                        <div class="row">
+                            {% for field in form %}
+                            {% if field.name != 'design_id' %}
+                            <div class="col-md-6 mb-4">
+                                
+                                <div class="form-field-container">
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                <div class="text-danger mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="javascript:history.back()" class="btn btn-outline-secondary px-4 py-2">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Back
+                                </a>
+                                <button type="submit" class="btn btn-primary px-5 py-2">
+                                    Proceed to Design
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form styling */
+    .form-control,
+    .form-select {
+        border-radius: 0.5rem;
+        padding: 0.625rem 1rem;
+        border: 1px solid #ddd;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #3366FF;
+        box-shadow: 0 0 0 0.25rem rgba(51, 102, 255, 0.15);
+    }
+
+    .form-label {
+        margin-bottom: 0.5rem;
+        color: #444;
+    }
+
+    /* Button styling */
+    .btn {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #3366FF;
+        border-color: #3366FF;
+    }
+
+    .btn-primary:hover {
+        background-color: #2952CC;
+        border-color: #2952CC;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(51, 102, 255, 0.15);
+    }
+
+    .btn-outline-secondary {
+        border-color: #ddd;
+        color: #555;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        color: #333;
+        border-color: #ddd;
+        transform: translateY(-2px);
+    }
+
+    /* Card styling */
+    .card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Alert styling */
+    .alert-info {
+        background-color: rgba(51, 102, 255, 0.05);
+        color: #333;
+    }
+</style>
+{% endblock %}

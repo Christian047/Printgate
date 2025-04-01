@@ -1,7 +1,174 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 {% load static %}
-
+{% load design_filters %}
 {% block title %}{{ product_type.name }} Templates{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Pay-Per-Design Template Styles with Black, White and Gold theme */
+.template-card {
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Paid template badge */
+.paid-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+    color: #000;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+/* Price tag */
+.price-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffd700;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+/* Overlay for locked templates */
+.purchase-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 11;
+}
+
+.template-card:hover .purchase-overlay {
+    opacity: 1;
+}
+
+.purchase-overlay-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #ffd700;
+}
+
+.purchase-overlay-text {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+/* Paid template card styles */
+.template-card.paid {
+    border-color: #ffd700;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.15);
+}
+
+/* Payment modal styles */
+.payment-modal .modal-header {
+    background: #000;
+    color: #ffd700;
+    border-bottom: 2px solid #ffd700;
+}
+
+.payment-modal .modal-content {
+    background-color: #fff;
+    border: 1px solid #000;
+}
+
+.payment-modal .modal-body {
+    padding: 2rem;
+}
+
+.template-preview {
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ffd700;
+}
+
+.template-preview img {
+    width: 100%;
+    height: auto;
+}
+
+.template-price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.template-price .currency {
+    color: #b8860b;
+    font-size: 1.5rem;
+}
+
+.btn-purchase {
+    background: #000;
+    border: 2px solid #ffd700;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: #ffd700;
+    transition: all 0.3s;
+}
+
+.btn-purchase:hover {
+    background: #ffd700;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Payment methods */
+.payment-methods {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    gap: 10px;
+}
+
+.payment-method {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.payment-method:hover, .payment-method.active {
+    border-color: #ffd700;
+    background-color: rgba(255, 215, 0, 0.1);
+}
+
+.payment-method img {
+    height: 30px;
+    width: auto;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <section class="py-5">
@@ -14,7 +181,7 @@
                 </p>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="{% url 'designs:editor' %}?product_type={{ product_type.id }}" class="btn btn-primary">
+                <a href="{% url 'editor' %}?product_type={{ product_type.id }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i> Start From Scratch
                 </a>
             </div>
@@ -25,11 +192,11 @@
         <div class="mb-4">
             <div class="d-flex flex-wrap align-items-center gap-2">
                 <span class="text-muted me-2">Filter by:</span>
-                <a href="{% url 'designs:product_templates' product_type.slug %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <a href="{% url 'product_templates' product_type.slug %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
                     All
                 </a>
                 {% for cat in categories %}
-                <a href="{% url 'designs:product_templates' product_type.slug %}?category={{ cat.slug }}" class="btn btn-sm {% if selected_category == cat.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <a href="{% url 'product_templates' product_type.slug %}?category={{ cat.slug }}" class="btn btn-sm {% if selected_category == cat.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
                     {{ cat.name }}
                 </a>
                 {% endfor %}
@@ -41,26 +208,105 @@
         <div class="row g-4">
             {% for template in templates %}
             <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="card template-card h-100">
+                <div class="card template-card h-100 {% if template.is_premium %}paid{% endif %}">
                     <img src="{{ template.preview_image.url }}" class="card-img-top" alt="{{ template.name }}">
+                    
+                    {% if template.is_premium %}
+                    <!-- Price tag -->
+                    <div class="price-tag">₦500</div>
+                    
+                    <!-- Only show overlay if user hasn't purchased this template -->
+                  {% if not user|has_purchased:template.id %} 
+                    <div class="purchase-overlay">
+                        <div class="purchase-overlay-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="purchase-overlay-text">Locked Template</div>
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal-{{ template.id }}">
+                            <i class="fas fa-shopping-cart me-1"></i> Purchase
+                        </button>
+                    </div>
+                   {% endif %}
+                    {% endif %}
+                    
                     <div class="card-body">
                         <h5 class="card-title">{{ template.name }}</h5>
                         <p class="card-text small text-muted">{{ template.category.name }}</p>
                     </div>
                     <div class="card-footer bg-white border-0">
-                        <a href="{% url 'designs:editor' %}?product_type={{ template.product_type.id }}&template={{ template.id }}" class="btn btn-primary w-100">
+                       {% if template.is_premium and not user|has_purchased:template.id %}
+                        <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#paymentModal-{{ template.id }}">
+                            <i class="fas fa-shopping-cart me-1"></i> Purchase (₦500)
+                        </button>
+                      {% else %} 
+                        <a href="{% url 'editor' %}?product_type={{ template.product_type.id }}&template={{ template.id }}" class="btn btn-primary w-100">
                             Use This Template
                         </a>
+                       {% endif %} 
                     </div>
                 </div>
             </div>
+            
+            <!-- Payment Modal for this template -->
+            {% if template.is_premium %}
+            <div class="modal fade payment-modal" id="paymentModal-{{ template.id }}" tabindex="-1" aria-labelledby="paymentModalLabel-{{ template.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="paymentModalLabel-{{ template.id }}">
+                                <i class="fas fa-shopping-cart me-2"></i> Purchase Template
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="template-preview">
+                                <img src="{{ template.preview_image.url }}" alt="{{ template.name }}" class="img-fluid">
+                            </div>
+                            
+                            <h3 class="h4 mb-3 text-center">{{ template.name }}</h3>
+                            
+                            <p class="template-price"><span class="currency">₦</span>500</p>
+                            {{template.id}}
+                        <form action="{% url 'purchase_template' template.id %}" method="post" id="payment-form-{{ template.id }}"> 
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Select Payment Method</label>
+                                    <div class="payment-methods">
+                                        <div class="payment-method active" data-method="card">
+                                            <img src="{% static 'images/card-icon.png' %}" alt="Credit Card" onerror="this.onerror=null; this.src='https://via.placeholder.com/60x30?text=Card'">
+                                        </div>
+                                        <div class="payment-method" data-method="bank">
+                                            <img src="{% static 'images/bank-icon.png' %}" alt="Bank Transfer" onerror="this.onerror=null; this.src='https://via.placeholder.com/60x30?text=Bank'">
+                                        </div>
+                                        <div class="payment-method" data-method="ussd">
+                                            <img src="{% static 'images/ussd-icon.png' %}" alt="USSD" onerror="this.onerror=null; this.src='https://via.placeholder.com/60x30?text=USSD'">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="payment_method" value="card" id="payment-method-{{ template.id }}">
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-lg btn-purchase w-100">
+                                        <i class="fas fa-lock-open me-2"></i> Pay Now
+                                    </button>
+                                    <p class="text-muted small mt-3 mb-0">
+                                        By purchasing, you agree to our <a href="#">Terms of Service</a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
             {% empty %}
             <div class="col-12 text-center py-5">
                 <div class="py-4">
                     <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
                     <h3 class="h4">No Templates Available</h3>
                     <p class="text-muted">No templates were found for this product type{% if selected_category %} and category{% endif %}.</p>
-                    <a href="{% url 'designs:editor' %}?product_type={{ product_type.id }}" class="btn btn-primary mt-3">
+                    <a href="{% url 'editor' %}?product_type={{ product_type.id }}" class="btn btn-primary mt-3">
                         <i class="fas fa-plus me-2"></i> Start Creating From Scratch
                     </a>
                 </div>
@@ -69,4 +315,90 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+
+
+
+{% block extra_js %}
+<script>
+
+function setupFormSubmission(form) {
+    const templateId = form.id.split('-').pop();
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        const originalDisabledState = submitBtn.disabled;
+
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            credentials: 'same-origin'
+        })
+        .then(async (response) => {
+            console.group('Fetch Response Details');
+            console.log('Status:', response.status);
+            console.log('Headers:', Object.fromEntries(response.headers.entries()));
+            
+            const contentType = response.headers.get('content-type');
+            console.log('Content Type:', contentType);
+            
+            // Handle authentication redirect
+            if (response.status === 401) {
+                const data = await response.json();
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                }
+                throw new Error(data.error || 'Authentication required');
+            }
+
+            // Existing non-JSON response handling
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Non-JSON Response:', text);
+                console.groupEnd();
+                
+                throw new Error(`Expected JSON, got ${contentType}`);
+            }
+            
+            console.groupEnd();
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert('Purchase successful');
+                }
+            } else {
+                // Handle server-side error
+                alert(data.error || 'An unexpected error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Purchase Error:', error);
+            alert(`An error occurred: ${error.message}`);
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = originalDisabledState;
+        });
+    });
+}
+</script>
+
 {% endblock %}

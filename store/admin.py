@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-from .models import OrderSpecification,PendingOrderSpecification,Categories,ReferenceImage,OrderItem
+from .models import OrderSpecification,PendingOrderSpecification,Categories,ReferenceImage,OrderItem,Customer
 
 from django.utils.safestring import mark_safe
 
@@ -8,7 +8,12 @@ from django.utils.safestring import mark_safe
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):  
-    list_display = ('title', 'base_price', 'digital', 'image', 'category' )
+    list_display = ('title', 'base_price', 'digital', 'category_image', 'category' )
+    
+    def category_image(self, obj):
+        if obj.image:  # Ensure there's an image
+            return mark_safe(f'<img src="{obj.image.url}" width="50" height="50" />')
+        return "No Image"
     
     
 @admin.register(ProductVariant)
@@ -22,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
     
 @admin.register(PendingOrder)
 class OrderAdmin(admin.ModelAdmin):  
-    list_display = ('customer', 'product',  'dimension_unit', 'special_instructions', 'total_price', 'date_ordered','variant', 'category_image','designer_instructions','order_type' ,'width', 'height',)
+    list_display = ('customer', 'product', 'user_design', 'dimension_unit', 'special_instructions', 'total_price', 'date_ordered','variant', 'category_image','designer_instructions','order_type' ,'width', 'height',)
 
     def category_image(self, obj):
         if obj.design_file:  # Ensure there's an image
@@ -58,3 +63,8 @@ class ReferenceImageAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("date_added", 'designer_service' ,"variant", "quantity", "order", "product")
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ("email", "name", "user")

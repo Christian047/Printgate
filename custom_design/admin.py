@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import ProductType, ProductVariant, DesignTemplate, DesignAsset, UserDesign,DesignCategory,Font,ColorPalette
-
+from .models import ProductType, ProductVariant, DesignTemplate, DesignAsset, UserDesign,DesignCategory,Font,ColorPalette,TemplateTransaction,TemplatePayment
 # Register your models here.
 
 
@@ -18,7 +17,7 @@ class ProductVariantAdmin(admin.ModelAdmin):
 
 @admin.register(DesignTemplate)
 class DesignTemplateAdmin(admin.ModelAdmin):
-    list_display = ( "active", "updated_at", "created_at", "is_premium", "is_featured", "canvas_json", "preview_image", "description", "category", "product_type", "slug", "name")
+    list_display = (  "name","active", "updated_at", "created_at", "is_premium", "is_featured", "canvas_json", "preview_image", "description", "category", "product_type", "slug")
 
 
 @admin.register(DesignAsset)
@@ -28,7 +27,7 @@ class DesignAssetAdmin(admin.ModelAdmin):
 
 @admin.register(UserDesign)
 class UserDesignAdmin(admin.ModelAdmin):
-    list_display = ( "design_side", "is_draft", "updated_at", "created_at", "preview_image", "canvas_json", "template", "product_variant", "product_type", "name", "user")
+    list_display = ("name",  "template", "design_side", "is_draft", "updated_at", "created_at", "preview_image", "canvas_json","product_variant", "product_type", "user")
 
 
 @admin.register(DesignCategory)
@@ -44,3 +43,17 @@ class FontAdmin(admin.ModelAdmin):
 @admin.register(ColorPalette)
 class ColorPaletteAdmin(admin.ModelAdmin):
     list_display = ("is_premium", "colors", "name")
+
+
+@admin.register(TemplatePayment)
+class TemplatePaymentAdmin(admin.ModelAdmin):
+    list_display = ( "date_created", "verified", "email", "ref", "amount", "template", "user")
+
+
+
+
+
+
+@admin.register(TemplateTransaction)
+class TemplateTransactionAdmin(admin.ModelAdmin):
+    list_display = ("purchased_at", "is_verified", "amount", "email", "payment_ref", "template", "user")

@@ -16,4 +16,12 @@ urlpatterns = [
     path('design/', views.design_options_page, name='design'),
     path('convert/', views.covert_size, name='convert'),
     path('autocomplete/', views.autocomplete, name='autocomplete'),
+    
+    
+    
+    
+    
+    
+    path('products/<int:pk>/design/', views.create_design_order, name='create_design_order'),
+    path('my-designs/', views.user_designs, name='user_designs'),  # View for listing user's saved designs
 ]

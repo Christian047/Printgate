@@ -11,7 +11,7 @@
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold mb-4">Design Your Way</h1>
                 <p class="lead mb-4">Create custom designs for t-shirts, business cards, posters, and more with our easy-to-use design tool.</p>
-                <a href="{% url 'designs:new_design' %}" class="btn btn-light btn-lg">Start Designing Now</a>
+                <a href="{% url 'new_design' %}" class="btn btn-light btn-lg">Start Designing Now</a>
             </div>
             <div class="col-lg-6 d-none d-lg-block">
                 <img src="{% static 'designs/images/hero-image.png' %}" alt="Design Tool" class="img-fluid rounded">
@@ -35,7 +35,7 @@
                         </div>
                         <h3 class="h5 card-title">{{ product_type.name }}</h3>
                         <p class="card-text text-muted small">{{ product_type.description|truncatechars:60 }}</p>
-                        <a href="{% url 'designs:product_templates' product_type.slug %}" class="btn btn-outline-primary mt-2">Browse Templates</a>
+                        <a href="{% url 'product_templates' product_type.slug %}" class="btn btn-outline-primary mt-2">Browse Templates</a>
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                         <p class="card-text small text-muted">{{ template.product_type.name }}</p>
                     </div>
                     <div class="card-footer bg-white border-0">
-                        <a href="{% url 'designs:editor' %}?product_type={{ template.product_type.id }}&template={{ template.id }}" class="btn btn-primary w-100">Use This Template</a>
+                        <a href="{% url 'editor' %}?product_type={{ template.product_type.id }}&template={{ template.id }}" class="btn btn-primary w-100">Use This Template</a>
                     </div>
                 </div>
             </div>
@@ -123,7 +123,7 @@
         <div class="row g-4">
             {% for category in design_categories %}
             <div class="col-6 col-md-4 col-lg-2">
-                <a href="{% url 'designs:product_templates' product_types.0.slug %}?category={{ category.slug }}" class="text-decoration-none">
+                <a href="{% url 'product_templates' product_types.0.slug %}?category={{ category.slug }}" class="text-decoration-none">
                     <div class="card h-100 text-center">
                         <div class="card-body">
                             <i class="fas {{ category.icon|default:'fa-shapes' }} fa-2x text-primary mb-3"></i>
@@ -146,7 +146,7 @@
     <div class="container text-center">
         <h2 class="mb-4">Ready to Create Your Design?</h2>
         <p class="lead mb-4">Start with a blank canvas or choose from our templates.</p>
-        <a href="{% url 'designs:new_design' %}" class="btn btn-light btn-lg">Start Designing Now</a>
+        <a href="{% url 'new_design' %}" class="btn btn-light btn-lg">Start Designing Now</a>
     </div>
 </section>
 {% endblock %}

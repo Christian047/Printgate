@@ -10,7 +10,7 @@ class Customer(models.Model):
 	email = models.CharField(max_length=200)
 
 	def __str__(self):
-		return self.name
+		return self.name if self.name else "unknown"
 
 
 class Categories(models.Model):
@@ -39,6 +39,7 @@ class Product(models.Model):
         
     )
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True, blank=True, related_name= 'product_category')
+    product_type = models.ForeignKey('custom_design.ProductType', on_delete=models.SET_NULL, null=True, blank=True, related_name='store_products')
 
     def __str__(self):
         return self.title
@@ -106,9 +107,17 @@ class ProductSpecField(models.Model):
 class PendingOrder(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True) 
+    
+    
+    
+    user_design = models.ForeignKey('custom_design.UserDesign', on_delete=models.SET_NULL, null=True, blank=True, related_name='custom_design')
+    
+    
+    
     variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL, null=True, blank=True) 
     width = models.FloatField(null=True,blank=True)
     height = models.FloatField(null=True,blank=True)
+    
     dimension_unit = models.CharField(max_length=10, choices=[('inches', 'Inches'), ('feet', 'Feet')], default='inches')
     design_file = models.ImageField(upload_to='print_jobs/', validators=[allowed_files], null=True, blank=True)
     special_instructions = models.TextField(blank=True)
@@ -117,9 +126,11 @@ class PendingOrder(models.Model):
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True, blank=True) 
     designer_instructions = models.TextField(blank=True, null=True)
+    
+    
     order_type = models.CharField(
         max_length=20, 
-        choices=[('print', 'Print Only'), ('designer', 'Hire Designer')],
+        choices=[('print', 'Print Only'), ('designer', 'Hire Designer'), ('design', 'Created Design')],
         default='print'
     )
     designer_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0) 

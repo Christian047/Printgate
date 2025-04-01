@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Complete Template Purchase</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Template Preview -->
+                    <div class="text-center mb-4">
+                        <img src="{{ template.preview_image.url }}" alt="{{ template.name }}" class="img-fluid rounded mb-3" style="max-height: 300px;">
+                        <h4>{{ template.name }}</h4>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div class="payment-details text-center mb-4">
+                        <h5>Payment Amount</h5>
+                        <div class="display-4 text-primary">
+                            ₦500
+                        </div>
+                        <p class="text-muted">Transaction Reference: {{ payment_ref|slice:":12" }}</p>
+                    </div>
+
+                    <!-- Paystack Payment Form -->
+                    <form id="paystack-payment-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="template_id" value="{{ template.id }}">
+                        <input type="hidden" name="payment_ref" value="{{ payment_ref }}">
+                        
+                        <button type="button" onclick="payWithPaystack()" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-credit-card me-2"></i> Pay Now
+                        </button>
+                    </form>
+
+                    <p class="text-center text-muted mt-3">
+                        By proceeding, you agree to our Terms & Conditions
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+function payWithPaystack() {
+    let handler = PaystackPop.setup({
+        key: "{{ paystack_pub_key }}",
+        email: "{{ email }}",
+        amount: 50000,  // 500 * 100 kobo
+        ref: "{{ payment_ref }}",
+        currency: "NGN",
+        callback: function(response) {
+            // Verify payment
+            window.location.href = "{% url 'verify_template_payment' payment_ref %}";
+        },
+        onClose: function() {
+            alert('Payment process was canceled');
+        }
+    });
+    handler.openIframe();
+}
+</script>
+{% endblock %}

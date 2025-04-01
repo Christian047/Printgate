@@ -5,6 +5,10 @@ from store.models import *
 
 
 
+from custom_design.models import *
+
+
+
 
 class BaseOrderForm(forms.Form):
     def __init__(self, product, *args, **kwargs):
@@ -235,3 +239,74 @@ class DesignerOrderForm(BaseOrderForm):
                     )
                     
             return pending_order
+        
+        
+
+
+
+
+
+
+# In forms.py
+class DesignOrderForm(BaseOrderForm):
+    def __init__(self, product, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(product, *args, **kwargs)
+        
+        # Add field for selecting existing designs
+        if self.user and not self.user.is_anonymous:
+            # Get designs compatible with this product type
+            # Assuming product.product_type exists or you have a way to map Products to ProductTypes
+            product_type_id = getattr(product, 'product_type_id', None)
+            if product_type_id:
+                user_designs = UserDesign.objects.filter(
+                    user=self.user, 
+                    product_type_id=product_type_id,
+                    is_draft=False
+                )
+                if user_designs.exists():
+                    design_choices = [(design.id, design.name) for design in user_designs]
+                    design_choices.insert(0, ('new', 'Create New Design'))
+                    self.fields['design_id'] = forms.ChoiceField(
+                        label="Select a Saved Design",
+                        choices=design_choices,
+                        required=True,
+                        widget=forms.Select(attrs={'class': 'form-select'})
+                    )
+                else:
+                    # No saved designs, will default to creating new
+                    self.fields['design_id'] = forms.CharField(
+                        widget=forms.HiddenInput(),
+                        initial='new'
+                    )
+            else:
+                # No product type relationship, will default to creating new
+                self.fields['design_id'] = forms.CharField(
+                    widget=forms.HiddenInput(),
+                    initial='new'
+                )
+        else:
+            # Anonymous user, will default to creating new
+            self.fields['design_id'] = forms.CharField(
+                widget=forms.HiddenInput(),
+                initial='new'
+            )
+    
+    def save(self, customer=None):
+        # Get the pending order created by the parent method
+        pending_order = super().save(customer=customer)
+        
+        # Set order type
+        pending_order.order_type = 'design'
+        
+        # Link existing design if selected
+        design_id = self.cleaned_data.get('design_id')
+        if design_id and design_id != 'new':
+            try:
+                user_design = UserDesign.objects.get(id=design_id)
+                pending_order.user_design = user_design
+            except UserDesign.DoesNotExist:
+                pass
+        
+        pending_order.save()
+        return pending_order

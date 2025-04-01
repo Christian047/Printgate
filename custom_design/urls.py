@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 
-app_name = 'designs'
+# This is how it might be defined in your urls.py
+# app_name = 'custom_design'  # This defines the namespace
 
 urlpatterns = [
     # Design home page
@@ -23,4 +24,11 @@ urlpatterns = [
     path('my-designs/', views.my_designs, name='my_designs'),
     path('my-designs/<int:design_id>/', views.design_detail, name='design_detail'),
     path('my-designs/<int:design_id>/delete/', views.delete_design, name='delete_design'),
+    
+    # --------------------------------------------------------------------------------------------------
+    
+    path('purchase-template/<int:template_id>/', views.purchase_template, name='purchase_template'),
+    path('customverify-template-payment/template_<str:payment_ref>/', views.verify_template_payment, name='verify_template_payment'),
+    path('template-payment/<int:template_id>/', views.template_payment, name='template_payment'),
+
 ]
