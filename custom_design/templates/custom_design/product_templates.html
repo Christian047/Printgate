@@ -131,7 +131,7 @@
     border: 2px solid #ffd700;
     padding: 10px 20px;
     font-weight: bold;
-    color: #ffd700;
+   color: #b8860b;
     transition: all 0.3s;
 }
 
@@ -266,11 +266,11 @@
                             <h3 class="h4 mb-3 text-center">{{ template.name }}</h3>
                             
                             <p class="template-price"><span class="currency">₦</span>500</p>
-                            {{template.id}}
+                    
                         <form action="{% url 'purchase_template' template.id %}" method="post" id="payment-form-{{ template.id }}"> 
                                 {% csrf_token %}
                                 
-                                <div class="mb-4">
+                                {% comment %} <div class="mb-4">
                                     <label class="form-label">Select Payment Method</label>
                                     <div class="payment-methods">
                                         <div class="payment-method active" data-method="card">
@@ -284,7 +284,7 @@
                                         </div>
                                     </div>
                                     <input type="hidden" name="payment_method" value="card" id="payment-method-{{ template.id }}">
-                                </div>
+                                </div> {% endcomment %}
                                 
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-lg btn-purchase w-100">
