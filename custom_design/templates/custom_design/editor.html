@@ -450,242 +450,315 @@
 
 
 
-    /* Mobile optimization */
-    @media (max-width: 768px) {
-        /* Compact sidebar in collapsed state */
-        .design-sidebar {
-            width: var(--mobile-sidebar-width);
-            transform: translateX(0);
-            transition: width 0.3s ease, transform 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            overflow: visible; /* Allow expanded content to overflow */
-            position: absolute;
-            height: 100%;
-            z-index: 100;
-        }
-        
-        /* Make sidebar collapsible completely when needed */
-        .design-sidebar.collapsed {
-            transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
-        }
-        
-        /* Handle expanded state */
-        .design-sidebar.expanded {
-            width: var(--mobile-sidebar-expanded-width);
-        }
-        
-        /* Simplify tabs to icon-only in collapsed state */
-        .design-sidebar:not(.expanded) .design-tabs a span {
-            display: none;
-        }
-        
-        .design-sidebar:not(.expanded) .design-tabs a i {
-            font-size: 24px;
-            margin-bottom: 0;
-        }
-        
-        /* Hide sidebar content when collapsed */
-        .design-sidebar:not(.expanded) .sidebar-content {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        /* Show sidebar content when expanded */
-        .design-sidebar.expanded .sidebar-content {
-            opacity: 1;
-            pointer-events: auto;
-            transition: opacity 0.2s ease 0.1s; /* Delay to avoid flash during transition */
-        }
-        
-        /* Adjust canvas to use available space */
-        .canvas-container {
-            margin-left: var(--mobile-sidebar-width);
-            width: calc(100% - var(--mobile-sidebar-width));
-            transition: margin-left 0.3s ease, width 0.3s ease;
-        }
-        
-        /* When sidebar is collapsed, give full width to canvas */
-        .design-sidebar.collapsed ~ .canvas-container {
-            margin-left: 0;
-            width: 100%;
-        }
-        
-        /* When sidebar is expanded, push canvas further */
-        .design-sidebar.expanded ~ .canvas-container {
-            margin-left: var(--mobile-sidebar-expanded-width);
-            width: calc(100% - var(--mobile-sidebar-expanded-width));
-        }
-        
-        /* Improved toggle button for sidebar */
-        .btn-toggle-sidebar {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            left: calc(var(--mobile-sidebar-width) - 15px);
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 101;
-            width: 30px;
-            height: 50px;
-            border-radius: 0 25px 25px 0;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-left: none;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            padding: 0;
-            transition: left 0.3s ease;
-        }
-        
-        /* Position toggle button properly based on sidebar state */
-        .design-sidebar.collapsed ~ .btn-toggle-sidebar {
-            left: 0;
-        }
-        
-        .design-sidebar.expanded ~ .btn-toggle-sidebar {
-            left: calc(var(--mobile-sidebar-expanded-width) - 15px);
-        }
-        
-        /* Reorganize canvas controls for mobile */
-        .canvas-controls {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            left: auto;
-            transform: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            max-width: 50px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .canvas-controls-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            border-right: none;
-            border-bottom: 1px solid #dee2e6;
-            padding-right: 0;
-            padding-bottom: 8px;
-            margin-right: 0;
-            margin-bottom: 4px;
-        }
-        
-        /* Add a toggle for canvas controls on mobile */
-        .canvas-controls-toggle {
-            display: block;
-            position: fixed;
-            right: 10px;
-            bottom: 10px;
-            width: 50px;
-            height: 50px;
-            background-color: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 102;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Collapse pan controls for better space use */
-        .pan-controls {
-            display: none;
-        }
-        
-        .pan-controls.active {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 2px;
-        }
-        
-        .pan-btn {
-            width: 30px;
-            height: 30px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Touch-friendly buttons */
-        .btn-icon {
-            min-width: 40px;
-            min-height: 40px;
-        }
-        
-        /* Fullscreen mode styles */
-        .fullscreen-mode .design-sidebar {
-            transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
-        }
-        
-        .fullscreen-mode .canvas-container {
-            margin-left: 0;
-            width: 100%;
-        }
-        
-        /* Add this button to the original controls */
-        .btn-fullscreen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Enhanced tooltip for mobile */
-        .mobile-tooltip {
-            position: fixed;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .mobile-tooltip.visible {
-            opacity: 1;
-        }
+
+
+
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    /* Root variables with rem for better responsiveness */
+    :root {
+        --mobile-sidebar-width: 3rem;
+        --mobile-sidebar-expanded-width: 10rem;
+        --header-height: 3.75rem;
+        --footer-height: 3.125rem;
+        --mobile-controls-height: 6.25rem;
+        --mobile-breakpoint: 768px;
     }
     
-    /* Main canvas container */
+    /* Compact sidebar in collapsed state */
+    .design-sidebar {
+        width: var(--mobile-sidebar-width);
+        transform: translateX(0);
+        transition: width 0.3s ease, transform 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        overflow: visible; /* Allow expanded content to overflow */
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+        background-color: rgba(248, 249, 250, 0.95);
+        backdrop-filter: blur(5px);
+    }
+    
+    /* Make sidebar collapsible completely when needed */
+    .design-sidebar.collapsed {
+        transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
+    }
+    
+    /* Handle expanded state */
+    .design-sidebar.expanded {
+        width: var(--mobile-sidebar-expanded-width);
+        background-color: rgba(248, 249, 250, 0.9);
+    }
+    
+    /* Simplify tabs to icon-only in collapsed state */
+    .design-sidebar:not(.expanded) .design-tabs a span {
+        display: none;
+    }
+    
+    .design-sidebar:not(.expanded) .design-tabs a i {
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+    
+    .design-sidebar:not(.expanded) .design-tabs a {
+        padding: 8px 4px;
+    }
+    
+    /* Hide sidebar content when collapsed */
+    .design-sidebar:not(.expanded) .sidebar-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Show sidebar content when expanded */
+    .design-sidebar.expanded .sidebar-content {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Adjust canvas to use available space */
     .canvas-container {
-        overflow: auto; /* Add scrollbars when needed */
+        margin-left: var(--mobile-sidebar-width);
+        width: calc(100% - var(--mobile-sidebar-width));
+        transition: margin-left 0.3s ease, width 0.3s ease;
     }
     
-    /* Button styles for better appearance */
-    .btn-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
+    /* When sidebar is collapsed, give full width to canvas */
+    .design-sidebar.collapsed ~ .canvas-container {
+        margin-left: 0;
+        width: 100%;
     }
     
-    .btn-success {
-        background-color: #198754;
-        border-color: #198754;
+    /* When sidebar is expanded, push canvas further */
+    .design-sidebar.expanded ~ .canvas-container {
+        margin-left: var(--mobile-sidebar-expanded-width);
+        width: calc(100% - var(--mobile-sidebar-expanded-width));
+        background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.15) 0,
+            rgba(255, 255, 255, 0.15) var(--mobile-sidebar-expanded-width),
+            transparent var(--mobile-sidebar-expanded-width),
+            transparent 100%
+        );
     }
     
-    .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
+    /* Improved toggle button for sidebar */
+    .btn-toggle-sidebar {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        left: calc(var(--mobile-sidebar-width) - 0.9375rem);
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 101;
+        width: 1.75rem;
+        height: 3.125rem;
+        border-radius: 0 1.5625rem 1.5625rem 0;
+        background-color: rgba(248, 249, 250, 0.9);
+        border: 1px solid #dee2e6;
+        border-left: none;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        padding: 0;
+        transition: left 0.3s ease;
     }
     
-    /* Highlight undo/redo buttons when inactive */
-    .btn-icon.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    /* Position toggle button properly based on sidebar state */
+    .design-sidebar.collapsed ~ .btn-toggle-sidebar {
+        left: 0;
     }
+    
+    .design-sidebar.expanded ~ .btn-toggle-sidebar {
+        left: calc(var(--mobile-sidebar-expanded-width) - 0.9375rem);
+    }
+    
+    /* Sidebar content styling with rem units */
+    .sidebar-content .form-control,
+    .sidebar-content .form-select,
+    .sidebar-content .btn {
+        font-size: 0.8125rem;
+        padding: 0.25rem 0.4rem;
+        height: auto;
+    }
+    
+    .sidebar-content .input-group {
+        height: auto;
+    }
+    
+    .sidebar-content .form-label {
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .sidebar-content p, 
+    .sidebar-content .small,
+    .sidebar-content .text-muted {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .control-section h3 {
+        font-size: 0.8125rem;
+        margin-bottom: 0.375rem;
+        padding-bottom: 0.25rem;
+    }
+    
+    .color-swatch {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    
+    .variant-option {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .control-section {
+        margin-bottom: 1rem;
+    }
+    
+    .control-row {
+        margin-bottom: 0.375rem;
+        gap: 0.375rem;
+    }
+    
+    .sidebar-content .btn-group .btn {
+        padding: 0.2rem 0.3rem;
+    }
+    
+    .sidebar-content .btn-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+    
+    /* Reorganize canvas controls for mobile with rem units */
+    .canvas-controls {
+        position: fixed;
+        bottom: 0.625rem;
+        right: 0.625rem;
+        left: auto;
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+        max-width: 3.125rem;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .canvas-controls-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+        padding-right: 0;
+        padding-bottom: 0.5rem;
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Add a toggle for canvas controls on mobile with rem units */
+    .canvas-controls-toggle {
+        display: block;
+        position: fixed;
+        right: 0.625rem;
+        bottom: 0.625rem;
+        width: 3.125rem;
+        height: 3.125rem;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.2);
+        z-index: 102;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Collapse pan controls for better space use with rem units */
+    .pan-controls {
+        display: none;
+    }
+    
+    .pan-controls.active {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 0.125rem;
+    }
+    
+    .pan-btn {
+        width: 1.875rem;
+        height: 1.875rem;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Touch-friendly buttons with rem units */
+    .btn-icon {
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+    }
+    
+    /* Fullscreen mode styles */
+    .fullscreen-mode .design-sidebar {
+        transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
+    }
+    
+    .fullscreen-mode .canvas-container {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Add this button to the original controls */
+    .btn-fullscreen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .badge {
+   display: none;
+    }
+    
+    /* Enhanced tooltip for mobile with rem units */
+    .mobile-tooltip {
+        position: fixed;
+        bottom: 4.375rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .mobile-tooltip.visible {
+        opacity: 1;
+    }
+}
+
+
+
+
+
+
+
+
 </style>
 {% endblock %}
 
@@ -1115,7 +1188,7 @@ No Template
 
 
 
-
+{% block footer %}{% endblock %}
 
 
 
@@ -1125,706 +1198,727 @@ No Template
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize the canvas
-        const canvas = new fabric.Canvas('design-canvas', {
-            width: {{ product_type.default_width }},
-            height: {{ product_type.default_height }},
-            backgroundColor: 'white',
-            preserveObjectStacking: true
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the canvas
+    const canvas = new fabric.Canvas('design-canvas', {
+        width: {{ product_type.default_width }},
+        height: {{ product_type.default_height }},
+        backgroundColor: 'white',
+        preserveObjectStacking: true
+    });
 
-        // Keep track of current zoom level
-        let zoomLevel = 1;
+    // Keep track of current zoom level
+    let zoomLevel = 1;
+    
+    // Variables to track the currently selected object
+    let selectedObject = null;
+    
+    // History management for undo/redo
+    const history = {
+        canvasState: [],
+        currentStateIndex: -1,
+        undoButton: document.getElementById('undo-btn'),
+        redoButton: document.getElementById('redo-btn'),
         
-        // Variables to track the currently selected object
-        let selectedObject = null;
-        
-        // History management for undo/redo
-        const history = {
-            canvasState: [],
-            currentStateIndex: -1,
-            undoButton: document.getElementById('undo-btn'),
-            redoButton: document.getElementById('redo-btn'),
-            
-            saveState() {
-                // Discard states after the current one when a new action is performed
-                if (this.currentStateIndex < this.canvasState.length - 1) {
-                    this.canvasState = this.canvasState.slice(0, this.currentStateIndex + 1);
-                }
-                
-                // Save current state
-                this.canvasState.push(JSON.stringify(canvas.toJSON()));
-                this.currentStateIndex = this.canvasState.length - 1;
-                
-                // Update buttons state
-                this.updateButtonsState();
-            },
-            
-            undo() {
-                if (this.currentStateIndex > 0) {
-                    this.currentStateIndex--;
-                    this.loadState();
-                }
-            },
-            
-            redo() {
-                if (this.currentStateIndex < this.canvasState.length - 1) {
-                    this.currentStateIndex++;
-                    this.loadState();
-                }
-            },
-            
-            loadState() {
-                canvas.loadFromJSON(this.canvasState[this.currentStateIndex], function() {
-                    canvas.renderAll();
-                });
-                
-                this.updateButtonsState();
-            },
-            
-            updateButtonsState() {
-                // Enable/disable undo button
-                if (this.currentStateIndex > 0) {
-                    this.undoButton.classList.remove('disabled');
-                } else {
-                    this.undoButton.classList.add('disabled');
-                }
-                
-                // Enable/disable redo button
-                if (this.currentStateIndex < this.canvasState.length - 1) {
-                    this.redoButton.classList.remove('disabled');
-                } else {
-                    this.redoButton.classList.add('disabled');
-                }
-            }
-        };
-        
-        // Initialize history with current state
-        history.saveState();
-        
-        // Bind undo/redo buttons
-        document.getElementById('undo-btn').addEventListener('click', function() {
-            history.undo();
-        });
-        
-        document.getElementById('redo-btn').addEventListener('click', function() {
-            history.redo();
-        });
-
-        // Create mobile tooltip element
-        const mobileTooltip = document.createElement('div');
-        mobileTooltip.className = 'mobile-tooltip';
-        document.body.appendChild(mobileTooltip);
-        
-        // Check if we're on mobile
-        const isMobile = window.innerWidth <= 768;
-        
-        // Get elements for mobile optimization
-        const sidebar = document.getElementById('design-sidebar');
-        const toggleSidebarBtn = document.getElementById('toggle-sidebar');
-        const canvasContainer = document.querySelector('.canvas-container');
-        const tabLinks = document.querySelectorAll('.design-tabs a');
-        
-        // Initialize mobile view if needed
-        if (isMobile) {
-            // Add mobile-specific elements
-            setupMobileControls();
-            
-            // Update toggle button icon
-            if (toggleSidebarBtn) {
-                toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        saveState() {
+            // Discard states after the current one when a new action is performed
+            if (this.currentStateIndex < this.canvasState.length - 1) {
+                this.canvasState = this.canvasState.slice(0, this.currentStateIndex + 1);
             }
             
-            // Set initial states
-            sidebar.classList.add('collapsed');
-            document.body.classList.add('mobile-view');
+            // Save current state
+            this.canvasState.push(JSON.stringify(canvas.toJSON()));
+            this.currentStateIndex = this.canvasState.length - 1;
+            
+            // Update buttons state
+            this.updateButtonsState();
+        },
+        
+        undo() {
+            if (this.currentStateIndex > 0) {
+                this.currentStateIndex--;
+                this.loadState();
+            }
+        },
+        
+        redo() {
+            if (this.currentStateIndex < this.canvasState.length - 1) {
+                this.currentStateIndex++;
+                this.loadState();
+            }
+        },
+        
+        loadState() {
+            canvas.loadFromJSON(this.canvasState[this.currentStateIndex], function() {
+                canvas.renderAll();
+            });
+            
+            this.updateButtonsState();
+        },
+        
+        updateButtonsState() {
+            // Enable/disable undo button
+            if (this.currentStateIndex > 0) {
+                this.undoButton.classList.remove('disabled');
+            } else {
+                this.undoButton.classList.add('disabled');
+            }
+            
+            // Enable/disable redo button
+            if (this.currentStateIndex < this.canvasState.length - 1) {
+                this.redoButton.classList.remove('disabled');
+            } else {
+                this.redoButton.classList.add('disabled');
+            }
+        }
+    };
+    
+    // Initialize history with current state
+    history.saveState();
+    
+    // Bind undo/redo buttons
+    document.getElementById('undo-btn').addEventListener('click', function() {
+        history.undo();
+    });
+    
+    document.getElementById('redo-btn').addEventListener('click', function() {
+        history.redo();
+    });
+
+    // Create mobile tooltip element
+    const mobileTooltip = document.createElement('div');
+    mobileTooltip.className = 'mobile-tooltip';
+    document.body.appendChild(mobileTooltip);
+    
+    // Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    // Get elements for mobile optimization
+    const sidebar = document.getElementById('design-sidebar');
+    const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+    const canvasContainer = document.querySelector('.canvas-container');
+    const tabLinks = document.querySelectorAll('.design-tabs a');
+    
+    // Initialize mobile view if needed
+    if (isMobile) {
+        // Add mobile-specific elements
+        setupMobileControls();
+        
+        // Update toggle button icon
+        if (toggleSidebarBtn) {
+            toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
         }
         
-        // Enhanced sidebar toggle for mobile
-        if (toggleSidebarBtn) {
-            toggleSidebarBtn.addEventListener('click', function() {
-                if (sidebar.classList.contains('collapsed')) {
-                    // Expand from hidden
-                    sidebar.classList.remove('collapsed');
-                    sidebar.classList.remove('expanded');
-                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                    showMobileTooltip('Sidebar visible');
-                } else if (sidebar.classList.contains('expanded')) {
-                    // Collapse from expanded
-                    sidebar.classList.remove('expanded');
+        // Set initial states
+        sidebar.classList.add('collapsed');
+        document.body.classList.add('mobile-view');
+    }
+    
+    // Enhanced sidebar toggle for mobile
+    if (toggleSidebarBtn) {
+        toggleSidebarBtn.addEventListener('click', function() {
+            if (sidebar.classList.contains('collapsed')) {
+                // Expand from hidden
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('expanded');
+                this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                showMobileTooltip('Sidebar visible');
+            } else if (sidebar.classList.contains('expanded')) {
+                // Collapse from expanded
+                sidebar.classList.remove('expanded');
+                this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                showMobileTooltip('Sidebar collapsed');
+            } else {
+                // Toggle between normal and expanded
+                sidebar.classList.toggle('expanded');
+                if (sidebar.classList.contains('expanded')) {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
+                    showMobileTooltip('Sidebar expanded');
+                } else {
                     this.innerHTML = '<i class="fas fa-chevron-right"></i>';
                     showMobileTooltip('Sidebar collapsed');
-                } else {
-                    // Toggle between normal and expanded
-                    sidebar.classList.toggle('expanded');
-                    if (sidebar.classList.contains('expanded')) {
-                        this.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
-                        showMobileTooltip('Sidebar expanded');
-                    } else {
-                        this.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                        showMobileTooltip('Sidebar collapsed');
-                    }
                 }
-            });
-        }
-        
-        // Handle tab clicks on mobile
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Normal tab activation logic
-                const targetId = this.getAttribute('data-target');
-                
-                // Deactivate all tabs and contents
-                tabLinks.forEach(tab => tab.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                
-                // Activate current tab and content
-                this.classList.add('active');
-                document.getElementById(targetId).classList.add('active');
-                
-                // Mobile-specific behavior
-                if (isMobile && !sidebar.classList.contains('expanded')) {
-                    // When sidebar is collapsed, expand it when a tab is clicked
-                    sidebar.classList.add('expanded');
-                    if (toggleSidebarBtn) {
-                        toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
-                    }
-                    
-                    // Show tooltip for what tab was opened
-                    const tabName = this.querySelector('span').textContent;
-                    showMobileTooltip(`${tabName} panel opened`);
+            }
+            
+            // NEW: Adjust canvas scaling when sidebar state changes
+            if (isMobile) {
+                adjustCanvasScaling();
+            }
+        });
+    }
+    
+    // Handle tab clicks on mobile
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Normal tab activation logic
+            const targetId = this.getAttribute('data-target');
+            
+            // Deactivate all tabs and contents
+            tabLinks.forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activate current tab and content
+            this.classList.add('active');
+            document.getElementById(targetId).classList.add('active');
+            
+            // Mobile-specific behavior
+            if (isMobile && !sidebar.classList.contains('expanded')) {
+                // When sidebar is collapsed, expand it when a tab is clicked
+                sidebar.classList.add('expanded');
+                if (toggleSidebarBtn) {
+                    toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
                 }
-            });
+                
+                // Show tooltip for what tab was opened
+                const tabName = this.querySelector('span').textContent;
+                showMobileTooltip(`${tabName} panel opened`);
+            }
+        });
+    });
+
+    // Add text to canvas
+    const addTextBtn = document.getElementById('add-text-btn');
+    const textInput = document.getElementById('text-input');
+
+    addTextBtn.addEventListener('click', function () {
+        if (!textInput.value.trim()) return;
+
+        const text = new fabric.IText(textInput.value.trim(), {
+            left: canvas.width / 2,
+            top: canvas.height / 2,
+            fontFamily: 'Arial',
+            fontSize: 30,
+            fill: '#000000',
+            textAlign: 'center',
+            originX: 'center',
+            originY: 'center'
         });
 
-        // Add text to canvas
-        const addTextBtn = document.getElementById('add-text-btn');
-        const textInput = document.getElementById('text-input');
+        canvas.add(text);
+        canvas.setActiveObject(text);
+        text.enterEditing();
+        canvas.renderAll();
+        
+        // Save state for undo/redo
+        history.saveState();
 
-        addTextBtn.addEventListener('click', function () {
-            if (!textInput.value.trim()) return;
+        // Clear the input
+        textInput.value = '';
 
-            const text = new fabric.IText(textInput.value.trim(), {
+        // Update the controls
+        updateTextControls(text);
+        
+        // NEW: Auto-collapse sidebar on very small screens after adding text
+        if (isMobile && window.innerWidth < 480) {
+            setTimeout(() => {
+                sidebar.classList.remove('expanded');
+                if (toggleSidebarBtn) {
+                    toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                }
+            }, 500);
+        }
+    });
+
+    // Font family change
+    const fontFamilySelect = document.getElementById('font-family');
+    fontFamilySelect.addEventListener('change', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'i-text') {
+            activeObject.set('fontFamily', this.value);
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    // Font size change
+    const fontSizeRange = document.getElementById('font-size');
+    const fontSizeValue = document.getElementById('font-size-value');
+
+    fontSizeRange.addEventListener('input', function () {
+        fontSizeValue.value = this.value;
+        updateTextProperty('fontSize', parseInt(this.value));
+    });
+    
+    fontSizeRange.addEventListener('change', function() {
+        // Only save state when slider interaction is complete
+        history.saveState();
+    });
+
+    fontSizeValue.addEventListener('input', function () {
+        fontSizeRange.value = this.value;
+        updateTextProperty('fontSize', parseInt(this.value));
+    });
+    
+    fontSizeValue.addEventListener('change', function() {
+        history.saveState();
+    });
+
+    // Text color change
+    const textColorInput = document.getElementById('text-color');
+    textColorInput.addEventListener('input', function () {
+        updateTextProperty('fill', this.value);
+    });
+    
+    textColorInput.addEventListener('change', function() {
+        history.saveState();
+    });
+
+    // Color swatches
+    const colorSwatches = document.querySelectorAll('.color-swatch');
+    colorSwatches.forEach(swatch => {
+        swatch.addEventListener('click', function () {
+            const color = this.getAttribute('data-color');
+            textColorInput.value = color;
+            updateTextProperty('fill', color);
+            history.saveState();
+        });
+    });
+
+    // Text style buttons
+    const boldBtn = document.getElementById('bold-btn');
+    boldBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'i-text') {
+            const isBold = activeObject.fontWeight === 'bold';
+            activeObject.set('fontWeight', isBold ? 'normal' : 'bold');
+
+            // Toggle button active state
+            this.classList.toggle('active');
+
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    const italicBtn = document.getElementById('italic-btn');
+    italicBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'i-text') {
+            const isItalic = activeObject.fontStyle === 'italic';
+            activeObject.set('fontStyle', isItalic ? 'normal' : 'italic');
+
+            // Toggle button active state
+            this.classList.toggle('active');
+
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    const underlineBtn = document.getElementById('underline-btn');
+    underlineBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'i-text') {
+            const isUnderlined = activeObject.underline;
+            activeObject.set('underline', !isUnderlined);
+
+            // Toggle button active state
+            this.classList.toggle('active');
+
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    // Text alignment buttons
+    const alignLeftBtn = document.getElementById('align-left-btn');
+    alignLeftBtn.addEventListener('click', function () {
+        updateTextProperty('textAlign', 'left');
+        updateAlignmentButtons('left');
+        history.saveState();
+    });
+
+    const alignCenterBtn = document.getElementById('align-center-btn');
+    alignCenterBtn.addEventListener('click', function () {
+        updateTextProperty('textAlign', 'center');
+        updateAlignmentButtons('center');
+        history.saveState();
+    });
+
+    const alignRightBtn = document.getElementById('align-right-btn');
+    alignRightBtn.addEventListener('click', function () {
+        updateTextProperty('textAlign', 'right');
+        updateAlignmentButtons('right');
+        history.saveState();
+    });
+
+    function updateAlignmentButtons(alignment) {
+        alignLeftBtn.classList.remove('active');
+        alignCenterBtn.classList.remove('active');
+        alignRightBtn.classList.remove('active');
+
+        if (alignment === 'left') alignLeftBtn.classList.add('active');
+        if (alignment === 'center') alignCenterBtn.classList.add('active');
+        if (alignment === 'right') alignRightBtn.classList.add('active');
+    }
+
+    // Upload images
+    const imageUpload = document.getElementById('image-upload');
+    const uploadPreview = document.getElementById('upload-preview');
+    const uploadPreviewImg = document.getElementById('upload-preview-img');
+    const addUploadBtn = document.getElementById('add-upload-btn');
+
+    imageUpload.addEventListener('change', function (e) {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB limit.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                uploadPreviewImg.src = e.target.result;
+                uploadPreview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    addUploadBtn.addEventListener('click', function () {
+        const imageUrl = uploadPreviewImg.src;
+
+        // Show loading indicator
+        document.querySelector('.loading-overlay').classList.add('active');
+
+        fabric.Image.fromURL(imageUrl, function (img) {
+            // Scale image to fit within the canvas (max 40% of canvas size)
+            const maxWidth = canvas.width * 0.4;
+            const maxHeight = canvas.height * 0.4;
+
+            if (img.width > maxWidth || img.height > maxHeight) {
+                const scaleFactor = Math.min(maxWidth / img.width, maxHeight / img.height);
+                img.scale(scaleFactor);
+            }
+
+            // Center the image
+            img.set({
                 left: canvas.width / 2,
                 top: canvas.height / 2,
-                fontFamily: 'Arial',
-                fontSize: 30,
-                fill: '#000000',
-                textAlign: 'center',
                 originX: 'center',
                 originY: 'center'
             });
 
-            canvas.add(text);
-            canvas.setActiveObject(text);
-            text.enterEditing();
+            canvas.add(img);
+            canvas.setActiveObject(img);
             canvas.renderAll();
+            history.saveState();
+
+            // Reset the upload input and preview
+            imageUpload.value = '';
+            uploadPreview.classList.add('d-none');
+
+            // Hide loading indicator
+            document.querySelector('.loading-overlay').classList.remove('active');
             
-            // Save state for undo/redo
-            history.saveState();
-
-            // Clear the input
-            textInput.value = '';
-
-            // Update the controls
-            updateTextControls(text);
-        });
-
-        // Font family change
-        const fontFamilySelect = document.getElementById('font-family');
-        fontFamilySelect.addEventListener('change', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'i-text') {
-                activeObject.set('fontFamily', this.value);
-                canvas.renderAll();
-                history.saveState();
+            // NEW: Auto-collapse sidebar on small screens after adding image
+            if (isMobile && window.innerWidth < 480) {
+                setTimeout(() => {
+                    sidebar.classList.remove('expanded');
+                    if (toggleSidebarBtn) {
+                        toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    }
+                }, 500);
             }
         });
+    });
 
-        // Font size change
-        const fontSizeRange = document.getElementById('font-size');
-        const fontSizeValue = document.getElementById('font-size-value');
+    // Product variant selection
+    const variantOptions = document.querySelectorAll('.variant-option');
+    variantOptions.forEach(option => {
+        option.addEventListener('click', function () {
+            const variantId = this.getAttribute('data-variant-id');
 
-        fontSizeRange.addEventListener('input', function () {
-            fontSizeValue.value = this.value;
-            updateTextProperty('fontSize', parseInt(this.value));
+            // Update hidden input
+            document.getElementById('variant-id').value = variantId;
+
+            // Update visual selection
+            variantOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+
+            // TODO: Update product image background if needed
+            // This would require an AJAX call to get the variant data
         });
-        
-        fontSizeRange.addEventListener('change', function() {
-            // Only save state when slider interaction is complete
-            history.saveState();
-        });
+    });
 
-        fontSizeValue.addEventListener('input', function () {
-            fontSizeRange.value = this.value;
-            updateTextProperty('fontSize', parseInt(this.value));
-        });
-        
-        fontSizeValue.addEventListener('change', function() {
-            history.saveState();
-        });
+    // Canvas background settings
+    const canvasBackgroundSelect = document.getElementById('canvas-background');
+    const customBgColorContainer = document.getElementById('custom-bg-color-container');
+    const customBgColorInput = document.getElementById('custom-bg-color');
 
-        // Text color change
-        const textColorInput = document.getElementById('text-color');
-        textColorInput.addEventListener('input', function () {
-            updateTextProperty('fill', this.value);
-        });
-        
-        textColorInput.addEventListener('change', function() {
-            history.saveState();
-        });
+    canvasBackgroundSelect.addEventListener('change', function () {
+        const value = this.value;
 
-        // Color swatches
-        const colorSwatches = document.querySelectorAll('.color-swatch');
-        colorSwatches.forEach(swatch => {
-            swatch.addEventListener('click', function () {
-                const color = this.getAttribute('data-color');
-                textColorInput.value = color;
-                updateTextProperty('fill', color);
-                history.saveState();
-            });
-        });
+        if (value === 'custom') {
+            customBgColorContainer.classList.remove('d-none');
+            canvas.setBackgroundColor(customBgColorInput.value, canvas.renderAll.bind(canvas));
+        } else {
+            customBgColorContainer.classList.add('d-none');
 
-        // Text style buttons
-        const boldBtn = document.getElementById('bold-btn');
-        boldBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'i-text') {
-                const isBold = activeObject.fontWeight === 'bold';
-                activeObject.set('fontWeight', isBold ? 'normal' : 'bold');
-
-                // Toggle button active state
-                this.classList.toggle('active');
-
-                canvas.renderAll();
-                history.saveState();
+            if (value === 'transparent') {
+                canvas.setBackgroundColor('', canvas.renderAll.bind(canvas));
+            } else if (value === 'white') {
+                canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+            } else if (value === 'product') {
+                // TODO: Set background to match product color if available
+                canvas.setBackgroundColor('#f0f0f0', canvas.renderAll.bind(canvas));
             }
-        });
-
-        const italicBtn = document.getElementById('italic-btn');
-        italicBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'i-text') {
-                const isItalic = activeObject.fontStyle === 'italic';
-                activeObject.set('fontStyle', isItalic ? 'normal' : 'italic');
-
-                // Toggle button active state
-                this.classList.toggle('active');
-
-                canvas.renderAll();
-                history.saveState();
-            }
-        });
-
-        const underlineBtn = document.getElementById('underline-btn');
-        underlineBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'i-text') {
-                const isUnderlined = activeObject.underline;
-                activeObject.set('underline', !isUnderlined);
-
-                // Toggle button active state
-                this.classList.toggle('active');
-
-                canvas.renderAll();
-                history.saveState();
-            }
-        });
-
-        // Text alignment buttons
-        const alignLeftBtn = document.getElementById('align-left-btn');
-        alignLeftBtn.addEventListener('click', function () {
-            updateTextProperty('textAlign', 'left');
-            updateAlignmentButtons('left');
-            history.saveState();
-        });
-
-        const alignCenterBtn = document.getElementById('align-center-btn');
-        alignCenterBtn.addEventListener('click', function () {
-            updateTextProperty('textAlign', 'center');
-            updateAlignmentButtons('center');
-            history.saveState();
-        });
-
-        const alignRightBtn = document.getElementById('align-right-btn');
-        alignRightBtn.addEventListener('click', function () {
-            updateTextProperty('textAlign', 'right');
-            updateAlignmentButtons('right');
-            history.saveState();
-        });
-
-        function updateAlignmentButtons(alignment) {
-            alignLeftBtn.classList.remove('active');
-            alignCenterBtn.classList.remove('active');
-            alignRightBtn.classList.remove('active');
-
-            if (alignment === 'left') alignLeftBtn.classList.add('active');
-            if (alignment === 'center') alignCenterBtn.classList.add('active');
-            if (alignment === 'right') alignRightBtn.classList.add('active');
         }
+        history.saveState();
+    });
 
-        // Upload images
-        const imageUpload = document.getElementById('image-upload');
-        const uploadPreview = document.getElementById('upload-preview');
-        const uploadPreviewImg = document.getElementById('upload-preview-img');
-        const addUploadBtn = document.getElementById('add-upload-btn');
+    customBgColorInput.addEventListener('input', function () {
+        canvas.setBackgroundColor(this.value, canvas.renderAll.bind(canvas));
+    });
+    
+    customBgColorInput.addEventListener('change', function() {
+        history.saveState();
+    });
 
-        imageUpload.addEventListener('change', function (e) {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-
-                // Validate file size (5MB max)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('File size exceeds 5MB limit.');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    uploadPreviewImg.src = e.target.result;
-                    uploadPreview.classList.remove('d-none');
-                };
-                reader.readAsDataURL(file);
-            }
+    // Show/hide print area
+    const showPrintAreaCheck = document.getElementById('show-print-area');
+    if (showPrintAreaCheck) {
+        showPrintAreaCheck.addEventListener('change', function () {
+            // TODO: Implement print area visualization
         });
+    }
 
-        addUploadBtn.addEventListener('click', function () {
-            const imageUrl = uploadPreviewImg.src;
+    // Zoom controls
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const zoomResetBtn = document.getElementById('zoom-reset-btn');
 
-            // Show loading indicator
-            document.querySelector('.loading-overlay').classList.add('active');
-
-            fabric.Image.fromURL(imageUrl, function (img) {
-                // Scale image to fit within the canvas (max 40% of canvas size)
-                const maxWidth = canvas.width * 0.4;
-                const maxHeight = canvas.height * 0.4;
-
-                if (img.width > maxWidth || img.height > maxHeight) {
-                    const scaleFactor = Math.min(maxWidth / img.width, maxHeight / img.height);
-                    img.scale(scaleFactor);
-                }
-
-                // Center the image
-                img.set({
-                    left: canvas.width / 2,
-                    top: canvas.height / 2,
-                    originX: 'center',
-                    originY: 'center'
-                });
-
-                canvas.add(img);
-                canvas.setActiveObject(img);
-                canvas.renderAll();
-                history.saveState();
-
-                // Reset the upload input and preview
-                imageUpload.value = '';
-                uploadPreview.classList.add('d-none');
-
-                // Hide loading indicator
-                document.querySelector('.loading-overlay').classList.remove('active');
-            });
-        });
-
-        // Product variant selection
-        const variantOptions = document.querySelectorAll('.variant-option');
-        variantOptions.forEach(option => {
-            option.addEventListener('click', function () {
-                const variantId = this.getAttribute('data-variant-id');
-
-                // Update hidden input
-                document.getElementById('variant-id').value = variantId;
-
-                // Update visual selection
-                variantOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                // TODO: Update product image background if needed
-                // This would require an AJAX call to get the variant data
-            });
-        });
-
-        // Canvas background settings
-        const canvasBackgroundSelect = document.getElementById('canvas-background');
-        const customBgColorContainer = document.getElementById('custom-bg-color-container');
-        const customBgColorInput = document.getElementById('custom-bg-color');
-
-        canvasBackgroundSelect.addEventListener('change', function () {
-            const value = this.value;
-
-            if (value === 'custom') {
-                customBgColorContainer.classList.remove('d-none');
-                canvas.setBackgroundColor(customBgColorInput.value, canvas.renderAll.bind(canvas));
-            } else {
-                customBgColorContainer.classList.add('d-none');
-
-                if (value === 'transparent') {
-                    canvas.setBackgroundColor('', canvas.renderAll.bind(canvas));
-                } else if (value === 'white') {
-                    canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
-                } else if (value === 'product') {
-                    // TODO: Set background to match product color if available
-                    canvas.setBackgroundColor('#f0f0f0', canvas.renderAll.bind(canvas));
-                }
-            }
-            history.saveState();
-        });
-
-        customBgColorInput.addEventListener('input', function () {
-            canvas.setBackgroundColor(this.value, canvas.renderAll.bind(canvas));
-        });
-        
-        customBgColorInput.addEventListener('change', function() {
-            history.saveState();
-        });
-
-        // Show/hide print area
-        const showPrintAreaCheck = document.getElementById('show-print-area');
-        if (showPrintAreaCheck) {
-            showPrintAreaCheck.addEventListener('change', function () {
-                // TODO: Implement print area visualization
-            });
-        }
-
-        // Zoom controls
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const zoomResetBtn = document.getElementById('zoom-reset-btn');
-
-        zoomInBtn.addEventListener('click', function () {
-            if (zoomLevel < 3) {
-                zoomLevel += 0.1;
-                updateZoom();
-            }
-        });
-
-        zoomOutBtn.addEventListener('click', function () {
-            if (zoomLevel > 0.5) {
-                zoomLevel -= 0.1;
-                updateZoom();
-            }
-        });
-
-        zoomResetBtn.addEventListener('click', function () {
-            zoomLevel = 1;
+    zoomInBtn.addEventListener('click', function () {
+        if (zoomLevel < 3) {
+            zoomLevel += 0.1;
             updateZoom();
+        }
+    });
+
+    zoomOutBtn.addEventListener('click', function () {
+        if (zoomLevel > 0.5) {
+            zoomLevel -= 0.1;
+            updateZoom();
+        }
+    });
+
+    zoomResetBtn.addEventListener('click', function () {
+        zoomLevel = 1;
+        updateZoom();
+    });
+
+    function updateZoom() {
+        canvas.setZoom(zoomLevel);
+        canvas.setWidth({{ product_type.default_width }} * zoomLevel);
+        canvas.setHeight({{ product_type.default_height }} * zoomLevel);
+        canvas.renderAll();
+    }
+
+    // Pan controls
+    const panStep = 50; // pixels to move per pan action
+
+    document.getElementById('pan-up-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(0, -panStep)); // Negative Y to move up
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-down-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(0, panStep)); // Positive Y to move down
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-left-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(-panStep, 0)); // Negative X to move left
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-right-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(panStep, 0)); // Positive X to move right
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-up-left-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(-panStep, -panStep)); // Move up-left
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-up-right-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(panStep, -panStep)); // Move up-right
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-down-left-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(-panStep, panStep)); // Move down-left
+        canvas.renderAll();
+    });
+
+    document.getElementById('pan-down-right-btn').addEventListener('click', function() {
+        canvas.relativePan(new fabric.Point(panStep, panStep)); // Move down-right
+        canvas.renderAll();
+    });
+
+    // Object manipulation
+    const deleteBtn = document.getElementById('delete-btn');
+    deleteBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+            canvas.remove(activeObject);
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    const duplicateBtn = document.getElementById('duplicate-btn');
+    duplicateBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+            // Clone the object
+            activeObject.clone(function (cloned) {
+                // Offset the position slightly
+                cloned.set({
+                    left: cloned.left + 10,
+                    top: cloned.top + 10,
+                    evented: true,
+                });
+
+                canvas.add(cloned);
+                canvas.setActiveObject(cloned);
+                canvas.renderAll();
+                history.saveState();
+            });
+        }
+    });
+
+    const bringForwardBtn = document.getElementById('bring-forward-btn');
+    bringForwardBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+            canvas.bringForward(activeObject);
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+    const sendBackwardBtn = document.getElementById('send-backward-btn');
+    sendBackwardBtn.addEventListener('click', function () {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+            canvas.sendBackwards(activeObject);
+            canvas.renderAll();
+            history.saveState();
+        }
+    });
+
+
+    // Save design dialog
+    const saveDesignBtn = document.getElementById('save-design-btn');
+    const saveDialog = document.querySelector('.save-dialog');
+    const dialogOverlay = document.querySelector('.dialog-overlay');
+    const cancelSaveBtn = document.getElementById('cancel-save-btn');
+    const confirmSaveBtn = document.getElementById('confirm-save-btn');
+    const designNameInput = document.getElementById('design-name');
+
+    saveDesignBtn.addEventListener('click', function () {
+        saveDialog.classList.add('active');
+        dialogOverlay.classList.add('active');
+    });
+
+    cancelSaveBtn.addEventListener('click', function () {
+        saveDialog.classList.remove('active');
+        dialogOverlay.classList.remove('active');
+    });
+
+    dialogOverlay.addEventListener('click', function () {
+        saveDialog.classList.remove('active');
+        dialogOverlay.classList.remove('active');
+    });
+
+    confirmSaveBtn.addEventListener('click', function () {
+        const designName = designNameInput.value.trim() || 'Untitled Design';
+
+        // Show loading indicator
+        document.querySelector('.loading-overlay').classList.add('active');
+        saveDialog.classList.remove('active');
+        dialogOverlay.classList.remove('active');
+
+        // Generate a preview image
+        const dataURL = canvas.toDataURL({
+            format: 'png',
+            quality: 0.8
         });
 
-        function updateZoom() {
-            canvas.setZoom(zoomLevel);
-            canvas.setWidth({{ product_type.default_width }} * zoomLevel);
-            canvas.setHeight({{ product_type.default_height }} * zoomLevel);
-            canvas.renderAll();
+        // Prepare the data to save
+        const saveData = {
+            name: designName,
+            canvas_json: JSON.stringify(canvas.toJSON()),
+            preview_image: dataURL,
+            product_type_id: document.getElementById('product-type-id').value,
+            is_draft: true
+        };
+
+        // Add variant_id if available
+        const variantIdElement = document.getElementById('variant-id');
+        if (variantIdElement && variantIdElement.value) {
+            saveData.variant_id = variantIdElement.value;
         }
 
-        // Pan controls
-        const panStep = 50; // pixels to move per pan action
+        // Add template_id if available
+        const templateIdElement = document.getElementById('template-id');
+        if (templateIdElement && templateIdElement.value) {
+            saveData.template_id = templateIdElement.value;
+        }
 
-        document.getElementById('pan-up-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(0, -panStep)); // Negative Y to move up
-            canvas.renderAll();
-        });
+        // Add design_id if editing existing design
+        const designIdElement = document.getElementById('design-id');
+        if (designIdElement && designIdElement.value) {
+            saveData.design_id = designIdElement.value;
+        }
 
-        document.getElementById('pan-down-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(0, panStep)); // Positive Y to move down
-            canvas.renderAll();
-        });
+        // Get CSRF token
+        const csrfToken = getCsrfToken();
 
-        document.getElementById('pan-left-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(-panStep, 0)); // Negative X to move left
-            canvas.renderAll();
-        });
+        // Send the data to the server
+        fetch('{% url "save_design" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(saveData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.loading-overlay').classList.remove('active');
 
-        document.getElementById('pan-right-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(panStep, 0)); // Positive X to move right
-            canvas.renderAll();
-        });
+                if (data.success) {
+                    // Update design_id if it's a new design
+                    if (!designIdElement || !designIdElement.value) {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.id = 'design-id';
+                        hiddenInput.value = data.design_id;
+                        document.body.appendChild(hiddenInput);
+                    }
 
-        document.getElementById('pan-up-left-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(-panStep, -panStep)); // Move up-left
-            canvas.renderAll();
-        });
+                    if (data.redirect_url) {
+                    console.log("Redirect URL found:", data.redirect_url);
+                    console.log("Redirecting...");
+                    window.location.href = data.redirect_url;
+                    return;
+                } else {
+                    console.log("No redirect URL in response");
+                }
 
-        document.getElementById('pan-up-right-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(panStep, -panStep)); // Move up-right
-            canvas.renderAll();
-        });
+                
 
-        document.getElementById('pan-down-left-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(-panStep, panStep)); // Move down-left
-            canvas.renderAll();
-        });
-
-        document.getElementById('pan-down-right-btn').addEventListener('click', function() {
-            canvas.relativePan(new fabric.Point(panStep, panStep)); // Move down-right
-            canvas.renderAll();
-        });
-
-        // Object manipulation
-        const deleteBtn = document.getElementById('delete-btn');
-        deleteBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject) {
-                canvas.remove(activeObject);
-                canvas.renderAll();
-                history.saveState();
-            }
-        });
-
-        const duplicateBtn = document.getElementById('duplicate-btn');
-        duplicateBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject) {
-                // Clone the object
-                activeObject.clone(function (cloned) {
-                    // Offset the position slightly
-                    cloned.set({
-                        left: cloned.left + 10,
-                        top: cloned.top + 10,
-                        evented: true,
-                    });
-
-                    canvas.add(cloned);
-                    canvas.setActiveObject(cloned);
-                    canvas.renderAll();
-                    history.saveState();
-                });
-            }
-        });
-
-        const bringForwardBtn = document.getElementById('bring-forward-btn');
-        bringForwardBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject) {
-                canvas.bringForward(activeObject);
-                canvas.renderAll();
-                history.saveState();
-            }
-        });
-
-        const sendBackwardBtn = document.getElementById('send-backward-btn');
-        sendBackwardBtn.addEventListener('click', function () {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject) {
-                canvas.sendBackwards(activeObject);
-                canvas.renderAll();
-                history.saveState();
-            }
-        });
-
-
-        // Save design dialog
-        const saveDesignBtn = document.getElementById('save-design-btn');
-        const saveDialog = document.querySelector('.save-dialog');
-        const dialogOverlay = document.querySelector('.dialog-overlay');
-        const cancelSaveBtn = document.getElementById('cancel-save-btn');
-        const confirmSaveBtn = document.getElementById('confirm-save-btn');
-        const designNameInput = document.getElementById('design-name');
-
-        saveDesignBtn.addEventListener('click', function () {
-            saveDialog.classList.add('active');
-            dialogOverlay.classList.add('active');
-        });
-
-        cancelSaveBtn.addEventListener('click', function () {
-            saveDialog.classList.remove('active');
-            dialogOverlay.classList.remove('active');
-        });
-
-        dialogOverlay.addEventListener('click', function () {
-            saveDialog.classList.remove('active');
-            dialogOverlay.classList.remove('active');
-        });
-
-        confirmSaveBtn.addEventListener('click', function () {
-            const designName = designNameInput.value.trim() || 'Untitled Design';
-
-            // Show loading indicator
-            document.querySelector('.loading-overlay').classList.add('active');
-            saveDialog.classList.remove('active');
-            dialogOverlay.classList.remove('active');
-
-            // Generate a preview image
-            const dataURL = canvas.toDataURL({
-                format: 'png',
-                quality: 0.8
-            });
-
-            // Prepare the data to save
-            const saveData = {
-                name: designName,
-                canvas_json: JSON.stringify(canvas.toJSON()),
-                preview_image: dataURL,
-                product_type_id: document.getElementById('product-type-id').value,
-                is_draft: true
-            };
-
-            // Add variant_id if available
-            const variantIdElement = document.getElementById('variant-id');
-            if (variantIdElement && variantIdElement.value) {
-                saveData.variant_id = variantIdElement.value;
-            }
-
-            // Add template_id if available
-            const templateIdElement = document.getElementById('template-id');
-            if (templateIdElement && templateIdElement.value) {
-                saveData.template_id = templateIdElement.value;
-            }
-
-            // Add design_id if editing existing design
-            const designIdElement = document.getElementById('design-id');
-            if (designIdElement && designIdElement.value) {
-                saveData.design_id = designIdElement.value;
-            }
-
-            // Get CSRF token
-            const csrfToken = getCsrfToken();
-
-            // Send the data to the server
-            fetch('{% url "save_design" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify(saveData)
+                    alert('Design saved successfully!');
+                } else {
+                    alert('Error saving design: ' + data.error);
+                }
             })
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelector('.loading-overlay').classList.remove('active');
-
-                    if (data.success) {
-                        // Update design_id if it's a new design
-                        if (!designIdElement || !designIdElement.value) {
-                            const hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.id = 'design-id';
-                            hiddenInput.value = data.design_id;
-                            document.body.appendChild(hiddenInput);
-                        }
-
-                        if (data.redirect_url) {
-                        console.log("Redirect URL found:", data.redirect_url);
-                        console.log("Redirecting...");
-                        window.location.href = data.redirect_url;
-                        return;
-                    } else {
-                        console.log("No redirect URL in response");
-                    }
-
-                    
-
-                        alert('Design saved successfully!');
-                    } else {
-                        alert('Error saving design: ' + data.error);
-                    }
-                })
 
 
 
@@ -1848,31 +1942,53 @@ No Template
 
 
 
-        });
+    });
 
 
 
-        // Helper function to get CSRF token
-        function getCsrfToken() {
-            const cookieValue = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('csrftoken='))
-                ?.split('=')[1];
+    // Helper function to get CSRF token
+    function getCsrfToken() {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
 
-            return cookieValue || '';
-        }
+        return cookieValue || '';
+    }
 
-        // Selection events
-        canvas.on('selection:created', updateControlsFromSelection);
-        canvas.on('selection:updated', updateControlsFromSelection);
-        canvas.on('selection:cleared', function () {
-            // Reset controls or disable them
+    // Selection events
+    canvas.on('selection:created', updateControlsFromSelection);
+    canvas.on('selection:updated', updateControlsFromSelection);
+    canvas.on('selection:cleared', function () {
+        // Reset controls or disable them
+        fontFamilySelect.disabled = true;
+        fontSizeRange.disabled = true;
+        fontSizeValue.disabled = true;
+        textColorInput.disabled = true;
+
+        // Reset buttons
+        boldBtn.classList.remove('active');
+        italicBtn.classList.remove('active');
+        underlineBtn.classList.remove('active');
+
+        alignLeftBtn.classList.remove('active');
+        alignCenterBtn.classList.remove('active');
+        alignRightBtn.classList.remove('active');
+    });
+
+    function updateControlsFromSelection(e) {
+        const activeObject = e.selected[0];
+
+        if (activeObject && activeObject.type === 'i-text') {
+            updateTextControls(activeObject);
+        } else {
+            // Not a text object, disable text controls
             fontFamilySelect.disabled = true;
             fontSizeRange.disabled = true;
             fontSizeValue.disabled = true;
             textColorInput.disabled = true;
 
-            // Reset buttons
+            // Reset button states
             boldBtn.classList.remove('active');
             italicBtn.classList.remove('active');
             underlineBtn.classList.remove('active');
@@ -1880,356 +1996,398 @@ No Template
             alignLeftBtn.classList.remove('active');
             alignCenterBtn.classList.remove('active');
             alignRightBtn.classList.remove('active');
-        });
-
-        function updateControlsFromSelection(e) {
-            const activeObject = e.selected[0];
-
-            if (activeObject && activeObject.type === 'i-text') {
-                updateTextControls(activeObject);
-            } else {
-                // Not a text object, disable text controls
-                fontFamilySelect.disabled = true;
-                fontSizeRange.disabled = true;
-                fontSizeValue.disabled = true;
-                textColorInput.disabled = true;
-
-                // Reset button states
-                boldBtn.classList.remove('active');
-                italicBtn.classList.remove('active');
-                underlineBtn.classList.remove('active');
-
-                alignLeftBtn.classList.remove('active');
-                alignCenterBtn.classList.remove('active');
-                alignRightBtn.classList.remove('active');
-            }
         }
+    }
 
-        function updateTextControls(textObject) {
-            // Enable controls
-            fontFamilySelect.disabled = false;
-            fontSizeRange.disabled = false;
-            fontSizeValue.disabled = false;
-            textColorInput.disabled = false;
+    function updateTextControls(textObject) {
+        // Enable controls
+        fontFamilySelect.disabled = false;
+        fontSizeRange.disabled = false;
+        fontSizeValue.disabled = false;
+        textColorInput.disabled = false;
 
-            // Update values
-            fontFamilySelect.value = textObject.fontFamily;
-            fontSizeRange.value = textObject.fontSize;
-            fontSizeValue.value = textObject.fontSize;
-            textColorInput.value = textObject.fill;
+        // Update values
+        fontFamilySelect.value = textObject.fontFamily;
+        fontSizeRange.value = textObject.fontSize;
+        fontSizeValue.value = textObject.fontSize;
+        textColorInput.value = textObject.fill;
 
-            // Update button states
-            boldBtn.classList.toggle('active', textObject.fontWeight === 'bold');
-            italicBtn.classList.toggle('active', textObject.fontStyle === 'italic');
-            underlineBtn.classList.toggle('active', textObject.underline === true);
+        // Update button states
+        boldBtn.classList.toggle('active', textObject.fontWeight === 'bold');
+        italicBtn.classList.toggle('active', textObject.fontStyle === 'italic');
+        underlineBtn.classList.toggle('active', textObject.underline === true);
 
-            // Update alignment
-            updateAlignmentButtons(textObject.textAlign);
+        // Update alignment
+        updateAlignmentButtons(textObject.textAlign);
+    }
+
+    function updateTextProperty(property, value) {
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.type === 'i-text') {
+            activeObject.set(property, value);
+            canvas.renderAll();
         }
+    }
 
-        function updateTextProperty(property, value) {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'i-text') {
-                activeObject.set(property, value);
-                canvas.renderAll();
-            }
+    // Handle object modifications
+    canvas.on('object:modified', function() {
+        history.saveState();
+    });
+    
+    // Handle keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Undo: Ctrl+Z
+        if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+            history.undo();
+            e.preventDefault();
         }
-
-        // Handle object modifications
-        canvas.on('object:modified', function() {
-            history.saveState();
-        });
         
-        // Handle keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Undo: Ctrl+Z
-            if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-                history.undo();
-                e.preventDefault();
+        // Redo: Ctrl+Y or Ctrl+Shift+Z
+        if ((e.key === 'y' && (e.ctrlKey || e.metaKey)) || 
+            (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
+            history.redo();
+            e.preventDefault();
+        }
+        
+        // Only process other shortcuts if not typing in a text field
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            // Delete key for delete
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject) {
+                    canvas.remove(activeObject);
+                    canvas.renderAll();
+                    history.saveState();
+                    e.preventDefault();
+                }
             }
             
-            // Redo: Ctrl+Y or Ctrl+Shift+Z
-            if ((e.key === 'y' && (e.ctrlKey || e.metaKey)) || 
-                (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
-                history.redo();
-                e.preventDefault();
-            }
-            
-            // Only process other shortcuts if not typing in a text field
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                // Delete key for delete
-                if (e.key === 'Delete' || e.key === 'Backspace') {
-                    const activeObject = canvas.getActiveObject();
-                    if (activeObject) {
-                        canvas.remove(activeObject);
+            // Ctrl+D for duplicate
+            if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject) {
+                    activeObject.clone(function (cloned) {
+                        cloned.set({
+                            left: cloned.left + 10,
+                            top: cloned.top + 10,
+                            evented: true,
+                        });
+                        canvas.add(cloned);
+                        canvas.setActiveObject(cloned);
                         canvas.renderAll();
                         history.saveState();
-                        e.preventDefault();
-                    }
-                }
-                
-                // Ctrl+D for duplicate
-                if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
-                    const activeObject = canvas.getActiveObject();
-                    if (activeObject) {
-                        activeObject.clone(function (cloned) {
-                            cloned.set({
-                                left: cloned.left + 10,
-                                top: cloned.top + 10,
-                                evented: true,
-                            });
-                            canvas.add(cloned);
-                            canvas.setActiveObject(cloned);
-                            canvas.renderAll();
-                            history.saveState();
-                        });
-                        e.preventDefault();
-                    }
-                }
-                
-                // Arrow keys for moving objects
-                if (e.key.startsWith('Arrow')) {
-                    const activeObject = canvas.getActiveObject();
-                    if (activeObject) {
-                        const moveStep = e.shiftKey ? 10 : 1;
-                        
-                        switch(e.key) {
-                            case 'ArrowUp':
-                                activeObject.top -= moveStep;
-                                break;
-                            case 'ArrowDown':
-                                activeObject.top += moveStep;
-                                break;
-                            case 'ArrowLeft':
-                                activeObject.left -= moveStep;
-                                break;
-                            case 'ArrowRight':
-                                activeObject.left += moveStep;
-                                break;
-                        }
-                        
-                        activeObject.setCoords();
-                        canvas.renderAll();
-                        
-                        if (e.shiftKey) { // Only save state on larger moves to avoid history spam
-                            history.saveState();
-                        }
-                        
-                        e.preventDefault();
-                    }
+                    });
+                    e.preventDefault();
                 }
             }
-        });
-
-        // Load initial canvas state if available
-        const initialCanvasJSON = document.getElementById('initial-canvas-json');
-        if (initialCanvasJSON && initialCanvasJSON.value) {
-            try {
-                console.log("Loading template from JSON");
-                // Parse the JSON string into an object first
-                const canvasData = JSON.parse(initialCanvasJSON.value);
-                
-                // Now load the JSON object into the canvas
-                canvas.loadFromJSON(canvasData, function() {
+            
+            // Arrow keys for moving objects
+            if (e.key.startsWith('Arrow')) {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject) {
+                    const moveStep = e.shiftKey ? 10 : 1;
+                    
+                    switch(e.key) {
+                        case 'ArrowUp':
+                            activeObject.top -= moveStep;
+                            break;
+                        case 'ArrowUp':
+                            activeObject.top -= moveStep;
+                            break;
+                        case 'ArrowDown':
+                            activeObject.top += moveStep;
+                            break;
+                        case 'ArrowLeft':
+                            activeObject.left -= moveStep;
+                            break;
+                        case 'ArrowRight':
+                            activeObject.left += moveStep;
+                            break;
+                    }
+                    
+                    activeObject.setCoords();
                     canvas.renderAll();
-                    console.log("Canvas template loaded successfully");
                     
-                    // Select first object if available
-                    if (canvas.getObjects().length > 0) {
-                        canvas.setActiveObject(canvas.getObjects()[0]);
-                        canvas.renderAll();
+                    if (e.shiftKey) { // Only save state on larger moves to avoid history spam
+                        history.saveState();
                     }
                     
-                    // Initialize history with the loaded template
-                    history.saveState();
-                });
-            } catch (error) {
-                console.error('Error loading initial canvas:', error);
-                console.error('JSON string preview:', initialCanvasJSON.value.substring(0, 100) + '...');
+                    e.preventDefault();
+                }
             }
         }
+    });
 
-        // Initialize with product image if available
-        const productImage = document.getElementById('product-image');
-        if (productImage) {
-            // Product image is loaded
-            console.log("Product image found");
-        }
-        
-        // Add responsiveness to canvas container
-        window.addEventListener('resize', function() {
-            adjustCanvasContainerSize();
+    // Load initial canvas state if available
+    const initialCanvasJSON = document.getElementById('initial-canvas-json');
+    if (initialCanvasJSON && initialCanvasJSON.value) {
+        try {
+            console.log("Loading template from JSON");
+            // Parse the JSON string into an object first
+            const canvasData = JSON.parse(initialCanvasJSON.value);
             
-            // Check if mobile view should be enabled/disabled
-            const isMobileNow = window.innerWidth <= 768;
-            
-            if (isMobileNow && !document.body.classList.contains('mobile-view')) {
-                document.body.classList.add('mobile-view');
-                setupMobileControls();
-            } else if (!isMobileNow && document.body.classList.contains('mobile-view')) {
-                document.body.classList.remove('mobile-view');
+            // Now load the JSON object into the canvas
+            canvas.loadFromJSON(canvasData, function() {
+                canvas.renderAll();
+                console.log("Canvas template loaded successfully");
                 
-                // Reset sidebar state
-                sidebar.classList.remove('expanded');
-                sidebar.classList.remove('collapsed');
-                
-                // Reset canvas container
-                canvasContainer.style.marginLeft = '';
-                canvasContainer.style.width = '';
-            }
-        });
-        
-        function adjustCanvasContainerSize() {
-            const canvasContainer = document.querySelector('.canvas-container');
-            const editorContainer = document.querySelector('.editor-container');
-            
-            if (canvasContainer && editorContainer) {
-                // Make sure canvas container adapts to available space
-                console.log("Adjusting canvas container size");
-            }
-        }
-        
-        // Setup mobile-specific controls
-        function setupMobileControls() {
-            // Create fullscreen toggle button if it doesn't exist
-            if (!document.getElementById('fullscreen-btn')) {
-                const fullscreenBtn = document.createElement('button');
-                fullscreenBtn.id = 'fullscreen-btn';
-                fullscreenBtn.className = 'btn btn-outline-secondary btn-icon btn-fullscreen';
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
-                fullscreenBtn.title = 'Toggle Fullscreen';
-                
-                // Add to canvas controls
-                const canvasControls = document.querySelector('.canvas-controls');
-                if (canvasControls) {
-                    const newGroup = document.createElement('div');
-                    newGroup.className = 'canvas-controls-group';
-                    newGroup.appendChild(fullscreenBtn);
-                    canvasControls.appendChild(newGroup);
+                // Select first object if available
+                if (canvas.getObjects().length > 0) {
+                    canvas.setActiveObject(canvas.getObjects()[0]);
+                    canvas.renderAll();
                 }
                 
-                // Add fullscreen toggle functionality
-                fullscreenBtn.addEventListener('click', function() {
-                    document.body.classList.toggle('fullscreen-mode');
-                    sidebar.classList.toggle('collapsed');
-                    
-                    if (document.body.classList.contains('fullscreen-mode')) {
-                        this.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>';
-                        showMobileTooltip('Fullscreen mode');
-                    } else {
-                        this.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
-                        showMobileTooltip('Normal mode');
-                    }
-                });
-            }
+                // Initialize history with the loaded template
+                history.saveState();
+            });
+        } catch (error) {
+            console.error('Error loading initial canvas:', error);
+            console.error('JSON string preview:', initialCanvasJSON.value.substring(0, 100) + '...');
+        }
+    }
+
+    // Initialize with product image if available
+    const productImage = document.getElementById('product-image');
+    if (productImage) {
+        // Product image is loaded
+        console.log("Product image found");
+    }
+    
+    // Add responsiveness to canvas container
+    window.addEventListener('resize', function() {
+        adjustCanvasContainerSize();
+        
+        // Check if mobile view should be enabled/disabled
+        const isMobileNow = window.innerWidth <= 768;
+        
+        if (isMobileNow && !document.body.classList.contains('mobile-view')) {
+            document.body.classList.add('mobile-view');
+            setupMobileControls();
+        } else if (!isMobileNow && document.body.classList.contains('mobile-view')) {
+            document.body.classList.remove('mobile-view');
             
-            // Create pan controls toggle
-            const panControls = document.querySelector('.pan-controls');
-            if (panControls) {
-                const panToggleBtn = document.createElement('button');
-                panToggleBtn.id = 'pan-toggle-btn';
-                panToggleBtn.className = 'btn btn-outline-secondary btn-icon';
-                panToggleBtn.innerHTML = '<i class="fas fa-arrows-alt"></i>';
-                panToggleBtn.title = 'Toggle Pan Controls';
-                
-                // Insert before the pan controls
-                panControls.parentNode.insertBefore(panToggleBtn, panControls);
-                
-                // Toggle pan controls visibility
-                panToggleBtn.addEventListener('click', function() {
-                    panControls.classList.toggle('active');
-                    if (panControls.classList.contains('active')) {
-                        showMobileTooltip('Pan controls visible');
-                    } else {
-                        showMobileTooltip('Pan controls hidden');
-                    }
-                });
-            }
+            // Reset sidebar state
+            sidebar.classList.remove('expanded');
+            sidebar.classList.remove('collapsed');
             
-            // Add canvas controls toggle
+            // Reset canvas container
+            canvasContainer.style.marginLeft = '';
+            canvasContainer.style.width = '';
+        }
+        
+        // NEW: Adjust canvas scaling when window is resized
+        adjustCanvasScaling();
+    });
+    
+    function adjustCanvasContainerSize() {
+        const canvasContainer = document.querySelector('.canvas-container');
+        const editorContainer = document.querySelector('.editor-container');
+        
+        if (canvasContainer && editorContainer) {
+            // Make sure canvas container adapts to available space
+            console.log("Adjusting canvas container size");
+        }
+    }
+    
+    // Setup mobile-specific controls
+    function setupMobileControls() {
+        // Create fullscreen toggle button if it doesn't exist
+        if (!document.getElementById('fullscreen-btn')) {
+            const fullscreenBtn = document.createElement('button');
+            fullscreenBtn.id = 'fullscreen-btn';
+            fullscreenBtn.className = 'btn btn-outline-secondary btn-icon btn-fullscreen';
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
+            fullscreenBtn.title = 'Toggle Fullscreen';
+            
+            // Add to canvas controls
             const canvasControls = document.querySelector('.canvas-controls');
             if (canvasControls) {
-                const canvasControlsToggle = document.createElement('button');
-                canvasControlsToggle.className = 'canvas-controls-toggle';
-                canvasControlsToggle.innerHTML = '<i class="fas fa-sliders-h"></i>';
-                document.body.appendChild(canvasControlsToggle);
+                const newGroup = document.createElement('div');
+                newGroup.className = 'canvas-controls-group';
+                newGroup.appendChild(fullscreenBtn);
+                canvasControls.appendChild(newGroup);
+            }
+            
+            // Add fullscreen toggle functionality
+            fullscreenBtn.addEventListener('click', function() {
+                document.body.classList.toggle('fullscreen-mode');
+                sidebar.classList.toggle('collapsed');
                 
-                // Store original position to restore later
-                const originalPosition = {
-                    bottom: canvasControls.style.bottom,
-                    right: canvasControls.style.right
-                };
+                if (document.body.classList.contains('fullscreen-mode')) {
+                    this.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>';
+                    showMobileTooltip('Fullscreen mode');
+                } else {
+                    this.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
+                    showMobileTooltip('Normal mode');
+                }
+            });
+        }
+        
+        // Create pan controls toggle
+        const panControls = document.querySelector('.pan-controls');
+        if (panControls) {
+            const panToggleBtn = document.createElement('button');
+            panToggleBtn.id = 'pan-toggle-btn';
+            panToggleBtn.className = 'btn btn-outline-secondary btn-icon';
+            panToggleBtn.innerHTML = '<i class="fas fa-arrows-alt"></i>';
+            panToggleBtn.title = 'Toggle Pan Controls';
+            
+            // Insert before the pan controls
+            panControls.parentNode.insertBefore(panToggleBtn, panControls);
+            
+            // Toggle pan controls visibility
+            panToggleBtn.addEventListener('click', function() {
+                panControls.classList.toggle('active');
+                if (panControls.classList.contains('active')) {
+                    showMobileTooltip('Pan controls visible');
+                } else {
+                    showMobileTooltip('Pan controls hidden');
+                }
+            });
+        }
+        
+        // Add canvas controls toggle
+        const canvasControls = document.querySelector('.canvas-controls');
+        if (canvasControls) {
+            const canvasControlsToggle = document.createElement('button');
+            canvasControlsToggle.className = 'canvas-controls-toggle';
+            canvasControlsToggle.innerHTML = '<i class="fas fa-sliders-h"></i>';
+            document.body.appendChild(canvasControlsToggle);
+            
+            // Store original position to restore later
+            const originalPosition = {
+                bottom: canvasControls.style.bottom,
+                right: canvasControls.style.right
+            };
+            
+            // Toggle canvas controls visibility
+            canvasControlsToggle.addEventListener('click', function() {
+                if (canvasControls.style.display === 'none') {
+                    canvasControls.style.display = 'flex';
+                    this.innerHTML = '<i class="fas fa-times"></i>';
+                    showMobileTooltip('Controls visible');
+                } else {
+                    canvasControls.style.display = 'none';
+                    this.innerHTML = '<i class="fas fa-sliders-h"></i>';
+                    showMobileTooltip('Controls hidden');
+                }
+            });
+        }
+        
+        // Add touch gesture support for panning
+        if (canvasContainer) {
+            let touching = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            canvasContainer.addEventListener('touchstart', function(e) {
+                // Only if we have 2 fingers (to distinguish from object manipulation)
+                if (e.touches.length === 2) {
+                    touching = true;
+                    lastX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    lastY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    e.preventDefault(); // Prevent default to avoid scrolling
+                }
+            });
+            
+            canvasContainer.addEventListener('touchmove', function(e) {
+                if (touching && e.touches.length === 2) {
+                    // Calculate average position of both touches
+                    const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    
+                    // Calculate delta
+                    const deltaX = currentX - lastX;
+                    const deltaY = currentY - lastY;
+                    
+                    // Pan the canvas
+                    canvas.relativePan(new fabric.Point(deltaX, deltaY));
+                    
+                    // Update last positions
+                    lastX = currentX;
+                    lastY = currentY;
+                    
+                    e.preventDefault(); // Prevent default to avoid scrolling
+                }
+            });
+            
+            canvasContainer.addEventListener('touchend', function() {
+                touching = false;
+            });
+            
+            // NEW: Add double-tap to zoom for mobile
+            let lastTapTime = 0;
+            
+            canvasContainer.addEventListener('touchend', function(e) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTapTime;
                 
-                // Toggle canvas controls visibility
-                canvasControlsToggle.addEventListener('click', function() {
-                    if (canvasControls.style.display === 'none') {
-                        canvasControls.style.display = 'flex';
-                        this.innerHTML = '<i class="fas fa-times"></i>';
-                        showMobileTooltip('Controls visible');
+                if (tapLength < 500 && tapLength > 0) {
+                    // Double tap detected
+                    e.preventDefault();
+                    
+                    // Toggle between zoom levels
+                    if (zoomLevel <= 1) {
+                        zoomLevel = 1.5;
                     } else {
-                        canvasControls.style.display = 'none';
-                        this.innerHTML = '<i class="fas fa-sliders-h"></i>';
-                        showMobileTooltip('Controls hidden');
+                        zoomLevel = 1;
                     }
-                });
-            }
-            
-            // Add touch gesture support for panning
-            if (canvasContainer) {
-                let touching = false;
-                let lastX = 0;
-                let lastY = 0;
+                    
+                    updateZoom();
+                    showMobileTooltip(zoomLevel > 1 ? 'Zoomed in' : 'Zoom reset');
+                }
                 
-                canvasContainer.addEventListener('touchstart', function(e) {
-                    // Only if we have 2 fingers (to distinguish from object manipulation)
-                    if (e.touches.length === 2) {
-                        touching = true;
-                        lastX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                        lastY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                        e.preventDefault(); // Prevent default to avoid scrolling
-                    }
-                });
-                
-                canvasContainer.addEventListener('touchmove', function(e) {
-                    if (touching && e.touches.length === 2) {
-                        // Calculate average position of both touches
-                        const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                        const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                        
-                        // Calculate delta
-                        const deltaX = currentX - lastX;
-                        const deltaY = currentY - lastY;
-                        
-                        // Pan the canvas
-                        canvas.relativePan(new fabric.Point(deltaX, deltaY));
-                        
-                        // Update last positions
-                        lastX = currentX;
-                        lastY = currentY;
-                        
-                        e.preventDefault(); // Prevent default to avoid scrolling
-                    }
-                });
-                
-                canvasContainer.addEventListener('touchend', function() {
-                    touching = false;
-                });
-            }
+                lastTapTime = currentTime;
+            });
         }
+    }
+    
+    // NEW: Dynamic canvas scaling based on available space
+    function adjustCanvasScaling() {
+        if (!isMobile) return; // Only apply on mobile
         
-        // Show a temporary mobile tooltip
-        function showMobileTooltip(message) {
-            mobileTooltip.textContent = message;
-            mobileTooltip.classList.add('visible');
-            
-            // Hide after 2 seconds
-            setTimeout(() => {
-                mobileTooltip.classList.remove('visible');
-            }, 2000);
+        // Get available space for canvas
+        const editorContainer = document.querySelector('.editor-container');
+        const sidebarWidth = sidebar.getBoundingClientRect().width;
+        const availableWidth = editorContainer.offsetWidth - sidebarWidth - 20; // Subtract padding
+        
+        // Calculate appropriate zoom level based on available space
+        const canvasWidth = {{ product_type.default_width }};
+        const idealZoom = availableWidth / canvasWidth;
+        
+        // Apply zoom if it's in a reasonable range (0.5 to 1.0)
+        if (idealZoom >= 0.5 && idealZoom <= 1.0) {
+            zoomLevel = idealZoom;
+            updateZoom();
         }
+    }
+    
+    // Show a temporary mobile tooltip
+    function showMobileTooltip(message) {
+        mobileTooltip.textContent = message;
+        mobileTooltip.classList.add('visible');
         
-        // Call once on init
-        adjustCanvasContainerSize();
-    });
+        // Hide after 2 seconds
+        setTimeout(() => {
+            mobileTooltip.classList.remove('visible');
+        }, 2000);
+    }
+    
+    // Call once on init
+    adjustCanvasContainerSize();
+    
+    // NEW: Initial canvas scaling for mobile
+    if (isMobile) {
+        setTimeout(adjustCanvasScaling, 500); // Slight delay to ensure everything is loaded
+    }
+});
+
+
 </script>
+
+
+
+
+
+
 {% endblock %}

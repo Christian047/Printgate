@@ -65,233 +65,323 @@
 </header>
 
 
- <style>
-    /* Global Styles */
-    :root {
-      --brand-primary: #5E17EB;
-      --brand-dark: #3B0F96;
-      --text-light: #ffffff;
-      --text-dark: #212529;
-    }
-    
-
-    
-    /* Carousel Styling */
-    .carousel {
-      position: relative;
+<style>
+  /* Global Styles */
+  :root {
+    --brand-primary: #FF6B00;
+    --brand-dark: #E25100;
+    --text-light: #ffffff;
+    --text-dark: #212529;
+  }
+  
+  /* Carousel Styling */
+  .carousel {
+    position: relative;
+  }
+  
+  .carousel-item {
+    position: relative;
+    height: 70vh;
+    overflow: hidden;
+  }
+  
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Overlay for better text visibility */
+  .carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+  }
+  
+  /* Contact Info */
+  .carousel-contact {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 16px;
+    border-radius: 30px;
+    z-index: 101;
+  }
+  
+  /* Brand Styling */
+  .brand-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Smaller Title */
+  .small-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .tagline {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: white;
+    margin-bottom: 30px;
+  }
+  
+  /* Carousel Caption Positioning */
+  .carousel-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  /* Search Container */
+  .search-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .search-container {
+    display: flex;
+    background-color: white;
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-input {
+    border: none;
+    font-size: 18px;
+    padding: 15px 20px;
+    flex-grow: 1;
+    width: 100%;
+    border-radius: 50px 0 0 50px;
+  }
+  
+  .search-input:focus {
+    outline: none;
+  }
+  
+  .search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    font-size: 20px;
+    color: var(--brand-primary);
+  }
+  
+  .btn-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Portfolio Filter Styling */
+  #portfolio-flters {
+    padding: 0;
+    margin: 0 auto 25px auto;
+    list-style: none;
+    text-align: center;
+    border-radius: 50px;
+  }
+  
+  #portfolio-flters li {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    margin: 0 3px 10px;
+    transition: all ease-in-out 0.3s;
+    background: #f8f9fa;
+    border-radius: 50px;
+  }
+  
+  #portfolio-flters li:hover, 
+  #portfolio-flters li.filter-active {
+    color: #fff;
+    background: var(--brand-primary);
+  }
+  
+  /* Product Card Styling */
+  .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .product-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+  }
+  
+  .product-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .product-card:hover .product-image {
+    transform: scale(1.05);
+  }
+  
+  .product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .product-card:hover .product-overlay {
+    opacity: 1;
+  }
+  
+  .btn-view {
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    transform: translateY(20px);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .product-card:hover .btn-view {
+    transform: translateY(0);
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 992px) {
+    .brand-name {
+      font-size: 3.5rem;
     }
     
     .carousel-item {
-      position: relative;
+      height: 60vh;
     }
-    
-    .carousel-item img {
-      width: 100%;
-    }
-    
-    /* Critical Fix: This ensures the overlay works properly */
-    .carousel-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-    
-    /* Contact Info */
-    .carousel-contact {
-      position: absolute;
-      top: 15px;
-      left: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 8px 16px;
-      border-radius: 30px;
-      z-index: 101;
-    }
-    
-  /* FANCY Brand Name Styling */
-    @font-face {
-      font-family: 'Tangerine';
-      src: url('https://fonts.googleapis.com/css2?family=Tangerine:wght@700&display=swap');
-    }
-    
-    @font-face {
-      font-family: 'Great Vibes';
-      src: url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
-    }
-    
-    @font-face {
-      font-family: 'Pacifico';
-      src: url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-    }
-    
+  }
+  
+  @media (max-width: 768px) {
     .brand-name {
-      /* You can replace this with any of the fancy fonts above */
-      font-family: 'Poppins', cursive;
-      font-size: 4rem;
-      font-weight: 700;
-      color: white;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
-      /* Add decorative effects */
-
+      font-size: 3rem;
     }
-    /* Smaller Title */
+    
     .small-title {
-      font-size: 1.5rem;
-      font-weight: 500;
-      color: white;
-      margin-bottom: 15px;
+      font-size: 1.2rem;
     }
     
     .tagline {
-      font-size: 1.8rem;
-      font-weight: 300;
-      color: white;
-      margin-bottom: 30px;
+      font-size: 1.4rem;
     }
     
-    /* Critical Fix: Ensure the carousel caption is properly positioned and visible */
-    .carousel-caption {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      top: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-      padding: 40px;
-      text-align: center;
+    .carousel-contact {
+      font-size: 15px;
+      top: 4.2rem;
+      left: 10px;
+      padding: 6px 12px;
+      z-index: 101;
     }
     
-    /* Search Container */
-    .search-wrapper {
-      max-width: 600px;
-      margin: 0 auto;
-      position: relative;
+    .carousel-item {
+      height: 50vh;
     }
     
     .search-container {
-      display: flex;
-      background-color: white;
-      border-radius: 4px;
-      overflow: hidden;
+      position: relative;
     }
     
     .search-input {
-      border: none;
-      font-size: 18px;
-      padding: 12px 15px;
-      flex-grow: 1;
+      font-size: 16px;
+      padding: 15px;
       width: 100%;
     }
     
-    .search-input:focus {
-      outline: none;
-    }
-    
     .search-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 15px;
-      font-size: 20px;
-      color: var(--brand-primary);
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .brand-name {
+      font-size: 2.5rem;
     }
     
-    .btn-primary {
-      background-color: var(--brand-primary);
-      border-color: var(--brand-primary);
-      padding: 12px 30px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .carousel-contact {
+      font-size: 13px;
     }
     
-    .btn-primary:hover {
-      background-color: var(--brand-dark);
-      border-color: var(--brand-dark);
+    #product::placeholder {
+      font-size: 14px;
+      color: #3b3b3b;
+      font-weight: 300;
+      opacity: 0.8;
     }
     
-    /* Responsive Styles */
-    @media (max-width: 992px) {
-      .brand-name {
-        font-size: 3.5rem;
-      }
+    .carousel-caption {
+      padding: 20px;
     }
     
-    @media (max-width: 768px) {
-      .brand-name {
-        font-size: 3rem;
-      }
-      
-      .small-title {
-        font-size: 1.2rem;
-      }
-      
-      .tagline {
-        font-size: 1.4rem;
-      }
-      
-      .carousel-contact {
-        font-size: 15px;
-        top: 4.2rem;
-        left: 10px;
-        padding: 6px 12px;
-        z-index: 101;
-      }
-      
-      /* Make sure search is properly styled on mobile */
-      .search-container {
-        position: relative;
-      }
-      
-      .search-input {
-        font-size: 16px;
-        padding: 15px;
-        width: 100%;
-      }
-      
-      .search-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: transparent;
-      }
+    .carousel-item {
+      height: 40vh;
     }
-    
-    @media (max-width: 576px) {
-      .brand-name {
-        font-size: 2.5rem;
-      }
-      
-      .carousel-contact {
-        font-size: 13px;
-      }
-      
-      #product::placeholder {
-        font-size: 14px;
-        color: #3b3b3b;
-        font-weight: 300;
-        opacity: 0.8;
-      }
-      
-      .carousel-caption {
-        padding: 20px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-
+<br>
+<br>
 <!-- Carousel Start -->
 <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
   <div class="carousel-indicators">
@@ -303,7 +393,7 @@
   <div class="carousel-inner">
     <!-- First Slide -->
     <div class="carousel-item active itemized" data-bs-interval="2000">
-      <img src="/media/images/10818.jpg" alt="Image">
+      <img src="/media/images/book.jpg" alt="Image">
 " class="d-block w-100" alt="...">
       
       <!-- Added explicit overlay for better text visibility -->
@@ -469,7 +559,189 @@
 </section>
 
 
+<!-- Featured Categories Section -->
+<section class="featured-categories py-5 bg-light">
+  <div class="container">
+    <header class="text-center mb-5">
+      <h2 class="fw-bold">Popular Print Categories</h2>
+      <p class="text-muted">Discover our most requested print products</p>
+    </header>
+    
+    <div class="row g-4">
+      <!-- Featured Category Card 1 -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <img src="/media/images/ban.jpg" class="card-img-top rounded-top-4" alt="Banners">
+          <div class="card-body text-center">
+            <h3 class="card-title">Banners</h3>
+            <p class="card-text">High-quality banners for events, promotions, and advertising needs.</p>
+            <a href="#" class="btn btn-outline-primary">Browse Banners</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Category Card 2 -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <img src="/media/images/flyer.jpg" class="card-img-top rounded-top-4" alt="Flyers">
+          <div class="card-body text-center">
+            <h3 class="card-title">Flyers</h3>
+            <p class="card-text">Professional flyers for marketing, events, and information distribution.</p>
+            <a href="#" class="btn btn-outline-primary">Browse Flyers</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Category Card 3 -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <img src="/media/images/download_4.jpg" class="card-img-top rounded-top-4" alt="Business Cards">
+          <div class="card-body text-center">
+            <h3 class="card-title">Business Cards</h3>
+            <p class="card-text">Elegant business cards to make a lasting professional impression.</p>
+            <a href="#" class="btn btn-outline-primary">Browse Business Cards</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Why Choose Us Section -->
+<section class="why-choose-us py-5">
+  <div class="container">
+    <header class="text-center mb-5">
+      <h2 class="fw-bold">Why Choose Printgate?</h2>
+      <p class="text-muted">We deliver quality print solutions that set you apart</p>
+    </header>
+    
+    <div class="row g-4">
+      <!-- Feature 1 -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <div class="icon-box mb-3">
+            <i class="bi bi-trophy fs-1 text-primary"></i>
+          </div>
+          <h4>Premium Quality</h4>
+          <p class="text-muted">High-quality materials and printing technology for exceptional results.</p>
+        </div>
+      </div>
+      
+      <!-- Feature 2 -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <div class="icon-box mb-3">
+            <i class="bi bi-lightning-charge fs-1 text-primary"></i>
+          </div>
+          <h4>Fast Turnaround</h4>
+          <p class="text-muted">Quick delivery times without compromising on quality.</p>
+        </div>
+      </div>
+      
+      <!-- Feature 3 -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <div class="icon-box mb-3">
+            <i class="bi bi-graph-up fs-1 text-primary"></i>
+          </div>
+          <h4>Competitive Pricing</h4>
+          <p class="text-muted">Affordable prices with transparent pricing structure.</p>
+        </div>
+      </div>
+      
+      <!-- Feature 4 -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <div class="icon-box mb-3">
+            <i class="bi bi-headset fs-1 text-primary"></i>
+          </div>
+          <h4>Expert Support</h4>
+          <p class="text-muted">Dedicated customer service team to assist with your print needs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Additional CSS for the new sections -->
+<style>
+  /* Featured Categories Section */
+  .featured-categories {
+    background-color: #f8f9fa;
+  }
+  
+  .featured-categories .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+  }
+  
+  .featured-categories .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .featured-categories .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .featured-categories .btn-outline-primary {
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    border-radius: 50px;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .featured-categories .btn-outline-primary:hover {
+    background-color: var(--brand-primary);
+    color: white;
+    transform: translateY(-3px);
+  }
+  
+  /* Why Choose Us Section */
+  .why-choose-us {
+    background-color: white;
+  }
+  
+  .why-choose-us .icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(255, 107, 0, 0.1);
+    color: var(--brand-primary);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .why-choose-us .text-center:hover .icon-box {
+    transform: scale(1.1);
+    background-color: rgba(255, 107, 0, 0.2);
+  }
+  
+  .why-choose-us h4 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .why-choose-us p {
+    font-size: 0.95rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .why-choose-us .col-md-3 {
+      margin-bottom: 2rem;
+    }
+    
+    .featured-categories .card {
+      margin-bottom: 1.5rem;
+    }
+  }
+</style>
 
 
 

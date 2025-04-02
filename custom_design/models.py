@@ -120,7 +120,7 @@ def default_canvas_json():
     return {
         "version": "5.3.1", 
         "objects": [], 
-        "background": "#ffffff"
+        "background": "#808080"
     }
 
 
