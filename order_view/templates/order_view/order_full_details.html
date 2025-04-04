@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} Full Details{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<div class="container-fluid px-3 px-md-4 py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Order #{{ order.id }} Full Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="mb-4">Order Items</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Variant</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Designer Service</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderitem_set.all %}
+                                <tr>
+                                    <td>{{ item.product.title }}</td>
+                                    <td>
+                                        {% if item.variant %}
+                                            {{ item.variant.name }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₦{{ item.get_unit_price|floatformat:2 }}</td>
+                                    <td>
+                                        {% if item.designer_service %}
+                                            <span class="badge bg-success">Yes</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>₦{{ item.get_total|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optional: Specifications Section -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h4 class="mb-3">Specifications</h4>
+                    {% if order.pending_order and order.pending_order.specifications.all %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Field Name</th>
+                                        <th>Value</th>
+                                        <th>File</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for spec in order.pending_order.specifications.all %}
+                                    <tr>
+                                        <td>{{ spec.field_name }}</td>
+                                        <td>{{ spec.field_value|default:"-" }}</td>
+                                        <td>
+                                            {% if spec.field_file %}
+                                                <a href="{{ spec.field_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View File</a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No specifications found for this order.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+
+
+
+            <div class="mt-4">
+                <a href="{% url 'orders' %}" class="btn btn-secondary">Back to Orders</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

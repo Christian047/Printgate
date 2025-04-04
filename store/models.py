@@ -193,9 +193,6 @@ class Order(models.Model):
     pending_order = models.OneToOneField(PendingOrder,  on_delete=models.SET_NULL, null=True, blank=True,related_name='confirmed_order')
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True) 
-    width = models.FloatField(null=True)
-    height = models.FloatField(null=True)
-    dimension_unit = models.CharField(max_length=10, choices=[('inches', 'Inches'), ('feet', 'Feet')], default='inches')
     design_file = models.ImageField(upload_to='print_jobs/', validators=[allowed_files], null=True)
     special_instructions = models.TextField(blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -227,8 +224,20 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
     
-    class Meta:
-        ordering = ['-date_ordered']
+    
+    
+
+        
+    #     # To prevent duplicate orders for the same customer:
+    # class Meta:
+    #     ordering = ['-date_ordered']
+    #     constraints = [
+    #         models.UniqueConstraint(
+    #             fields=['customer'],
+    #             condition=models.Q(complete=False),
+    #             name='unique_incomplete_order_per_customer'
+    #         )
+    #     ]
 
 
 # ----------------------------------------------------------------------------------------------------------------
