@@ -28,7 +28,6 @@
 .footer ul li {
   text-decoration: none;
   list-style-type: none;
-  color: #ffe037;
 } 
 
 
@@ -460,7 +459,7 @@
   width: 145px;
   height: 40px;
   bottom: 20px;
-  right: 20px;
+  right: 45px;
   background-color: #ffe037;
   color: #079b65;
   text-align: center;
