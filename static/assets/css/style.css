@@ -1,7 +1,9 @@
-.itemized {
-  height: 60rem;
-  color: rgb(255, 0, 0);
-  position: relative;
+:root {
+  --brand-primary: #007459;
+  --brand-secondary: #ffe037;
+  --brand-tertiary: #ffe037;
+  --text-light: #ffffff;
+  --text-dark: #212529;
 }
 
 .carousel-item img {
