@@ -1,177 +1,247 @@
-{% extends 'base1.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load design_filters %}
-{% block title %}{{ product_type.name }} Templates{% endblock %}
+
 
 {% block extra_css %}
-<style>
-/* Pay-Per-Design Template Styles with Black, White and Gold theme */
-.template-card {
-    position: relative;
-    transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden;
-}
+<style>/* Product Templates Styles - Black and Gold with Brand Colors */
+    :root {
+        --brand-primary: #007459;
+        --brand-secondary: #ffe037;
+    }
+    
+    /* Card styling */
+    .template-card {
+        position: relative;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 0;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    
+    .template-card.paid {
+        border: 2px solid var(--brand-secondary);
+        box-shadow: 0 5px 15px rgba(255, 224, 55, 0.15);
+    }
+    
+    .template-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+    
+    .template-card.paid:hover {
+        border: 2px solid var(--brand-secondary);
+        box-shadow: 0 12px 24px rgba(255, 224, 55, 0.25);
+    }
+    
+    /* Paid template badge */
+    .paid-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: linear-gradient(135deg, var(--brand-secondary) 0%, #b8860b 100%);
+        color: #000;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+    
+    /* Price tag */
+    .price-tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: var(--brand-secondary);
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 4px;
+        z-index: 10;
+    }
+    
+    /* Overlay for locked templates */
+    .purchase-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 11;
+    }
+    
+    .template-card:hover .purchase-overlay {
+        opacity: 1;
+    }
+    
+    .purchase-overlay-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--brand-secondary);
+    }
+    
+    .purchase-overlay-text {
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    
+    /* Button styling */
+    .btn {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: var(--brand-primary);
+        border-color: var(--brand-primary);
+    }
+    
+    .btn-primary:hover {
+        background-color: #005a45;
+        border-color: #005a45;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-primary {
+        color: var(--brand-primary);
+        border-color: var(--brand-primary);
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--brand-primary);
+        border-color: var(--brand-primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-warning {
+        background-color: var(--brand-secondary);
+        border-color: var(--brand-secondary);
+        color: #000;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e6c800;
+        border-color: #e6c800;
+        transform: translateY(-2px);
+    }
+    
+    /* Payment modal styles */
+    .payment-modal .modal-header {
+        background: #000;
+        color: var(--brand-secondary);
+        border-bottom: 2px solid var(--brand-secondary);
+    }
+    
+    .payment-modal .modal-content {
+        background-color: #fff;
+        border: 1px solid #000;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    
+    .payment-modal .modal-body {
+        padding: 2rem;
+    }
+    
+    .template-preview {
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--brand-secondary);
+    }
+    
+    .template-preview img {
+        width: 100%;
+        height: auto;
+    }
+    
+    .template-price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .template-price .currency {
+        color: var(--brand-primary);
+        font-size: 1.5rem;
+    }
+    
+    .btn-purchase {
+        background: #000;
+        border: 2px solid var(--brand-secondary);
+        padding: 10px 20px;
+        font-weight: bold;
+        color: var(--brand-secondary);
+        transition: all 0.3s;
+    }
+    
+    .btn-purchase:hover {
+        background: var(--brand-secondary);
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Payment methods */
+    .payment-methods {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        gap: 10px;
+    }
+    
+    .payment-method {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .payment-method:hover, .payment-method.active {
+        border-color: var(--brand-secondary);
+        background-color: rgba(255, 224, 55, 0.1);
+    }
+    
+    .payment-method img {
+        height: 30px;
+        width: auto;
+    }
+    
+    /* Category filter buttons */
+    .btn-sm.btn-outline-primary {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Image container */
+    .image-container {
+        overflow: hidden;
+        border-radius: 12px;
+    }
 
-.template-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Paid template badge */
-.paid-badge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
-    color: #000;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
-/* Price tag */
-.price-tag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #ffd700;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 4px;
-    z-index: 10;
-}
-
-/* Overlay for locked templates */
-.purchase-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 11;
-}
-
-.template-card:hover .purchase-overlay {
-    opacity: 1;
-}
-
-.purchase-overlay-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #ffd700;
-}
-
-.purchase-overlay-text {
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-/* Paid template card styles */
-.template-card.paid {
-    border-color: #ffd700;
-    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.15);
-}
-
-/* Payment modal styles */
-.payment-modal .modal-header {
-    background: #000;
-    color: #ffd700;
-    border-bottom: 2px solid #ffd700;
-}
-
-.payment-modal .modal-content {
-    background-color: #fff;
-    border: 1px solid #000;
-}
-
-.payment-modal .modal-body {
-    padding: 2rem;
-}
-
-.template-preview {
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid #ffd700;
-}
-
-.template-preview img {
-    width: 100%;
-    height: auto;
-}
-
-.template-price {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-.template-price .currency {
-    color: #b8860b;
-    font-size: 1.5rem;
-}
-
-.btn-purchase {
-    background: #000;
-    border: 2px solid #ffd700;
-    padding: 10px 20px;
-    font-weight: bold;
-   color: #b8860b;
-    transition: all 0.3s;
-}
-
-.btn-purchase:hover {
-    background: #ffd700;
-    color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Payment methods */
-.payment-methods {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    gap: 10px;
-}
-
-.payment-method {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.payment-method:hover, .payment-method.active {
-    border-color: #ffd700;
-    background-color: rgba(255, 215, 0, 0.1);
-}
-
-.payment-method img {
-    height: 30px;
-    width: auto;
-}
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="py-5">
+<section class="py-2">
     <div class="container">
         <div class="row mb-4">
             <div class="col-md-8">

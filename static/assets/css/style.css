@@ -1,6 +1,5 @@
 .itemized {
-  height: 30rem;
-  background: rgb(0, 0, 0);
+  height: 60rem;
   color: rgb(255, 0, 0);
   position: relative;
 }
@@ -8,7 +7,6 @@
 .carousel-item img {
   height: 100%;
   object-fit: cover;
-  opacity: 0.3;
 }
 
 .print_icons img{
@@ -17,7 +15,7 @@
 }
 
 .footer {
-  color: white;
+  color: #ffe037;
   background-color: #000000;
   font-size: 14px;
   justify-content: center;
@@ -28,10 +26,94 @@
 .footer ul li {
   text-decoration: none;
   list-style-type: none;
+  color: #ffe037;
 } 
 
 
+/* Offcanvas styling */
+.offcanvas {
+  border-right: 2px solid var(--brand-secondary);
+  background-color: var(--brand-primary);
+}
 
+.offcanvas-header {
+  border-bottom: 1px solid var(--brand-secondary);
+  padding: 1.5rem 1rem;
+}
+
+.offcanvas-title h5 {
+  color: var(--brand-secondary);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.offcanvas-title h6 {
+  color: white;
+  font-size: 0.9rem;
+}
+
+.btn-close {
+  background-color: var(--brand-secondary);
+  opacity: 0.8;
+}
+
+.btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+  transition: all 0.3s ease;
+}
+
+.offcanvas-body {
+  padding: 1.5rem 1rem;
+}
+
+.offcanvas .navbar-nav .nav-link {
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.offcanvas .navbar-nav .nav-link:hover {
+  background: linear-gradient(to bottom, #00533f, #00745c) !important; 
+  color: var(--brand-secondary)!important;
+  transform: translateX(5px);
+}
+
+
+/* Add this to your main.css or create a new CSS file that's included on all pages */
+.offcanvas-start {
+  background: linear-gradient(to bottom, #00533f, #00745c) !important;
+  color: white !important;
+}
+
+
+
+
+
+.offcanvas .navbar-nav .nav-link.active {
+  color: var(--brand-secondary) !important;
+  font-weight: bold;
+}
+
+.offcanvas .dropdown-menu {
+  background-color: var(--brand-primary)!important;
+  border: 1px solid var(--brand-secondary)!important;
+}
+
+.offcanvas .dropdown-item {
+  color: white;
+}
+
+.offcanvas .dropdown-item:hover {
+  background-color: var(--brand-secondary)!important;
+  color: var(--brand-primary)!important;
+}
+
+.offcanvas .dropdown-divider {
+  border-color: var(--brand-secondary)!important;
+  opacity: 0.2;
+}
 
  .input-group {
    display: flex;
@@ -145,7 +227,7 @@
 
 .portfolio #portfolio-flters li:hover,
 .portfolio #portfolio-flters li.filter-active {
-  color: #4154f1;
+  color: #ffe037;
   border-color: #4154f1;
 }
 
@@ -356,7 +438,6 @@
 }
 
 
-
 .whatsapp_float {
   width: 10px;
   height: 10px;
@@ -378,8 +459,8 @@
   height: 40px;
   bottom: 20px;
   right: 20px;
-  background-color: rgb(15, 15, 15);
-  color: #fff;
+  background-color: #ffe037;
+  color: #079b65;
   text-align: center;
   font-size: 40px;
   z-index: 90;
@@ -425,3 +506,6 @@
     font-size: 20px;
   }
 }
+
+
+

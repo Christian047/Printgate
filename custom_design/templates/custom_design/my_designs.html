@@ -1,11 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
 
 
-{% for designs in designs %}
-    
+{% block content %}
+<br>
+<br>
+<br>
+<div class="container py-4">
 
+    {% if designs %}
+        <div class="row" style="margin: 0 -10px;">
+            {% for design in designs %}
+                <div class="col-6 col-md-4 mb-4" style="padding: 0 10px;">
+                    <div class="card h-100" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
+                        <div style="height: 220px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; position: relative;">
+                            {% if design.preview_image %}
+                                <img src="{{ design.preview_image.url }}" alt="{{ design.name }}" 
+                                     style="max-width: 100%; max-height: 100%; padding: 10px; object-fit: contain;">
+                            {% else %}
+                                <div style="text-align: center; color: #adb5bd;">
+                                    <i class="fas fa-image fa-3x"></i>
+                                    <p class="mt-2">No preview</p>
+                                </div>
+                            {% endif %}
+                            
+                            {% if design.is_draft %}
+                                <span style="position: absolute; top: 10px; right: 10px; background-color: #ffc107; color: #212529; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px;">
+                                    Draft
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ design.name }}</h5>
+                            <p class="card-text text-muted small">
+                                <i class="far fa-calendar-alt"></i> {{ design.created_at|date:'M d, Y' }}
+                                <span class="mx-1">•</span>
+                                <i class="far fa-object-group"></i> {{ design.product_type.name }}
+                            </p>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex">
+                                {% if design.preview_image %}
+                                    <a href="{{ design.preview_image.url }}" class="btn btn-success flex-grow-1 mr-2" download="{{ design.name }}.png">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                {% endif %}
+                                <button type="button" class="btn btn-danger flex-grow-1" data-toggle="modal" data-target="#deleteModal{{ design.id }}">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<img src= "{{designs.preview_image.url}}" >
-
-{% endfor %}
-    
-
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteModal{{ design.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Deletion</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the design <strong>"{{ design.name }}"</strong>? This action cannot be undone.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <form action="{% url 'delete_design' design.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-paint-brush fa-3x text-muted mb-3"></i>
+            <h3>No designs yet</h3>
+            <p class="text-muted">You haven't created any designs yet.</p>
+            <a href="{% url 'designs:new_design' %}" class="btn btn-primary mt-2">
+                Create Your First Design
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

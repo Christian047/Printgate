@@ -13,6 +13,7 @@ urlpatterns = [
     path('payments/', include('payments.urls')), 
     path('auth/', include('authentication.urls')), 
     path('order/', include('order_view.urls')), 
+    path('update/', include('product_update.urls')), 
 
 
 

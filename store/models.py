@@ -33,12 +33,14 @@ allowed_files = FileExtensionValidator(
 class Product(models.Model):
     title = models.CharField(max_length=200)
     base_price = models.IntegerField(null=True, blank=True)
+    bulk_quantity = models.IntegerField(null=True, blank=True)
     digital = models.BooleanField(default=False,null=True, blank=True)
     image =  models.ImageField(
         upload_to='product/', default='default.jpg', null=True, blank=True
         
     )
-    category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True, blank=True, related_name= 'product_category')
+    # category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True, blank=True, related_name= 'product_category')
+    category = models.ManyToManyField(Categories, related_name= 'product_category')
     product_type = models.ForeignKey('custom_design.ProductType', on_delete=models.SET_NULL, null=True, blank=True, related_name='store_products')
 
     def __str__(self):

@@ -50,8 +50,8 @@ class ProductType(models.Model):
     order = models.IntegerField(default=0, help_text="Display order")
     
     # Canvas specifications
-    default_width = models.IntegerField(help_text="Default canvas width in pixels", default=1800)
-    default_height = models.IntegerField(help_text="Default canvas height in pixels", default=1600)
+    default_width = models.IntegerField(help_text="Default canvas width in pixels", default=350)
+    default_height = models.IntegerField(help_text="Default canvas height in pixels", default=400)
     
     # Printable area constraints
     has_print_area = models.BooleanField(default=True, help_text="Whether this product has defined print areas")
@@ -141,9 +141,17 @@ class DesignTemplate(models.Model):
     active = models.BooleanField(default=True)
     
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+            if not self.slug:
+                self.slug = slugify(self.name)
+                
+                # Check for slug uniqueness and add a suffix if needed
+                original_slug = self.slug
+                counter = 1
+                while DesignTemplate.objects.filter(slug=self.slug).exists():
+                    self.slug = f"{original_slug}-{counter}"
+                    counter += 1
+                    
+                super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['-is_featured', '-created_at']

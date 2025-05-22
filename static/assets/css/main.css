@@ -115,6 +115,7 @@ h1,h2,h3,h4,h5,h6{
 .product-image-container {
   position: relative;
   overflow: hidden;
+  height: 200px;
   border-radius: 12px 12px 0 0;
 }
 .product-image {
@@ -155,7 +156,7 @@ h1,h2,h3,h4,h5,h6{
   transition: all 0.3s ease-in-out;
 }
 .btn-view:hover {
-  background: rgba(255, 255, 255, 1);
+
   transform: scale(1.1);
 }
 

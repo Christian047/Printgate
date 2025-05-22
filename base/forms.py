@@ -9,6 +9,30 @@ from custom_design.models import *
 
 
 
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['title', 'base_price', 'bulk_quantity', 'image', 'category', 'product_type']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'base_price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'bulk_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
+      
+            'category': forms.SelectMultiple(attrs={'class': 'form-select select2 w-100'}),
+            'product_type': forms.Select(attrs={'class': 'form-select'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['base_price'].label = "Base Price (₦)"
+        self.fields['bulk_quantity'].label = "Bulk Quantity"
+        self.fields['product_type'].empty_label = "Select Product Type"
+
+
+
+
+
+
 
 class BaseOrderForm(forms.Form):
     def __init__(self, product, *args, **kwargs):

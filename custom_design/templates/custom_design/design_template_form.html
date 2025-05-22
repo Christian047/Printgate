@@ -1,0 +1,345 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card shadow-lg border-0">
+        <div class="card-header" style="background: linear-gradient(to right, var(--brand-primary-dark), var(--brand-primary-light)); color: white;">
+          <h3 class="mb-0">{{ title }}</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Nav tabs for different methods -->
+          <ul class="nav nav-tabs mb-4" id="designTemplateTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual" type="button" role="tab" aria-controls="manual" aria-selected="true">
+                <i class="fas fa-edit"></i> Manual Entry
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="import-tab" data-bs-toggle="tab" data-bs-target="#import" type="button" role="tab" aria-controls="import" aria-selected="false">
+                <i class="fas fa-file-import"></i> Import From User Design
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="editor-tab" data-bs-toggle="tab" data-bs-target="#editor" type="button" role="tab" aria-controls="editor" aria-selected="false">
+                <i class="fas fa-paint-brush"></i> Use Design Editor
+              </button>
+            </li>
+          </ul>
+
+          
+          
+          <div class="tab-content" id="designTemplateTabsContent">
+            <!-- 1. Manual Entry Tab -->
+            <div class="tab-pane fade show active" id="manual" role="tabpanel" aria-labelledby="manual-tab">
+              <form method="post" enctype="multipart/form-data" id="manualForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="manual">
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="{{ form.name.id_for_label }}" class="form-label">Template Name</label>
+                      {{ form.name }}
+                      {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="{{ form.product_type.id_for_label }}" class="form-label">Product Type</label>
+                      {{ form.product_type }}
+                      {% if form.product_type.errors %}
+                        <div class="text-danger">{{ form.product_type.errors }}</div>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                      {{ form.category }}
+                      {% if form.category.errors %}
+                        <div class="text-danger">{{ form.category.errors }}</div>
+                      {% endif %}
+                    </div>
+                    
+
+
+
+                    <div class="mb-3">
+                      <label for="{{ form.preview_image.id_for_label }}" class="form-label">Preview Image</label>
+                      {% if design_template and design_template.preview_image %}
+                        <div class="mb-2">
+                          <img src="{{ design_template.preview_image.url }}" alt="{{ design_template.name }}" class="img-thumbnail" style="max-height: 150px;">
+                        </div>
+                      {% endif %}
+                      {{ form.preview_image }}
+                      {% if form.preview_image.errors %}
+                        <div class="text-danger">{{ form.preview_image.errors }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  
+
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                      {{ form.description }}
+                      {% if form.description.errors %}
+                        <div class="text-danger">{{ form.description.errors }}</div>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                      <div class="form-check mb-2">
+                        {{ form.is_featured }}
+                        <label class="form-check-label" for="{{ form.is_featured.id_for_label }}">
+                          Featured Template
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        {{ form.is_premium }}
+                        <label class="form-check-label" for="{{ form.is_premium.id_for_label }}">
+                          Premium Template
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        {{ form.active }}
+                        <label class="form-check-label" for="{{ form.active.id_for_label }}">
+                          Active
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="{{ form.canvas_json.id_for_label }}" class="form-label">Canvas JSON Data</label>
+                  {{ form.canvas_json }}
+                  {% if form.canvas_json.errors %}
+                    <div class="text-danger">{{ form.canvas_json.errors }}</div>
+                  {% endif %}
+                  <div class="form-text">Enter Fabric.js canvas JSON data</div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                  <a href="{% url 'design_template_list' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                  <button type="submit" class="btn" style="background-color: black; color: white;">{{ submit_text|default:"Save" }}</button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- 2. Import From User Design Tab -->
+            <div class="tab-pane fade" id="import" role="tabpanel" aria-labelledby="import-tab">
+              <form method="post" enctype="multipart/form-data" id="importForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="import">
+                
+        
+                <!-- Basic template info fields -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="template_name" class="form-label">Template Name</label>
+                      <input type="text" name="template_name" id="template_name" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="product_type" class="form-label">Product Type</label>
+                      <select name="product_type" id="product_type" class="form-select" required>
+                        <option value="">Select Product Type</option>
+                        {% for pt in product_types %}
+                          <option value="{{ pt.id }}">{{ pt.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="category" class="form-label">Category</label>
+                      <select name="category" id="category" class="form-select" required>
+                        <option value="">Select Category</option>
+                        {% for cat in design_categories %}
+                          <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Description</label>
+                      <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <div class="form-check mb-2">
+                        <input type="checkbox" name="is_featured" id="is_featured" class="form-check-input">
+                        <label class="form-check-label" for="is_featured">Featured Template</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input type="checkbox" name="is_premium" id="is_premium" class="form-check-input">
+                        <label class="form-check-label" for="is_premium">Premium Template</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- User design selector -->
+       <!-- User design selector without JavaScript -->
+<!-- Radio button list with inline images -->
+<div class="mb-4">
+  <label class="form-label">Select User Design</label>
+  
+  <div class="list-group">
+    {% for design in user_designs %}
+      <label class="list-group-item d-flex align-items-center" for="design-{{ design.id }}">
+        <input type="radio" name="user_design_id" id="design-{{ design.id }}" value="{{ design.id }}" 
+               class="me-3" required
+               onchange="document.getElementById('product_type').value='{{ design.product_type.id }}';">
+        
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div>{{ design.name }} - {{ design.product_type.name }}</div>
+          
+          {% if design.preview_image %}
+            <div class="ms-3">
+              <img src="{{ design.preview_image.url }}" alt="{{ design.name }}" 
+                  style="height: 50px; max-width: 80px; object-fit: contain;">
+            </div>
+          {% endif %}
+        </div>
+      </label>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Hidden input for product type -->
+<input type="hidden" name="product_type" id="product_type" value="">
+
+
+
+
+                <!-- Preview of selected design -->
+                <div id="designPreview" class="mb-4 d-none">
+                  <label class="form-label">Design Preview</label>
+                  <div class="border rounded p-2 text-center">
+                    <img id="previewImage" src="" alt="Design Preview" class="img-fluid" >
+                  </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                  <a href="{% url 'design_template_list' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                  <button type="submit" class="btn" style="background-color: black; color: white;">Import Design</button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- 3. Use Design Editor Tab -->
+            <div class="tab-pane fade" id="editor" role="tabpanel" aria-labelledby="editor-tab">
+              <div class="mb-4">
+                <p class="text-info">
+                  <i class="fas fa-info-circle"></i> 
+                  Create a template using the design editor. Enter basic information, then you'll be redirected to the editor.
+                </p>
+              </div>
+              
+              <form method="post" enctype="multipart/form-data" id="editorForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="editor">
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="editor_name" class="form-label">Template Name</label>
+                      <input type="text" name="editor_name" id="editor_name" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="editor_product_type" class="form-label">Product Type</label>
+                      <select name="editor_product_type" id="editor_product_type" class="form-select" required>
+                        <option value="">Select Product Type</option>
+                        {% for pt in product_types %}
+                          <option value="{{ pt.id }}">{{ pt.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="editor_category" class="form-label">Category</label>
+                      <select name="editor_category" id="editor_category" class="form-select" required>
+                        <option value="">Select Category</option>
+                        {% for cat in design_categories %}
+                          <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                      <label for="editor_description" class="form-label">Description</label>
+                      <textarea name="editor_description" id="editor_description" class="form-control" rows="3"></textarea>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                  <a href="{% url 'design_template_list' %}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                  <button type="submit" class="btn" style="background-color: black; color: white;">Go to Editor</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_scripts %}
+<script>
+  // Handle user design selection
+  $(document).ready(function() {
+    $('#user_design').change(function() {
+      const selectedOption = $(this).find('option:selected');
+      
+      if (selectedOption.val()) {
+        // Show preview
+        const previewUrl = selectedOption.data('preview');
+        $('#previewImage').attr('src', previewUrl);
+        $('#designPreview').removeClass('d-none');
+        
+        // Set product type to match the user design
+        const productTypeId = selectedOption.data('product-type');
+        $('#product_type').val(productTypeId);
+      } else {
+        // Hide preview if no selection
+        $('#designPreview').addClass('d-none');
+      }
+    });
+    
+    // Submit handling for tabs
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+      // Update active form based on selected tab
+      const targetId = $(e.target).attr('id');
+      
+      if (targetId === 'manual-tab') {
+        $('#manualForm').data('active', true);
+        $('#importForm').data('active', false);
+        $('#editorForm').data('active', false);
+      } else if (targetId === 'import-tab') {
+        $('#manualForm').data('active', false);
+        $('#importForm').data('active', true);
+        $('#editorForm').data('active', false);
+      } else if (targetId === 'editor-tab') {
+        $('#manualForm').data('active', false);
+        $('#importForm').data('active', false);
+        $('#editorForm').data('active', true);
+      }
+    });
+  });
+</script>
+{% endblock %}
+{% endblock %}

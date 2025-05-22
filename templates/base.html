@@ -38,6 +38,8 @@
 
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 
   <script type="text/javascript">
     var user = '{{request.user}}'
@@ -98,7 +100,8 @@
 
 
   {% comment %} Navbar---------------------------- {% endcomment %}
-  <nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top">
+  <nav class="navbar navbar-dark  navbar-expand-lg fixed-top"
+    style="background: linear-gradient(to bottom, #00533f, #00745c);">
     <div class="container-fluid">
       <a class="navbar-brand" href="{% url 'home' %}">Printgate</a>
 
@@ -150,11 +153,14 @@
 
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-      <div class="offcanvas-title" id="offcanvasExampleLabel"><h5>Contact</h5> <h6 class="fw-bold">0812 345 6789 <br> 0803 987 6543</h6> </div>
-    
+      <div class="offcanvas-title" id="offcanvasExampleLabel">
+        <h5>Contact</h5>
+        <h6 class="fw-bold">0812 345 6789 <br> 0803 987 6543</h6>
+      </div>
 
-        
-    
+
+
+
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -176,34 +182,50 @@
           <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
         {% endif %}
+
         <li class="nav-item">
-          <a class="nav-link" href="{%  url 'orders' %}">Admin dashboard</a>
+          <a class="nav-link" href="{%  url 'custom-home' %}">Create a design</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%  url 'add_product' %}">Add Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{%  url 'product_list' %}">Manage Products</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'convert' %}">Unit Converter</a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{%  url 'orders' %}">Admin dashboard</a>
+        </li>
+
+
+        {% if user.is_authenticated %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
+          <a class="nav-link dropdown-toggle" href="{% url 'new_design' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Design Section
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="{% url 'product_type_create' %}">Create Product Type</a></li>
+            <li><a class="dropdown-item" href="{% url 'design_template_create' %}">Create Design Templates</a></li>
             <li>
               <hr class="dropdown-divider" />
             </li>
             <li>
-              <a class="dropdown-item" href="#">Something else here</a>
+              <a class="dropdown-item" href="{% url 'product_type_list' %}">Manage Product Types</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'design_template_list' %}">Manage Templates</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'my_designs' %}">My Designs</a>
             </li>
 
           </ul>
         </li>
+        {% endif %}
 
-        <svg class="icon-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-          class="bi bi-cart-check-fill" viewBox="0 0 16 16">
-          <path
-            d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708" />
-        </svg>
 
 
 
@@ -242,17 +264,18 @@
 
 
   <div class="row">
-    <div class="whatsapp-background"> <a href="https:/wa.me/+2348027989868" target="_blank" class="text-decoration-none text-white">Chat with us  </a>
-      {% comment %} <a href="https:/wa.me/+2348027989868" target="_blank"
-        class="whatsapp_float">
-        <i class="fa-brands fa-whatsapp whatsapp-icon"> {% endcomment %}
+    <div class="whatsapp-background">
+      <a href="https://wa.me/+2348027989868" target="_blank" class="text-decoration-none" style="color:#004d3b;">
+        Chat with us <i class="fa-brands fa-whatsapp whatsapp-icon"></i>
+      </a>
     </div>
   </div>
 
 
   <!-- ----------------------Footer Start -->
-  <footer class="footer bg-dark text-white" id="ContactusSection">
-    <div class="m-3">
+  <footer class="footer text-white" style="background: linear-gradient(to bottom, #00533f, #00745c);"
+    id="ContactusSection">
+    <div class="mt-3">
       <div class="display-1 text-center">Stay Connected
       </div>
       <div class=" d-flex icons justify-content-center">
@@ -268,57 +291,20 @@
 
 
 
-      <div class="col-md-3">
+      <div class="m-4 ">
         <ul>
           <li>
-            <h2>Portharcourt Address</h2>
+            <h2>Onitsha Address</h2>
           </li>
-          Quest Academy International Schools <br>
-          Plot 10, Chijioke Street, <br>
-          Rumuigbo, Port Harcourt, <br>
-          Rivers State, Nigeria.
+          <div style="font-size: 20px;">58 Old Market Road, Onitsha, <br> Anambra State, Nigeria</div>
         </ul>
+
+        <div style="font-size: 20px; font-weight:bold">0812 345 6789 |
+          0803 987 6543</div>
+  
       </div>
 
-
-      <div class="col-md-3">
-        <ul>
-          <li>
-            <h2>Enugu Address</h2>
-          </li>
-          Quest Academy International Schools <br>
-          123 Ogui Road, <br>
-          Independence Layout, Enugu, <br>
-          Enugu State, Nigeria.
-        </ul>
-      </div>
-
-
-      <div class="col-md-3">
-        <ul>
-          <li>
-            <h2>Lagos Address</h2>
-          </li>
-          Quest Academy International Schools <br>
-          45 Victoria Island Avenue, <br>
-          Lekki Phase 1, Lagos, <br>
-          Lagos State, Nigeria.
-        </ul>
-      </div>
-
-
-      <div class="col-md-3">
-        <ul>
-          <li>
-            <h2>Abuja Branch</h2>
-          </li>
-          <br />
-          Quest Academy International Schools <br>
-          78 Gudu District, off Malugu Market <br>
-          Jabi, Abuja, <br>
-          FCT, Nigeria.
-        </ul>
-      </div>
+     
     </div>
 
 
@@ -413,7 +399,7 @@
 
 
 
-
+<!-- 
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
     integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
     crossorigin="anonymous"></script>
@@ -425,31 +411,42 @@
   <script type="text/javascript" src="{% static 'assets/js/cart.js' %}"></script>
 
 
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-<script>
-  $(function () {
-    $("#product").autocomplete({
-      source: "{% url 'autocomplete' %}",
-      minLength: 2,
-      select: function (event, ui) {
-        // Redirect to product detail page when an item is selected
-        window.location.href = "/product/" + ui.item.id + "/";  // Adjust URL pattern to match your product detail URL
-        return false;  // Prevents the default behavior of filling the input
-      },
-      focus: function (event, ui) {
-        // Optional: Update the input with the focused item's label
-        $("#product").val(ui.item.label);
-        return false;
-      }
-    }).autocomplete("instance")._renderItem = function (ul, item) {
-      // Optional: Custom rendering of autocomplete items
-      return $("<li>")
-        .append("<div>" + item.label + "</div>")
-        .appendTo(ul);
-    };
-  });
-</script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script> -->
+
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+  
+  <!-- Bootstrap 5 Bundle JS (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  <!-- Your custom scripts -->
+  <script type="text/javascript" src="{% static 'assets/js/cart.js' %}"></script>
+  <script>
+    $(function () {
+      $("#product").autocomplete({
+        source: "{% url 'autocomplete' %}",
+        minLength: 2,
+        select: function (event, ui) {
+          // Redirect to product detail page when an item is selected
+          window.location.href = "/product/" + ui.item.id + "/";  // Adjust URL pattern to match your product detail URL
+          return false;  // Prevents the default behavior of filling the input
+        },
+        focus: function (event, ui) {
+          // Optional: Update the input with the focused item's label
+          $("#product").val(ui.item.label);
+          return false;
+        }
+      }).autocomplete("instance")._renderItem = function (ul, item) {
+        // Optional: Custom rendering of autocomplete items
+        return $("<li>")
+          .append("<div>" + item.label + "</div>")
+          .appendTo(ul);
+      };
+    });
+  </script>
 
 
 

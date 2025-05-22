@@ -14,7 +14,7 @@
         </div>
 
         <!-- Product Details Section -->
-        <div class="col-md-6 py-2">
+        <div class="col-md-6 py-2 m-2">
             <h1 class="fw-bold">{{ product.title }}</h1>
             <p class="text-muted">Category: <strong>{{ product.category.name }}</strong></p>
 
@@ -32,7 +32,7 @@
 
             <!-- Call to Action Buttons -->
             <div class="d-grid gap-2 d-md-flex">
-                <a href="{% url 'options' product.pk %}" class="btn btn-primary px-5 py-3 fw-semibold">
+                <a href="{% url 'options' product.pk %}" class="btn btn-primary px-5 py-3 fw-semibold" style= "background-color: #007459;">
                     <i class="fas fa-shopping-cart"></i> Print
                 </a>
                 <a href="{% url 'home' %}" class="btn btn-outline-dark px-5 py-3 fw-semibold">

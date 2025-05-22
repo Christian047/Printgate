@@ -8,13 +8,23 @@ from django.utils.safestring import mark_safe
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):  
-    list_display = ('title', 'base_price', 'digital', 'category_image', 'category' )
+    list_display = ('title', 'base_price', 'bulk_quantity', 'digital', 'category_image', 'get_categories')
+    filter_horizontal = ('category',)  # Note: This should match your field name
     
     def category_image(self, obj):
         if obj.image:  # Ensure there's an image
             return mark_safe(f'<img src="{obj.image.url}" width="50" height="50" />')
         return "No Image"
     
+    def get_categories(self, obj):
+        # Join all category names into a comma-separated string
+        # Note the change here to match your field name
+        return ", ".join([cat.name for cat in obj.category.all()])
+    
+    # Set a display name for the column
+    get_categories.short_description = 'Categories'
+
+
     
 @admin.register(ProductVariant)
 class ProductAdmin(admin.ModelAdmin):  

@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'authentication',
     'order_view',
 
-
+'product_update',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

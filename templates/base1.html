@@ -29,7 +29,7 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background-color: #fff;
+            background-color: #ffffff;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
@@ -37,12 +37,21 @@
             flex: 1;
         }
         
-        .main-footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-        }
-        
+    
+.footer {
+    color: #ffe037;
+    background-color: #000000;
+    font-size: 14px;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+  }
+  
+  .footer ul li {
+    text-decoration: none;
+    list-style-type: none;
+    color: #ffe037;
+  } 
         .product-card {
             transition: transform 0.2s, box-shadow 0.2s;
             height: 100%;
@@ -76,9 +85,9 @@
 <body>
     <!-- Header -->
     <header class="main-header">
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #007459 ; color: white;" >
             <div class="container">
-        
+              <a class="nav-link" href="{% url 'home' %}">PrintGate</a>
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -86,13 +95,22 @@
                 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
-                       {% comment %} <li class="nav-item">
-                            <a class="nav-link" href="{% url 'designs:home' %}">Home</a>
-                        </li>  {% endcomment %}
+                  <li class="nav-item">
+                           
+                        </li>  
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'new_design' %}">Create Design</a>
                         </li>
                         {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product_type_create' %}">Create Product Type</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'design_template_create' %}">Create Design Templates</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product_type_list' %}">Manage Product Types</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'my_designs' %}">My Designs</a>
                         </li>
@@ -124,44 +142,91 @@
     
     <!-- Main Content -->
     <main class="main-content">
-        {% block content %}{% endblock %}
+   
+        {% block content %}
+     
+        {% endblock %}
     </main>
     
     <!-- Footer -->
     
     {% block footer %}
-    <footer class="main-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>CustomDesign</h5>
-                    <p>Create custom designs for various products with our easy-to-use design tool.</p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        {% comment %} <li><a href="{% url 'designs:home' %}" class="text-light">Home</a></li> {% endcomment %}
-                        <li><a href="{% url 'new_design' %}" class="text-light">Create Design</a></li>
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'my_designs' %}" class="text-light">My Designs</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Support</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Help Center</a></li>
-                        <li><a href="#" class="text-light">Contact Us</a></li>
-                        <li><a href="#" class="text-light">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="mt-4 mb-3">
-            <div class="text-center">
-                <p class="mb-0">&copy; {% now "Y" %} CustomDesign. All rights reserved.</p>
-            </div>
+    <!-- ----------------------Footer Start -->
+    <footer class="footer text-white" style="background: linear-gradient(to bottom, #00533f, #00745c);" id="ContactusSection">
+      <div class="m-3">
+        <div class="display-1 text-center">Stay Connected
         </div>
+        <div class=" d-flex icons justify-content-center">
+          <a href="">
+            <i class="bi bi-instagram text-white mx-2"></i>
+            <i class="bi bi-twitter-x text-white mx-2"></i>
+            <i class="bi bi-facebook text-white mx-2"></i>
+            <i class="bi bi-whatsapp text-white mx-2"></i>
+          </a>
+        </div>
+      </div>
+      <div class="row text-center">
+  
+  
+  
+        <div class="col-md-3">
+          <ul>
+            <li>
+              <h2>Portharcourt Address</h2>
+            </li>
+            Quest Academy International Schools <br>
+            Plot 10, Chijioke Street, <br>
+            Rumuigbo, Port Harcourt, <br>
+            Rivers State, Nigeria.
+          </ul>
+        </div>
+  
+  
+        <div class="col-md-3">
+          <ul>
+            <li>
+              <h2>Enugu Address</h2>
+            </li>
+            Quest Academy International Schools <br>
+            123 Ogui Road, <br>
+            Independence Layout, Enugu, <br>
+            Enugu State, Nigeria.
+          </ul>
+        </div>
+  
+  
+        <div class="col-md-3">
+          <ul>
+            <li>
+              <h2>Lagos Address</h2>
+            </li>
+            Quest Academy International Schools <br>
+            45 Victoria Island Avenue, <br>
+            Lekki Phase 1, Lagos, <br>
+            Lagos State, Nigeria.
+          </ul>
+        </div>
+  
+  
+        <div class="col-md-3">
+          <ul>
+            <li>
+              <h2>Abuja Branch</h2>
+            </li>
+            <br />
+            Quest Academy International Schools <br>
+            78 Gudu District, off Malugu Market <br>
+            Jabi, Abuja, <br>
+            FCT, Nigeria.
+          </ul>
+        </div>
+      </div>
+  
+  
     </footer>
+    <!-- --------------------------Footer End--------------------------- -->
+  
+  
        {% endblock footer %}
 
 

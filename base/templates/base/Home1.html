@@ -68,8 +68,9 @@
 <style>
   /* Global Styles */
   :root {
-    --brand-primary: #FF6B00;
-    --brand-dark: #E25100;
+    --brand-primary: #007459;
+    --brand-secondary: #ffe037;
+    --brand-tertiary: #ffe037;
     --text-light: #ffffff;
     --text-dark: #212529;
   }
@@ -81,7 +82,7 @@
   
   .carousel-item {
     position: relative;
-    height: 70vh;
+    height: 80vh;
     overflow: hidden;
   }
   
@@ -92,16 +93,7 @@
   }
   
   /* Overlay for better text visibility */
-  .carousel-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 1;
-  }
-  
+
   /* Contact Info */
   .carousel-contact {
     position: absolute;
@@ -206,7 +198,7 @@
   }
   
   .btn-primary:hover {
-    background-color: var(--brand-dark);
+    background-color:red;
     border-color: var(--brand-dark);
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -240,6 +232,9 @@
     background: var(--brand-primary);
   }
   
+
+
+
   /* Product Card Styling */
   .product-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -247,10 +242,25 @@
   }
   
   .product-card:hover {
+  
+
     transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 12px 24px #007459;;
   }
   
+
+  .btn {
+    border-radius: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: all 0.3s ease;
+}
+
+  .btn:hover {
+color:#ffe037;
+
+}
+
   .product-image-container {
     position: relative;
     overflow: hidden;
@@ -266,6 +276,7 @@
   
   .product-card:hover .product-image {
     transform: scale(1.05);
+    
   }
   
   .product-overlay {
@@ -274,7 +285,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #0f0f0f3f;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -290,6 +301,9 @@
     padding: 8px 16px;
     border-radius: 30px;
     font-weight: 600;
+    background-color: var(--brand-primary);
+    color: white;
+    border: none;
     transform: translateY(20px);
     transition: transform 0.3s ease, background-color 0.3s ease;
   }
@@ -336,6 +350,7 @@
     
     .search-container {
       position: relative;
+      top: 7rem;
     }
     
     .search-input {
@@ -393,8 +408,8 @@
   <div class="carousel-inner">
     <!-- First Slide -->
     <div class="carousel-item active itemized" data-bs-interval="2000">
-      <img src="/media/images/book.jpg" alt="Image">
-" class="d-block w-100" alt="...">
+   
+      <img src="media/images/Printgate.jpg" class="d-block w-100" alt="...">
       
       <!-- Added explicit overlay for better text visibility -->
       <div class="carousel-overlay"></div>
@@ -409,10 +424,7 @@
           <div class="row justify-content-center">
             <div class="col-md-10">
               <!-- Brand Identity -->
-              <div class="brand-name">Printgate</div>
-              {% comment %} <div class="small-title">Welcome to the house of Prints.</div> {% endcomment %}
-              <div class="tagline">Let our print products stand you out</div>
-
+        
               <!-- Search container -->
               <div class="search-wrapper">
                 <div class="search-container">
@@ -423,7 +435,7 @@
                   </div>
                   
                 </div>
-                <button type="button" class="btn btn-primary mt-3">Search</button>
+                <button type="button" class="btn btn-primary mt-3 d-none">Search</button>
               </div>
             </div>
           </div>
@@ -434,6 +446,7 @@
     <!-- Second Slide -->
     <div class="carousel-item itemized">
       <img src="{% static 'Images/Boost.png' %}" class="d-block w-100" alt="...">
+      <img src="media/images/Printgate.jpg" class="d-block w-100" alt="...">
       
       <!-- Added explicit overlay for better text visibility -->
       <div class="carousel-overlay"></div>
@@ -466,7 +479,7 @@
   <div class="container my-4" data-aos="fade-up">
     <header class="text-center">
 
-      <h1 class="display-5 fw-bold">What do you want to print?</h1>
+      <h1 class="display-5 fw-bold" style=" color: var(--brand-primary);">What do you want to print?</h1>
     </header>
 
     <div class="row" data-aos="fade-up" data-aos-delay="100">
@@ -480,37 +493,16 @@
       </div>
     </div>
 
-    <div class="row gy-4 portfolio-container m-2" data-aos="fade-up" data-aos-delay="200">
 
 
-
-      {% comment %} {% for product in products %}
-      <div class="col-lg-4 col-md-6 portfolio-item filter-{{product.category.name|slugify}}">
-        <div class="portfolio-wrap">
-          <img src="{{ product.product_picture.url }}" class="img-fluid" alt="{{ product.name }}" />
-          <div class="portfolio-info">
-            <h4>{{ product.name }}</h4>
-            <p>{{ product.category.name }}</p>
-            <div class="portfolio-links">
-              <a href="{{ product.product_picture.url }}" data-gallery="portfolioGallery" class="portfokio-lightbox"
-                title="{{ product.name }}">
-                <i class="bi bi-plus"></i>
-              </a>
-              <a href="portfolio-details.html" title="More Details">
-                <i class="bi bi-link"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %} {% endcomment %}
-
-
-
+<div class="row gy-4 portfolio-container m-2" data-aos="fade-up" data-aos-delay="200">
 
 {% for product in products %}
-<div class="col-sm-6 col-md-4 col-lg-4 mb-4 portfolio-item filter-{{ product.category.name|slugify }}">
-  <div class="card product-card shadow-lg border-0 rounded overflow-hidden">
+<div class="col-6 col-sm-6 col-md-4 col-lg-4 mb-4 portfolio-item 
+    {% for cat in product.category.all %}
+    filter-{{ cat.name|slugify }} 
+    {% endfor %}">
+  <div class="card product-card shadow-sm border-0 rounded overflow-hidden">
 
     <!-- Product Image with Hover Overlay -->
     <div class="product-image-container">
@@ -524,47 +516,56 @@
       </div>
     </div>
 
+
+
+    
     <!-- Card Body -->
     <div class="card-body p-3">
-      <h4 class="card-title fw-bold text-dark">{{ product.title }}</h4>
+      <h4 class="card-title fw-bold " >{{ product.title }}</h4>
 
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <div class="text-muted small">Base Price:</div>
-          <h3 class="fw-bold text-success mb-0">₦{{ product.base_price|intcomma }}</h3>
-          <div class="text-muted small">per 100</div>
+          {% comment %} <div class="text-muted small">Base Price:</div> {% endcomment %}
+          <h3 class="card-title h2 fw-bold" style="color: var(--brand-primary);">₦{{ product.base_price|intcomma }}</h3>
+
+
+{% if product.bulk_quantity %}
+<div class=" small" style="font-style: italic;">per {{ product.bulk_quantity }} pcs</div>
+{% endif %}
+  
+         
+
+
         </div>
         <div class="d-flex gap-2">
-          <a href="{% url 'options' product.pk %}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-printer"></i> Print
+          <a href="{% url 'options' product.pk %}" class="btn btn-success btn-sm" style="color: #ffe037;">
+            Print
           </a>
-          <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-success btn-sm">
+          <!-- <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-success btn-sm">
             <i class="bi bi-eye"></i> View
-          </a>
+          </a> -->
         </div>
       </div>
     </div>
+
+
+
   </div>
 </div>
 {% endfor %}
 
-
-
-
-
-
     </div>
   </div>
-  <p class="text-center m-2 fw-bold"><a href="">See all Products</a></p>
+  <!-- <p class="text-center m-2 fw-bold"><a href="">See all Products</a></p> -->
 </section>
 
 
 <!-- Featured Categories Section -->
-<section class="featured-categories py-5 bg-light">
-  <div class="container">
-    <header class="text-center mb-5">
-      <h2 class="fw-bold">Popular Print Categories</h2>
-      <p class="text-muted">Discover our most requested print products</p>
+<section class="featured-categories py-5 " style="background: linear-gradient(to bottom, #00533f, #00745c);" >
+  <div class="container" >
+    <header class="text-center mb-5 text-white">
+      <h2 class="fw-bold text-white">Popular Print Categories</h2>
+      <p class="text-white">Discover our most requested print products</p>
     </header>
     
     <div class="row g-4">
@@ -607,61 +608,6 @@
   </div>
 </section>
 
-<!-- Why Choose Us Section -->
-<section class="why-choose-us py-5">
-  <div class="container">
-    <header class="text-center mb-5">
-      <h2 class="fw-bold">Why Choose Printgate?</h2>
-      <p class="text-muted">We deliver quality print solutions that set you apart</p>
-    </header>
-    
-    <div class="row g-4">
-      <!-- Feature 1 -->
-      <div class="col-md-3">
-        <div class="text-center">
-          <div class="icon-box mb-3">
-            <i class="bi bi-trophy fs-1 text-primary"></i>
-          </div>
-          <h4>Premium Quality</h4>
-          <p class="text-muted">High-quality materials and printing technology for exceptional results.</p>
-        </div>
-      </div>
-      
-      <!-- Feature 2 -->
-      <div class="col-md-3">
-        <div class="text-center">
-          <div class="icon-box mb-3">
-            <i class="bi bi-lightning-charge fs-1 text-primary"></i>
-          </div>
-          <h4>Fast Turnaround</h4>
-          <p class="text-muted">Quick delivery times without compromising on quality.</p>
-        </div>
-      </div>
-      
-      <!-- Feature 3 -->
-      <div class="col-md-3">
-        <div class="text-center">
-          <div class="icon-box mb-3">
-            <i class="bi bi-graph-up fs-1 text-primary"></i>
-          </div>
-          <h4>Competitive Pricing</h4>
-          <p class="text-muted">Affordable prices with transparent pricing structure.</p>
-        </div>
-      </div>
-      
-      <!-- Feature 4 -->
-      <div class="col-md-3">
-        <div class="text-center">
-          <div class="icon-box mb-3">
-            <i class="bi bi-headset fs-1 text-primary"></i>
-          </div>
-          <h4>Expert Support</h4>
-          <p class="text-muted">Dedicated customer service team to assist with your print needs.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- Additional CSS for the new sections -->
 <style>

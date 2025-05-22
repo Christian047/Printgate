@@ -33,6 +33,10 @@
         position: relative;
     }
 
+
+
+
+
     .design-sidebar {
         width: var(--sidebar-width);
         background-color: #f8f9fa;
@@ -41,7 +45,7 @@
         flex-direction: column;
         overflow: hidden;
         z-index: 10;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, width 0.3s ease;
     }
 
     .sidebar-nav {
@@ -83,7 +87,8 @@
     .design-tabs a i {
         font-size: 18px;
         margin-bottom: 5px;
-        margin-right: 0; /* Override previous margin */
+        margin-right: 0;
+        /* Override previous margin */
     }
 
     .design-tabs a.active {
@@ -123,15 +128,16 @@
         align-items: center;
         background-color: #e9ecef;
         position: relative;
-        
+
         /* These are the important properties for scrolling */
-        overflow: auto; /* Force horizontal scrollbar */
+        overflow: auto;
+        /* Force horizontal scrollbar */
     }
 
     /* And make sure this comes after the canvas-container definition */
     .canvas-wrapper {
-        position: relative;
-        padding: 0 20px;
+
+        padding: 10px;
     }
 
     .editor-header {
@@ -263,7 +269,7 @@
     #pan-center-btn {
         background-color: #f8f9fa;
     }
-    
+
     .canvas-controls-group:last-child {
         border-right: none;
         padding-right: 0;
@@ -345,314 +351,295 @@
 
 
 
-/* Editor overlay for templates that require purchase */
-.purchase-editor-overlay {
-    position: fixed;
+    /* Editor overlay for templates that require purchase */
+    .purchase-editor-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+    }
+
+    .purchase-editor-content {
+        max-width: 500px;
+        padding: 2rem;
+        background-color: #fff;
+        border: 2px solid #ffd700;
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        text-align: center;
+    }
+
+    .purchase-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #ffd700;
+    }
+
+    .purchase-title {
+        color: #000;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .purchase-description {
+        color: #555;
+        margin-bottom: 1.5rem;
+    }
+
+    .template-preview-image {
+        max-width: 100%;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        margin-bottom: 1.5rem;
+    }
+
+    .purchase-price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 1rem;
+    }
+
+    .purchase-price .currency {
+        color: #b8860b;
+        font-size: 1.5rem;
+    }
+
+    .btn-purchase-now {
+        background: #000;
+        border: 2px solid #ffd700;
+        padding: 10px 20px;
+        font-weight: bold;
+        color: #ffd700;
+        transition: all 0.3s;
+    }
+
+    .btn-purchase-now:hover {
+        background: #ffd700;
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Payment methods */
+    .payment-methods {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        gap: 10px;
+    }
+
+    .payment-method {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .payment-method:hover,
+    .payment-method.active {
+        border-color: #ffd700;
+        background-color: rgba(255, 215, 0, 0.1);
+    }
+
+    .payment-method img {
+        height: 30px;
+        width: auto;
+    }
+
+
+/* Add these to your existing styles */
+
+/* Visual feedback when hovering shape cards */
+.shape-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.shape-card::after {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(5px);
+    right: 0;
+    bottom: 0;
+    background-color: rgba(13, 110, 253, 0);
+    transition: background-color 0.2s;
+    z-index: 1;
+    pointer-events: none;
 }
 
-.purchase-editor-content {
-    max-width: 500px;
-    padding: 2rem;
-    background-color: #fff;
-    border: 2px solid #ffd700;
-    border-radius: 10px;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+.shape-card:hover::after {
+    background-color: rgba(13, 110, 253, 0.08);
+}
+
+.shape-card:active::after {
+    background-color: rgba(13, 110, 253, 0.15);
+}
+
+.shape-icon, .shape-name {
+    position: relative;
+    z-index: 2;
+}
+
+/* Delete button */
+#delete-shape-btn {
+    height: 42px;
+    font-weight: 500;
+}
+
+/* Empty state message when no shape is selected */
+.empty-state {
     text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-size: 14px;
 }
 
-.purchase-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #ffd700;
+.empty-state i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.5;
 }
 
-.purchase-title {
-    color: #000;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.purchase-description {
-    color: #555;
-    margin-bottom: 1.5rem;
-}
-
-.template-preview-image {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    margin-bottom: 1.5rem;
-}
-
-.purchase-price {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 1rem;
-}
-
-.purchase-price .currency {
-    color: #b8860b;
-    font-size: 1.5rem;
-}
-
-.btn-purchase-now {
-    background: #000;
-    border: 2px solid #ffd700;
-    padding: 10px 20px;
-    font-weight: bold;
-    color: #ffd700;
-    transition: all 0.3s;
-}
-
-.btn-purchase-now:hover {
-    background: #ffd700;
-    color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Payment methods */
-.payment-methods {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    gap: 10px;
-}
-
-.payment-method {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.payment-method:hover, .payment-method.active {
-    border-color: #ffd700;
-    background-color: rgba(255, 215, 0, 0.1);
-}
-
-.payment-method img {
-    height: 30px;
-    width: auto;
+/* Smoothly reveal properties */
+#shape-properties {
+    transition: opacity 0.3s;
 }
 
 
 
 
-
-
-
-/* Mobile optimization */
+    /* Mobile optimization */
+ /* Mobile optimization - updated responsive CSS */
 @media (max-width: 768px) {
     /* Root variables with rem for better responsiveness */
     :root {
-        --mobile-sidebar-width: 3rem;
-        --mobile-sidebar-expanded-width: 10rem;
+        --mobile-sidebar-width: 260px; /* Use full sidebar width */
         --header-height: 3.75rem;
         --footer-height: 3.125rem;
         --mobile-controls-height: 6.25rem;
         --mobile-breakpoint: 768px;
     }
     
-    /* Compact sidebar in collapsed state */
+    /* Sidebar positioning and visibility */
     .design-sidebar {
         width: var(--mobile-sidebar-width);
-        transform: translateX(0);
-        transition: width 0.3s ease, transform 0.3s ease;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        overflow: visible; /* Allow expanded content to overflow */
-        position: absolute;
+        position: fixed; /* Fixed position instead of absolute */
         height: 100%;
         z-index: 100;
-        background-color: rgba(248, 249, 250, 0.95);
-        backdrop-filter: blur(5px);
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        transform: translateX(0); /* Start visible */
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* Allow scrolling within sidebar */
     }
     
-    /* Make sidebar collapsible completely when needed */
+    /* Simple collapsed state - just move off-screen */
     .design-sidebar.collapsed {
-        transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
+        transform: translateX(-100%);
     }
     
-    /* Handle expanded state */
-    .design-sidebar.expanded {
-        width: var(--mobile-sidebar-expanded-width);
-        background-color: rgba(248, 249, 250, 0.9);
-    }
-    
-    /* Simplify tabs to icon-only in collapsed state */
-    .design-sidebar:not(.expanded) .design-tabs a span {
-        display: none;
-    }
-    
-    .design-sidebar:not(.expanded) .design-tabs a i {
-        font-size: 20px;
-        margin-bottom: 0;
-    }
-    
-    .design-sidebar:not(.expanded) .design-tabs a {
-        padding: 8px 4px;
-    }
-    
-    /* Hide sidebar content when collapsed */
-    .design-sidebar:not(.expanded) .sidebar-content {
-        opacity: 0;
-        pointer-events: none;
-    }
-    
-    /* Show sidebar content when expanded */
-    .design-sidebar.expanded .sidebar-content {
+    /* Ensure sidebar content is visible when sidebar is open */
+    .design-sidebar:not(.collapsed) .sidebar-content,
+    .design-sidebar:not(.collapsed) .sidebar-nav {
         opacity: 1;
-        pointer-events: auto;
-        transition: opacity 0.3s ease;
+        visibility: visible;
+        display: block;
     }
     
-    /* Adjust canvas to use available space */
-    .canvas-container {
-        margin-left: var(--mobile-sidebar-width);
-        width: calc(100% - var(--mobile-sidebar-width));
-        transition: margin-left 0.3s ease, width 0.3s ease;
+    /* Remove expanded state completely */
+    .design-sidebar.expanded {
+        width: var(--mobile-sidebar-width); /* Same width as normal */
     }
     
-    /* When sidebar is collapsed, give full width to canvas */
-    .design-sidebar.collapsed ~ .canvas-container {
-        margin-left: 0;
+    /* Make sure tabs are visible */
+    .design-tabs {
+        display: flex;
         width: 100%;
     }
     
-    /* When sidebar is expanded, push canvas further */
-    .design-sidebar.expanded ~ .canvas-container {
-        margin-left: var(--mobile-sidebar-expanded-width);
-        width: calc(100% - var(--mobile-sidebar-expanded-width));
-        background: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.15) 0,
-            rgba(255, 255, 255, 0.15) var(--mobile-sidebar-expanded-width),
-            transparent var(--mobile-sidebar-expanded-width),
-            transparent 100%
-        );
+    .design-tabs li {
+        flex: 1;
     }
     
-    /* Improved toggle button for sidebar */
+    /* Ensure tab text is always visible */
+    .design-tabs a span {
+        display: inline !important;
+    }
+    
+    /* Toggle button positioning */
     .btn-toggle-sidebar {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000;
+        width: 2rem;
+        height: 4rem;
+        border-radius: 0 1.5625rem 1.5625rem 0;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-left: none;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+        padding: 0;
         display: flex !important;
         align-items: center;
         justify-content: center;
-        position: fixed;
-        left: calc(var(--mobile-sidebar-width) - 0.9375rem);
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 101;
-        width: 1.75rem;
-        height: 3.125rem;
-        border-radius: 0 1.5625rem 1.5625rem 0;
-        background-color: rgba(248, 249, 250, 0.9);
-        border: 1px solid #dee2e6;
-        border-left: none;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        padding: 0;
+        left: 0; /* Start at left edge */
         transition: left 0.3s ease;
     }
     
-    /* Position toggle button properly based on sidebar state */
-    .design-sidebar.collapsed ~ .btn-toggle-sidebar {
-        left: 0;
+    /* Move toggle button when sidebar is visible */
+    .design-sidebar:not(.collapsed) ~ .btn-toggle-sidebar {
+        left: var(--mobile-sidebar-width);
     }
     
-    .design-sidebar.expanded ~ .btn-toggle-sidebar {
-        left: calc(var(--mobile-sidebar-expanded-width) - 0.9375rem);
+    /* Canvas container should use full width when sidebar is collapsed */
+    .canvas-container {
+        margin-left: 0;
+        width: 100%;
+        transition: margin-left 0.3s ease, width 0.3s ease;
     }
     
-    /* Sidebar content styling with rem units */
-    .sidebar-content .form-control,
-    .sidebar-content .form-select,
-    .sidebar-content .btn {
-        font-size: 0.8125rem;
-        padding: 0.25rem 0.4rem;
-        height: auto;
+    /* When sidebar is visible, adjust canvas */
+    .design-sidebar:not(.collapsed) ~ .canvas-container {
+        margin-left: var(--mobile-sidebar-width);
+        width: calc(100% - var(--mobile-sidebar-width));
     }
     
-    .sidebar-content .input-group {
-        height: auto;
-    }
-    
-    .sidebar-content .form-label {
-        font-size: 0.75rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .sidebar-content p, 
-    .sidebar-content .small,
-    .sidebar-content .text-muted {
-        font-size: 0.75rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .control-section h3 {
-        font-size: 0.8125rem;
-        margin-bottom: 0.375rem;
-        padding-bottom: 0.25rem;
-    }
-    
-    .color-swatch {
-        width: 1.5rem;
-        height: 1.5rem;
-    }
-    
-    .variant-option {
-        width: 2rem;
-        height: 2rem;
-    }
-    
-    .control-section {
-        margin-bottom: 1rem;
-    }
-    
-    .control-row {
-        margin-bottom: 0.375rem;
-        gap: 0.375rem;
-    }
-    
-    .sidebar-content .btn-group .btn {
-        padding: 0.2rem 0.3rem;
-    }
-    
-    .sidebar-content .btn-icon {
-        width: 1.75rem;
-        height: 1.75rem;
-    }
-    
-    /* Reorganize canvas controls for mobile with rem units */
+    /* Canvas controls for mobile */
     .canvas-controls {
         position: fixed;
-        bottom: 0.625rem;
-        right: 0.625rem;
+        bottom: 1rem;
+        right: 1rem;
         left: auto;
         transform: none;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(5px);
         padding: 0.5rem;
         border-radius: 0.5rem;
-        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
         max-width: 3.125rem;
         max-height: 80vh;
         overflow-y: auto;
+        z-index: 100;
     }
     
+    /* Vertical layout for canvas control groups */
     .canvas-controls-group {
         display: flex;
         flex-direction: column;
@@ -665,9 +652,8 @@
         margin-bottom: 0.25rem;
     }
     
-    /* Add a toggle for canvas controls on mobile with rem units */
+    /* Canvas controls toggle button */
     .canvas-controls-toggle {
-        display: block;
         position: fixed;
         right: 0.625rem;
         bottom: 0.625rem;
@@ -675,14 +661,14 @@
         height: 3.125rem;
         background-color: white;
         border-radius: 50%;
-        box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.2);
+        box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
         z-index: 102;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
-    /* Collapse pan controls for better space use with rem units */
+    /* Pan controls visibility */
     .pan-controls {
         display: none;
     }
@@ -694,69 +680,55 @@
         gap: 0.125rem;
     }
     
-    .pan-btn {
-        width: 1.875rem;
-        height: 1.875rem;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* Touch-friendly buttons with rem units */
+    /* Larger, more touch-friendly buttons */
     .btn-icon {
-        min-width: 2.5rem;
-        min-height: 2.5rem;
+        min-width: 2.8rem;
+        min-height: 2.8rem;
+        font-size: 1.2rem;
     }
     
-    /* Fullscreen mode styles */
-    .fullscreen-mode .design-sidebar {
-        transform: translateX(calc(-1 * var(--mobile-sidebar-width)));
-    }
-    
-    .fullscreen-mode .canvas-container {
-        margin-left: 0;
-        width: 100%;
-    }
-    
-    /* Add this button to the original controls */
-    .btn-fullscreen {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .badge {
-   display: none;
-    }
-    
-    /* Enhanced tooltip for mobile with rem units */
+    /* Enhanced tooltip */
     .mobile-tooltip {
         position: fixed;
         bottom: 4.375rem;
         left: 50%;
         transform: translateX(-50%);
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.8);
         color: white;
-        padding: 0.375rem 0.75rem;
+        padding: 0.5rem 1rem;
         border-radius: 0.25rem;
         font-size: 0.875rem;
-        z-index: 1000;
+        z-index: 1500;
         pointer-events: none;
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        max-width: 80%;
+        text-align: center;
     }
     
     .mobile-tooltip.visible {
         opacity: 1;
     }
+    
+    /* Hide badge on mobile */
+    .badge {
+        display: none;
+    }
+    
+    /* Make sure active tab content is visible */
+    .tab-content.active {
+        display: block !important;
+    }
+    
+    /* Form controls sizing */
+    .sidebar-content .form-control,
+    .sidebar-content .form-select,
+    .sidebar-content .btn {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.5rem;
+    }
 }
-
-
-
-
-
-
 
 
 </style>
@@ -776,10 +748,16 @@
 
 
 <!-- Hidden fields for pay-per-design checks -->
-<input type="hidden" id="template-requires-purchase" value="{% if template.is_premium and not user|has_purchased:template.id %}true{% else %}false{% endif %}">
+<input type="hidden" id="template-requires-purchase"
+    value="{% if template.is_premium and not user|has_purchased:template.id %}true{% else %}false{% endif %}">
 <input type="hidden" id="template-id" value="{% if template %}{{ template.id }}{% endif %}">
 <input type="hidden" id="template-name" value="{% if template %}{{ template.name }}{% endif %}">
-<input type="hidden" id="template-image" value="{% if template %}{{ template.preview_image.url }}{% endif %}"> 
+
+{% if template and template.preview_image and template.preview_image.name %}
+    <input type="hidden" id="template-image" value="{{ template.preview_image.url }}">
+{% else %}
+    <input type="hidden" id="template-image" value="">
+{% endif %}
 
 
 
@@ -816,9 +794,9 @@
     <div class="editor-container">
         <!-- Toggle sidebar button for mobile -->
         <button class="btn btn-toggle-sidebar" id="toggle-sidebar">
-            <i class="fas fa-bars"></i>
+            <i class="fas fa-chevron-left"></i>
         </button>
-        
+
         <!-- Sidebar -->
         <div class="design-sidebar" id="design-sidebar">
             <div class="sidebar-nav">
@@ -839,6 +817,14 @@
                         <a href="#" data-target="tab-product">
                             <i class="fas fa-tshirt"></i>
                             <span>Product</span>
+                        </a>
+                    </li>
+
+                    <!-- Add this as a new tab in the sidebar-nav section -->
+                    <li>
+                        <a href="#" data-target="tab-shapes">
+                            <i class="fas fa-shapes"></i>
+                            <span>Shapes</span>
                         </a>
                     </li>
                 </ul>
@@ -933,7 +919,8 @@
                                     <button id="italic-btn" class="btn btn-outline-secondary btn-icon" title="Italic">
                                         <i class="fas fa-italic"></i>
                                     </button>
-                                    <button id="underline-btn" class="btn btn-outline-secondary btn-icon" title="Underline">
+                                    <button id="underline-btn" class="btn btn-outline-secondary btn-icon"
+                                        title="Underline">
                                         <i class="fas fa-underline"></i>
                                     </button>
                                 </div>
@@ -943,13 +930,16 @@
                                     <i class="fas fa-align-left"></i> Align
                                 </label>
                                 <div class="btn-group w-100">
-                                    <button id="align-left-btn" class="btn btn-outline-secondary btn-icon" title="Align Left">
+                                    <button id="align-left-btn" class="btn btn-outline-secondary btn-icon"
+                                        title="Align Left">
                                         <i class="fas fa-align-left"></i>
                                     </button>
-                                    <button id="align-center-btn" class="btn btn-outline-secondary btn-icon" title="Align Center">
+                                    <button id="align-center-btn" class="btn btn-outline-secondary btn-icon"
+                                        title="Align Center">
                                         <i class="fas fa-align-center"></i>
                                     </button>
-                                    <button id="align-right-btn" class="btn btn-outline-secondary btn-icon" title="Align Right">
+                                    <button id="align-right-btn" class="btn btn-outline-secondary btn-icon"
+                                        title="Align Right">
                                         <i class="fas fa-align-right"></i>
                                     </button>
                                 </div>
@@ -1032,6 +1022,145 @@
                         </div>
                     </div>
                 </div>
+
+
+<!-- Updated Shapes Tab with Improved UX -->
+<!-- Shapes Tab -->
+<div class="tab-content" id="tab-shapes">
+    <!-- Shape Type Selection -->
+    <div class="control-section">
+        <h3><i class="fas fa-shapes"></i> Add Shape</h3>
+        <div class="shape-selector mb-3">
+            <div class="row g-2">
+                <div class="col-6">
+                    <div id="add-rect-btn" class="shape-card">
+                        <div class="shape-icon"><i class="fas fa-square"></i></div>
+                        <div class="shape-name">Rectangle</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div id="add-circle-btn" class="shape-card">
+                        <div class="shape-icon"><i class="fas fa-circle"></i></div>
+                        <div class="shape-name">Circle</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shape Properties - ALWAYS VISIBLE -->
+    <div class="control-section">
+        <h3><i class="fas fa-palette"></i> Shape Appearance</h3>
+        <!-- Fill color with presets -->
+        <div class="control-row">
+            <div class="control-item">
+                <label class="form-label">Fill Color</label>
+                <input type="color" id="shape-fill-color" class="form-control form-control-color w-100" value="#3498db">
+            </div>
+            <div class="control-item">
+                <label class="form-label">Presets</label>
+                <div class="d-flex flex-wrap gap-1">
+                    <div class="color-swatch" style="background-color: #3498db" data-color="#3498db"></div>
+                    <div class="color-swatch" style="background-color: #e74c3c" data-color="#e74c3c"></div>
+                    <div class="color-swatch" style="background-color: #2ecc71" data-color="#2ecc71"></div>
+                    <div class="color-swatch" style="background-color: #f1c40f" data-color="#f1c40f"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stroke color and width -->
+        <div class="control-row mt-3">
+            <div class="control-item">
+                <label class="form-label">Stroke Color</label>
+                <input type="color" id="shape-stroke-color" class="form-control form-control-color w-100"
+                    value="#2980b9">
+            </div>
+            <div class="control-item">
+                <label for="shape-stroke-width" class="form-label">Width</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shape-stroke-width-value" min="0" max="20" value="2">
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opacity slider -->
+        <div class="control-row mt-3">
+            <div class="control-item">
+                <label for="shape-opacity" class="form-label">Opacity</label>
+                <input type="range" class="form-range" id="shape-opacity" min="0" max="1" step="0.05" value="1">
+            </div>
+            <div class="control-item text-center">
+                <label class="form-label">Value</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shape-opacity-value" min="0" max="100" value="100">
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rectangle Properties -->
+    <div id="rectangle-controls" class="control-section">
+        <h3><i class="fas fa-square"></i> Rectangle Properties</h3>
+        <div class="control-row">
+            <div class="control-item">
+                <label for="rect-width" class="form-label">Width</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="rect-width" min="10" max="500" value="150">
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+            <div class="control-item">
+                <label for="rect-height" class="form-label">Height</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="rect-height" min="10" max="500" value="100">
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-row mt-3">
+            <div class="control-item">
+                <label for="rect-radius" class="form-label">Corner Radius</label>
+                <input type="range" class="form-range" id="rect-radius" min="0" max="100" value="0">
+            </div>
+            <div class="control-item text-center">
+                <label class="form-label">Value</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="rect-radius-value" min="0" max="100" value="0">
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Circle Properties -->
+    <div id="circle-controls" class="control-section" style="display: none;">
+        <h3><i class="fas fa-circle"></i> Circle Properties</h3>
+        <div class="control-row">
+            <div class="control-item">
+                <label for="circle-radius" class="form-label">Radius</label>
+                <input type="range" class="form-range" id="circle-radius" min="10" max="200" value="50">
+            </div>
+            <div class="control-item text-center">
+                <label class="form-label">Value</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="circle-radius-value" min="10" max="200" value="50">
+                    <span class="input-group-text">px</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete button -->
+    <button id="delete-shape-btn" class="btn btn-outline-danger w-100 mt-3">
+        <i class="fas fa-trash me-2"></i> Delete Shape
+    </button>
+</div>
+
+
+
             </div>
         </div>
 
@@ -1047,7 +1176,7 @@
                 <canvas id="design-canvas"></canvas>
             </div>
         </div>
-        
+
         <!-- Floating Canvas Controls -->
         <div class="canvas-controls">
             <!-- Undo/Redo Controls -->
@@ -1059,7 +1188,7 @@
                     <i class="fas fa-redo"></i>
                 </button>
             </div>
-            
+
             <!-- Zoom Controls -->
             <div class="canvas-controls-group">
                 <button id="zoom-in-btn" class="btn btn-outline-secondary btn-icon" title="Zoom In">
@@ -1072,7 +1201,7 @@
                     <i class="fas fa-expand"></i>
                 </button>
             </div>
-            
+
             <!-- Object Controls -->
             <div class="canvas-controls-group">
                 <button id="delete-btn" class="btn btn-outline-danger btn-icon" title="Delete Selected Object">
@@ -1090,37 +1219,41 @@
             </div>
 
             <!-- Add this to your canvas controls section -->
-<div class="canvas-controls-group">
-    <div class="pan-controls">
-        <button id="pan-up-left-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Up-Left">
-            <i class="fas fa-arrow-up" style="transform: rotate(-45deg);"></i>
-        </button>
-        <button id="pan-up-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Up">
-            <i class="fas fa-arrow-up"></i>
-        </button>
-        <button id="pan-up-right-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Up-Right">
-            <i class="fas fa-arrow-up" style="transform: rotate(45deg);"></i>
-        </button>
-        <button id="pan-left-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Left">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <button id="pan-center-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Center Canvas">
-            <i class="fas fa-bullseye"></i>
-        </button>
-        <button id="pan-right-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Right">
-            <i class="fas fa-arrow-right"></i>
-        </button>
-        <button id="pan-down-left-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Down-Left">
-            <i class="fas fa-arrow-down" style="transform: rotate(45deg);"></i>
-        </button>
-        <button id="pan-down-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Down">
-            <i class="fas fa-arrow-down"></i>
-        </button>
-        <button id="pan-down-right-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Down-Right">
-            <i class="fas fa-arrow-down" style="transform: rotate(-45deg);"></i>
-        </button>
-    </div>
-</div>
+            <div class="canvas-controls-group">
+                <div class="pan-controls">
+                    <button id="pan-up-left-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Up-Left">
+                        <i class="fas fa-arrow-up" style="transform: rotate(-45deg);"></i>
+                    </button>
+                    <button id="pan-up-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Up">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button id="pan-up-right-btn" class="btn btn-outline-secondary btn-icon pan-btn"
+                        title="Pan Up-Right">
+                        <i class="fas fa-arrow-up" style="transform: rotate(45deg);"></i>
+                    </button>
+                    <button id="pan-left-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Left">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button id="pan-center-btn" class="btn btn-outline-secondary btn-icon pan-btn"
+                        title="Center Canvas">
+                        <i class="fas fa-bullseye"></i>
+                    </button>
+                    <button id="pan-right-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Right">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button id="pan-down-left-btn" class="btn btn-outline-secondary btn-icon pan-btn"
+                        title="Pan Down-Left">
+                        <i class="fas fa-arrow-down" style="transform: rotate(45deg);"></i>
+                    </button>
+                    <button id="pan-down-btn" class="btn btn-outline-secondary btn-icon pan-btn" title="Pan Down">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <button id="pan-down-right-btn" class="btn btn-outline-secondary btn-icon pan-btn"
+                        title="Pan Down-Right">
+                        <i class="fas fa-arrow-down" style="transform: rotate(-45deg);"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1199,64 +1332,68 @@ No Template
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize the canvas
-    const canvas = new fabric.Canvas('design-canvas', {
-        width: {{ product_type.default_width }},
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize the canvas
+        const canvas = new fabric.Canvas('design-canvas', {
+            width: {{ product_type.default_width }},
         height: {{ product_type.default_height }},
         backgroundColor: 'white',
         preserveObjectStacking: true
-    });
+        });
+
+    // Store canvas in window for access by other functions
+    window.canvas = canvas;
 
     // Keep track of current zoom level
     let zoomLevel = 1;
-    
+    window.zoomLevel = zoomLevel;
+
     // Variables to track the currently selected object
     let selectedObject = null;
-    
+
     // History management for undo/redo
     const history = {
         canvasState: [],
         currentStateIndex: -1,
         undoButton: document.getElementById('undo-btn'),
         redoButton: document.getElementById('redo-btn'),
-        
+
         saveState() {
             // Discard states after the current one when a new action is performed
             if (this.currentStateIndex < this.canvasState.length - 1) {
                 this.canvasState = this.canvasState.slice(0, this.currentStateIndex + 1);
             }
-            
+
             // Save current state
             this.canvasState.push(JSON.stringify(canvas.toJSON()));
             this.currentStateIndex = this.canvasState.length - 1;
-            
+
             // Update buttons state
             this.updateButtonsState();
         },
-        
+
         undo() {
             if (this.currentStateIndex > 0) {
                 this.currentStateIndex--;
                 this.loadState();
             }
         },
-        
+
         redo() {
             if (this.currentStateIndex < this.canvasState.length - 1) {
                 this.currentStateIndex++;
                 this.loadState();
             }
         },
-        
+
         loadState() {
-            canvas.loadFromJSON(this.canvasState[this.currentStateIndex], function() {
+            canvas.loadFromJSON(this.canvasState[this.currentStateIndex], function () {
                 canvas.renderAll();
             });
-            
+
             this.updateButtonsState();
         },
-        
+
         updateButtonsState() {
             // Enable/disable undo button
             if (this.currentStateIndex > 0) {
@@ -1264,7 +1401,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 this.undoButton.classList.add('disabled');
             }
-            
+
             // Enable/disable redo button
             if (this.currentStateIndex < this.canvasState.length - 1) {
                 this.redoButton.classList.remove('disabled');
@@ -1273,16 +1410,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     };
-    
+
     // Initialize history with current state
     history.saveState();
-    
+
     // Bind undo/redo buttons
-    document.getElementById('undo-btn').addEventListener('click', function() {
+    document.getElementById('undo-btn').addEventListener('click', function () {
         history.undo();
     });
-    
-    document.getElementById('redo-btn').addEventListener('click', function() {
+
+    document.getElementById('redo-btn').addEventListener('click', function () {
         history.redo();
     });
 
@@ -1290,92 +1427,92 @@ document.addEventListener('DOMContentLoaded', function () {
     const mobileTooltip = document.createElement('div');
     mobileTooltip.className = 'mobile-tooltip';
     document.body.appendChild(mobileTooltip);
-    
+
     // Check if we're on mobile
     const isMobile = window.innerWidth <= 768;
-    
+
     // Get elements for mobile optimization
     const sidebar = document.getElementById('design-sidebar');
     const toggleSidebarBtn = document.getElementById('toggle-sidebar');
     const canvasContainer = document.querySelector('.canvas-container');
     const tabLinks = document.querySelectorAll('.design-tabs a');
-    
+
     // Initialize mobile view if needed
     if (isMobile) {
         // Add mobile-specific elements
         setupMobileControls();
-        
+
         // Update toggle button icon
         if (toggleSidebarBtn) {
             toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
         }
-        
+
         // Set initial states
         sidebar.classList.add('collapsed');
         document.body.classList.add('mobile-view');
     }
-    
-    // Enhanced sidebar toggle for mobile
+
+    // Simplified sidebar toggle with only two states: open or closed
     if (toggleSidebarBtn) {
-        toggleSidebarBtn.addEventListener('click', function() {
+        toggleSidebarBtn.addEventListener('click', function () {
+            sidebar.classList.toggle('collapsed');
+
+            // Update button icon based on current state
             if (sidebar.classList.contains('collapsed')) {
-                // Expand from hidden
-                sidebar.classList.remove('collapsed');
-                sidebar.classList.remove('expanded');
+                this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                showMobileTooltip('Sidebar hidden');
+            } else {
                 this.innerHTML = '<i class="fas fa-chevron-left"></i>';
                 showMobileTooltip('Sidebar visible');
-            } else if (sidebar.classList.contains('expanded')) {
-                // Collapse from expanded
-                sidebar.classList.remove('expanded');
-                this.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                showMobileTooltip('Sidebar collapsed');
-            } else {
-                // Toggle between normal and expanded
-                sidebar.classList.toggle('expanded');
-                if (sidebar.classList.contains('expanded')) {
-                    this.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
-                    showMobileTooltip('Sidebar expanded');
-                } else {
-                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                    showMobileTooltip('Sidebar collapsed');
-                }
             }
-            
-            // NEW: Adjust canvas scaling when sidebar state changes
-            if (isMobile) {
-                adjustCanvasScaling();
-            }
+
+            // Adjust canvas scaling when sidebar state changes
+            adjustCanvasScaling();
         });
     }
-    
-    // Handle tab clicks on mobile
+
+    // Handle tab clicks
     tabLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             // Normal tab activation logic
             const targetId = this.getAttribute('data-target');
-            
+
             // Deactivate all tabs and contents
             tabLinks.forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
+
             // Activate current tab and content
             this.classList.add('active');
             document.getElementById(targetId).classList.add('active');
-            
+
             // Mobile-specific behavior
-            if (isMobile && !sidebar.classList.contains('expanded')) {
+            if (isMobile && sidebar.classList.contains('collapsed')) {
                 // When sidebar is collapsed, expand it when a tab is clicked
-                sidebar.classList.add('expanded');
+                sidebar.classList.remove('collapsed');
                 if (toggleSidebarBtn) {
-                    toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>';
+                    toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
                 }
-                
+
                 // Show tooltip for what tab was opened
                 const tabName = this.querySelector('span').textContent;
                 showMobileTooltip(`${tabName} panel opened`);
             }
         });
     });
+
+    // Enhanced tooltip function - displays faster and for a shorter duration
+    function showMobileTooltip(message) {
+        mobileTooltip.textContent = message;
+        mobileTooltip.classList.add('visible');
+
+        // Hide after 1.5 seconds (faster feedback)
+        setTimeout(() => {
+            mobileTooltip.classList.remove('visible');
+        }, 1500);
+    }
+
+    // Make tooltip function available to window
+    window.showMobileTooltip = showMobileTooltip;
 
     // Add text to canvas
     const addTextBtn = document.getElementById('add-text-btn');
@@ -1399,7 +1536,7 @@ document.addEventListener('DOMContentLoaded', function () {
         canvas.setActiveObject(text);
         text.enterEditing();
         canvas.renderAll();
-        
+
         // Save state for undo/redo
         history.saveState();
 
@@ -1408,14 +1545,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update the controls
         updateTextControls(text);
-        
-        // NEW: Auto-collapse sidebar on very small screens after adding text
+
+        // Auto-collapse sidebar on very small screens after adding text
         if (isMobile && window.innerWidth < 480) {
             setTimeout(() => {
-                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
                 if (toggleSidebarBtn) {
                     toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
                 }
+                adjustCanvasScaling();
             }, 500);
         }
     });
@@ -1439,8 +1577,8 @@ document.addEventListener('DOMContentLoaded', function () {
         fontSizeValue.value = this.value;
         updateTextProperty('fontSize', parseInt(this.value));
     });
-    
-    fontSizeRange.addEventListener('change', function() {
+
+    fontSizeRange.addEventListener('change', function () {
         // Only save state when slider interaction is complete
         history.saveState();
     });
@@ -1449,8 +1587,8 @@ document.addEventListener('DOMContentLoaded', function () {
         fontSizeRange.value = this.value;
         updateTextProperty('fontSize', parseInt(this.value));
     });
-    
-    fontSizeValue.addEventListener('change', function() {
+
+    fontSizeValue.addEventListener('change', function () {
         history.saveState();
     });
 
@@ -1459,8 +1597,8 @@ document.addEventListener('DOMContentLoaded', function () {
     textColorInput.addEventListener('input', function () {
         updateTextProperty('fill', this.value);
     });
-    
-    textColorInput.addEventListener('change', function() {
+
+    textColorInput.addEventListener('change', function () {
         history.saveState();
     });
 
@@ -1613,14 +1751,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Hide loading indicator
             document.querySelector('.loading-overlay').classList.remove('active');
-            
-            // NEW: Auto-collapse sidebar on small screens after adding image
+
+            // Auto-collapse sidebar on small screens after adding image
             if (isMobile && window.innerWidth < 480) {
                 setTimeout(() => {
-                    sidebar.classList.remove('expanded');
+                    sidebar.classList.add('collapsed');
                     if (toggleSidebarBtn) {
                         toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
                     }
+                    adjustCanvasScaling();
                 }, 500);
             }
         });
@@ -1673,8 +1812,8 @@ document.addEventListener('DOMContentLoaded', function () {
     customBgColorInput.addEventListener('input', function () {
         canvas.setBackgroundColor(this.value, canvas.renderAll.bind(canvas));
     });
-    
-    customBgColorInput.addEventListener('change', function() {
+
+    customBgColorInput.addEventListener('change', function () {
         history.saveState();
     });
 
@@ -1699,66 +1838,78 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     zoomOutBtn.addEventListener('click', function () {
-        if (zoomLevel > 0.5) {
-            zoomLevel -= 0.1;
+            if (zoomLevel > 0.5) {
+                zoomLevel -= 0.1;
+                updateZoom();
+            }
+        });
+
+        zoomResetBtn.addEventListener('click', function () {
+            zoomLevel = 1;
             updateZoom();
-        }
-    });
+        });
 
-    zoomResetBtn.addEventListener('click', function () {
-        zoomLevel = 1;
-        updateZoom();
-    });
-
-    function updateZoom() {
-        canvas.setZoom(zoomLevel);
-        canvas.setWidth({{ product_type.default_width }} * zoomLevel);
+        function updateZoom() {
+            canvas.setZoom(zoomLevel);
+            canvas.setWidth({{ product_type.default_width }} * zoomLevel);
         canvas.setHeight({{ product_type.default_height }} * zoomLevel);
         canvas.renderAll();
     }
 
-    // Pan controls
-    const panStep = 50; // pixels to move per pan action
+        // Pan controls
+        const panStep = 50; // pixels to move per pan action
 
-    document.getElementById('pan-up-btn').addEventListener('click', function() {
-        canvas.relativePan(new fabric.Point(0, -panStep)); // Negative Y to move up
-        canvas.renderAll();
-    });
-
-    document.getElementById('pan-down-btn').addEventListener('click', function() {
+        document.getElementById('pan-up-btn').addEventListener('click', function () {
+            canvas.relativePan(new fabric.Point(0, -panStep)); // Negative Y to move up
+            canvas.renderAll();
+        });
+    
+    document.getElementById('pan-down-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(0, panStep)); // Positive Y to move down
         canvas.renderAll();
     });
 
-    document.getElementById('pan-left-btn').addEventListener('click', function() {
+    document.getElementById('pan-left-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(-panStep, 0)); // Negative X to move left
         canvas.renderAll();
     });
 
-    document.getElementById('pan-right-btn').addEventListener('click', function() {
+    document.getElementById('pan-right-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(panStep, 0)); // Positive X to move right
         canvas.renderAll();
     });
 
-    document.getElementById('pan-up-left-btn').addEventListener('click', function() {
+    document.getElementById('pan-up-left-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(-panStep, -panStep)); // Move up-left
         canvas.renderAll();
     });
 
-    document.getElementById('pan-up-right-btn').addEventListener('click', function() {
+    document.getElementById('pan-up-right-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(panStep, -panStep)); // Move up-right
         canvas.renderAll();
     });
 
-    document.getElementById('pan-down-left-btn').addEventListener('click', function() {
+    document.getElementById('pan-down-left-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(-panStep, panStep)); // Move down-left
         canvas.renderAll();
     });
 
-    document.getElementById('pan-down-right-btn').addEventListener('click', function() {
+    document.getElementById('pan-down-right-btn').addEventListener('click', function () {
         canvas.relativePan(new fabric.Point(panStep, panStep)); // Move down-right
         canvas.renderAll();
     });
+
+    // Center canvas button
+    document.getElementById('pan-center-btn').addEventListener('click', function () {
+        centerCanvas();
+    });
+
+    // Function to center canvas
+    function centerCanvas() {
+        canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        canvas.renderAll();
+        showMobileTooltip('Canvas centered');
+    }
 
     // Object manipulation
     const deleteBtn = document.getElementById('delete-btn');
@@ -1811,7 +1962,6 @@ document.addEventListener('DOMContentLoaded', function () {
             history.saveState();
         }
     });
-
 
     // Save design dialog
     const saveDesignBtn = document.getElementById('save-design-btn');
@@ -1904,47 +2054,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     if (data.redirect_url) {
-                    console.log("Redirect URL found:", data.redirect_url);
-                    console.log("Redirecting...");
-                    window.location.href = data.redirect_url;
-                    return;
-                } else {
-                    console.log("No redirect URL in response");
-                }
-
-                
+                        console.log("Redirect URL found:", data.redirect_url);
+                        console.log("Redirecting...");
+                        window.location.href = data.redirect_url;
+                        return;
+                    } else {
+                        console.log("No redirect URL in response");
+                    }
 
                     alert('Design saved successfully!');
                 } else {
                     alert('Error saving design: ' + data.error);
                 }
             })
+            .catch(error => {
+                document.querySelector('.loading-overlay').classList.remove('active');
+                console.error('Error:', error);
 
+                // Check if error might be related to authentication or HTML redirect
+                if (error.name === 'SyntaxError' &&
+                    error.message.includes('Unexpected token') &&
+                    error.message.includes('<!doctype')) {
 
-
-
-.catch(error => {
-    document.querySelector('.loading-overlay').classList.remove('active');
-    console.error('Error:', error);
-    
-    // Check if error might be related to authentication or HTML redirect
-    if (error.name === 'SyntaxError' && 
-        error.message.includes('Unexpected token') && 
-        error.message.includes('<!doctype')) {
-        
-        console.log("Detected login redirect, navigating to login page...");
-        const currentUrl = encodeURIComponent(window.location.href);
-        window.location.href = '/auth/login/?next=' + currentUrl;
-    } else {
-        alert('Error saving design. Please try again.');
-    }
-});
-
-
-
+                    console.log("Detected login redirect, navigating to login page...");
+                    const currentUrl = encodeURIComponent(window.location.href);
+                    window.location.href = '/auth/login/?next=' + currentUrl;
+                } else {
+                    alert('Error saving design. Please try again.');
+                }
+            });
     });
-
-
 
     // Helper function to get CSRF token
     function getCsrfToken() {
@@ -2030,25 +2169,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle object modifications
-    canvas.on('object:modified', function() {
+    canvas.on('object:modified', function () {
         history.saveState();
     });
-    
+
     // Handle keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // Undo: Ctrl+Z
         if (e.key === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
             history.undo();
             e.preventDefault();
         }
-        
+
         // Redo: Ctrl+Y or Ctrl+Shift+Z
-        if ((e.key === 'y' && (e.ctrlKey || e.metaKey)) || 
+        if ((e.key === 'y' && (e.ctrlKey || e.metaKey)) ||
             (e.key === 'z' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
             history.redo();
             e.preventDefault();
         }
-        
+
         // Only process other shortcuts if not typing in a text field
         if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
             // Delete key for delete
@@ -2061,7 +2200,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     e.preventDefault();
                 }
             }
-            
+
             // Ctrl+D for duplicate
             if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
                 const activeObject = canvas.getActiveObject();
@@ -2080,17 +2219,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     e.preventDefault();
                 }
             }
-            
+
             // Arrow keys for moving objects
             if (e.key.startsWith('Arrow')) {
                 const activeObject = canvas.getActiveObject();
                 if (activeObject) {
                     const moveStep = e.shiftKey ? 10 : 1;
-                    
-                    switch(e.key) {
-                        case 'ArrowUp':
-                            activeObject.top -= moveStep;
-                            break;
+
+                    switch (e.key) {
                         case 'ArrowUp':
                             activeObject.top -= moveStep;
                             break;
@@ -2104,19 +2240,68 @@ document.addEventListener('DOMContentLoaded', function () {
                             activeObject.left += moveStep;
                             break;
                     }
-                    
+
                     activeObject.setCoords();
                     canvas.renderAll();
-                    
+
                     if (e.shiftKey) { // Only save state on larger moves to avoid history spam
                         history.saveState();
                     }
-                    
+
                     e.preventDefault();
                 }
             }
+
+            // Toggle sidebar with Tab key
+            if (e.key === 'Tab') {
+                sidebar.classList.toggle('collapsed');
+                if (toggleSidebarBtn) {
+                    toggleSidebarBtn.innerHTML = sidebar.classList.contains('collapsed') ?
+                        '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
+                }
+                e.preventDefault();
+                adjustCanvasScaling();
+            }
         }
     });
+
+    // Optimized canvas scaling based on available space
+    function adjustCanvasScaling() {
+        // Get reference to the editor container
+        const editorContainer = document.querySelector('.editor-container');
+
+        // Calculate available space
+        let availableWidth = editorContainer.offsetWidth;
+
+        // Adjust for sidebar if it's visible
+        if (!sidebar.classList.contains('collapsed')) {
+            availableWidth -= sidebar.offsetWidth;
+        }
+
+        // Account for padding
+        availableWidth -= 40; // 20px padding on each side
+
+        // Get canvas dimensions
+        const canvasWidth = canvas.getWidth() / canvas.getZoom();
+
+        // Calculate ideal zoom level
+        let idealZoom = availableWidth / canvasWidth;
+
+        // Constrain zoom level within reasonable bounds
+        idealZoom = Math.max(0.5, Math.min(idealZoom, 1.2));
+
+        // Only apply zoom if it's different enough from current (to avoid constant small adjustments)
+        if (Math.abs(zoomLevel - idealZoom) > 0.05) {
+            zoomLevel = idealZoom;
+            canvas.setZoom(zoomLevel);
+            canvas.setWidth({{ product_type.default_width }} * zoomLevel);
+        canvas.setHeight({{ product_type.default_height }} * zoomLevel);
+    canvas.renderAll();
+            }
+        }
+
+    // Make adjustCanvasScaling available globally
+    window.adjustCanvasScaling = adjustCanvasScaling;
 
     // Load initial canvas state if available
     const initialCanvasJSON = document.getElementById('initial-canvas-json');
@@ -2125,18 +2310,18 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Loading template from JSON");
             // Parse the JSON string into an object first
             const canvasData = JSON.parse(initialCanvasJSON.value);
-            
+
             // Now load the JSON object into the canvas
-            canvas.loadFromJSON(canvasData, function() {
+            canvas.loadFromJSON(canvasData, function () {
                 canvas.renderAll();
                 console.log("Canvas template loaded successfully");
-                
+
                 // Select first object if available
                 if (canvas.getObjects().length > 0) {
                     canvas.setActiveObject(canvas.getObjects()[0]);
                     canvas.renderAll();
                 }
-                
+
                 // Initialize history with the loaded template
                 history.saveState();
             });
@@ -2152,43 +2337,33 @@ document.addEventListener('DOMContentLoaded', function () {
         // Product image is loaded
         console.log("Product image found");
     }
-    
+
     // Add responsiveness to canvas container
-    window.addEventListener('resize', function() {
-        adjustCanvasContainerSize();
-        
+    window.addEventListener('resize', function () {
         // Check if mobile view should be enabled/disabled
         const isMobileNow = window.innerWidth <= 768;
-        
+
         if (isMobileNow && !document.body.classList.contains('mobile-view')) {
             document.body.classList.add('mobile-view');
+            sidebar.classList.add('collapsed');
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            }
             setupMobileControls();
         } else if (!isMobileNow && document.body.classList.contains('mobile-view')) {
             document.body.classList.remove('mobile-view');
-            
-            // Reset sidebar state
-            sidebar.classList.remove('expanded');
+
+            // Reset sidebar state if coming from mobile
             sidebar.classList.remove('collapsed');
-            
-            // Reset canvas container
-            canvasContainer.style.marginLeft = '';
-            canvasContainer.style.width = '';
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            }
         }
-        
-        // NEW: Adjust canvas scaling when window is resized
-        adjustCanvasScaling();
+
+        // Adjust canvas scaling when window is resized
+        setTimeout(adjustCanvasScaling, 300);
     });
-    
-    function adjustCanvasContainerSize() {
-        const canvasContainer = document.querySelector('.canvas-container');
-        const editorContainer = document.querySelector('.editor-container');
-        
-        if (canvasContainer && editorContainer) {
-            // Make sure canvas container adapts to available space
-            console.log("Adjusting canvas container size");
-        }
-    }
-    
+
     // Setup mobile-specific controls
     function setupMobileControls() {
         // Create fullscreen toggle button if it doesn't exist
@@ -2198,7 +2373,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fullscreenBtn.className = 'btn btn-outline-secondary btn-icon btn-fullscreen';
             fullscreenBtn.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
             fullscreenBtn.title = 'Toggle Fullscreen';
-            
+
             // Add to canvas controls
             const canvasControls = document.querySelector('.canvas-controls');
             if (canvasControls) {
@@ -2207,36 +2382,39 @@ document.addEventListener('DOMContentLoaded', function () {
                 newGroup.appendChild(fullscreenBtn);
                 canvasControls.appendChild(newGroup);
             }
-            
+
             // Add fullscreen toggle functionality
-            fullscreenBtn.addEventListener('click', function() {
+            fullscreenBtn.addEventListener('click', function () {
                 document.body.classList.toggle('fullscreen-mode');
-                sidebar.classList.toggle('collapsed');
-                
+
                 if (document.body.classList.contains('fullscreen-mode')) {
+                    sidebar.classList.add('collapsed');
                     this.innerHTML = '<i class="fas fa-compress-arrows-alt"></i>';
                     showMobileTooltip('Fullscreen mode');
                 } else {
                     this.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
                     showMobileTooltip('Normal mode');
                 }
+
+                // Adjust canvas scaling after toggling fullscreen
+                setTimeout(adjustCanvasScaling, 300);
             });
         }
-        
-        // Create pan controls toggle
+
+        // Create pan controls toggle if needed
         const panControls = document.querySelector('.pan-controls');
-        if (panControls) {
+        if (panControls && !document.getElementById('pan-toggle-btn')) {
             const panToggleBtn = document.createElement('button');
             panToggleBtn.id = 'pan-toggle-btn';
             panToggleBtn.className = 'btn btn-outline-secondary btn-icon';
             panToggleBtn.innerHTML = '<i class="fas fa-arrows-alt"></i>';
             panToggleBtn.title = 'Toggle Pan Controls';
-            
+
             // Insert before the pan controls
             panControls.parentNode.insertBefore(panToggleBtn, panControls);
-            
+
             // Toggle pan controls visibility
-            panToggleBtn.addEventListener('click', function() {
+            panToggleBtn.addEventListener('click', function () {
                 panControls.classList.toggle('active');
                 if (panControls.classList.contains('active')) {
                     showMobileTooltip('Pan controls visible');
@@ -2245,23 +2423,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-        
-        // Add canvas controls toggle
+
+        // Add canvas controls toggle if needed
         const canvasControls = document.querySelector('.canvas-controls');
-        if (canvasControls) {
+        if (canvasControls && !document.querySelector('.canvas-controls-toggle')) {
             const canvasControlsToggle = document.createElement('button');
             canvasControlsToggle.className = 'canvas-controls-toggle';
             canvasControlsToggle.innerHTML = '<i class="fas fa-sliders-h"></i>';
             document.body.appendChild(canvasControlsToggle);
-            
-            // Store original position to restore later
-            const originalPosition = {
-                bottom: canvasControls.style.bottom,
-                right: canvasControls.style.right
-            };
-            
+
             // Toggle canvas controls visibility
-            canvasControlsToggle.addEventListener('click', function() {
+            canvasControlsToggle.addEventListener('click', function () {
                 if (canvasControls.style.display === 'none') {
                     canvasControls.style.display = 'flex';
                     this.innerHTML = '<i class="fas fa-times"></i>';
@@ -2273,14 +2445,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-        
-        // Add touch gesture support for panning
-        if (canvasContainer) {
+
+        // Add touch gesture support for panning if not already added
+        if (canvasContainer && !canvasContainer.getAttribute('data-touch-enabled')) {
+            canvasContainer.setAttribute('data-touch-enabled', 'true');
+
             let touching = false;
             let lastX = 0;
             let lastY = 0;
-            
-            canvasContainer.addEventListener('touchstart', function(e) {
+
+            canvasContainer.addEventListener('touchstart', function (e) {
                 // Only if we have 2 fingers (to distinguish from object manipulation)
                 if (e.touches.length === 2) {
                     touching = true;
@@ -2289,105 +2463,430 @@ document.addEventListener('DOMContentLoaded', function () {
                     e.preventDefault(); // Prevent default to avoid scrolling
                 }
             });
-            
-            canvasContainer.addEventListener('touchmove', function(e) {
+
+            canvasContainer.addEventListener('touchmove', function (e) {
                 if (touching && e.touches.length === 2) {
                     // Calculate average position of both touches
                     const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                     const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                    
+
                     // Calculate delta
                     const deltaX = currentX - lastX;
                     const deltaY = currentY - lastY;
-                    
+
                     // Pan the canvas
                     canvas.relativePan(new fabric.Point(deltaX, deltaY));
-                    
+
                     // Update last positions
                     lastX = currentX;
                     lastY = currentY;
-                    
+
                     e.preventDefault(); // Prevent default to avoid scrolling
                 }
             });
-            
-            canvasContainer.addEventListener('touchend', function() {
+
+            canvasContainer.addEventListener('touchend', function () {
                 touching = false;
             });
-            
-            // NEW: Add double-tap to zoom for mobile
+
+            // Add double-tap to zoom for mobile
             let lastTapTime = 0;
-            
-            canvasContainer.addEventListener('touchend', function(e) {
+
+            canvasContainer.addEventListener('touchend', function (e) {
                 const currentTime = new Date().getTime();
                 const tapLength = currentTime - lastTapTime;
-                
+
                 if (tapLength < 500 && tapLength > 0) {
                     // Double tap detected
                     e.preventDefault();
-                    
+
                     // Toggle between zoom levels
                     if (zoomLevel <= 1) {
                         zoomLevel = 1.5;
                     } else {
                         zoomLevel = 1;
                     }
-                    
+
                     updateZoom();
                     showMobileTooltip(zoomLevel > 1 ? 'Zoomed in' : 'Zoom reset');
                 }
-                
+
                 lastTapTime = currentTime;
             });
         }
+
+        // Show initial help tooltip
+        showMobileTooltip('Tap to edit, use two fingers to pan');
     }
-    
-    // NEW: Dynamic canvas scaling based on available space
-    function adjustCanvasScaling() {
-        if (!isMobile) return; // Only apply on mobile
-        
-        // Get available space for canvas
-        const editorContainer = document.querySelector('.editor-container');
-        const sidebarWidth = sidebar.getBoundingClientRect().width;
-        const availableWidth = editorContainer.offsetWidth - sidebarWidth - 20; // Subtract padding
-        
-        // Calculate appropriate zoom level based on available space
-        const canvasWidth = {{ product_type.default_width }};
-        const idealZoom = availableWidth / canvasWidth;
-        
-        // Apply zoom if it's in a reasonable range (0.5 to 1.0)
-        if (idealZoom >= 0.5 && idealZoom <= 1.0) {
-            zoomLevel = idealZoom;
-            updateZoom();
+
+    // Initialize with proper canvas scaling and tooltip
+    setTimeout(function () {
+        adjustCanvasScaling();
+
+        // Show welcome tooltip on mobile
+        if (isMobile) {
+            showMobileTooltip('Welcome to the design editor');
         }
-    }
-    
-    // Show a temporary mobile tooltip
-    function showMobileTooltip(message) {
-        mobileTooltip.textContent = message;
-        mobileTooltip.classList.add('visible');
-        
-        // Hide after 2 seconds
-        setTimeout(() => {
-            mobileTooltip.classList.remove('visible');
-        }, 2000);
-    }
-    
-    // Call once on init
-    adjustCanvasContainerSize();
-    
-    // NEW: Initial canvas scaling for mobile
-    if (isMobile) {
-        setTimeout(adjustCanvasScaling, 500); // Slight delay to ensure everything is loaded
-    }
-});
+    }, 500);
+                     });
+
 
 
 </script>
 
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+            // Get reference to canvas from the main script
+            const canvas = window.canvas;
+
+            // Reference to history and helper functions
+            const history = window.history;
+            const showMobileTooltip = window.showMobileTooltip;
+
+            // Shape buttons
+            const addRectBtn = document.getElementById('add-rect-btn');
+            const addCircleBtn = document.getElementById('add-circle-btn');
+            const deleteShapeBtn = document.getElementById('delete-shape-btn');
+
+            // Shape controls
+            const rectangleControls = document.getElementById('rectangle-controls');
+            const circleControls = document.getElementById('circle-controls');
+
+            // Property controls
+            const shapeFillColor = document.getElementById('shape-fill-color');
+            const shapeStrokeColor = document.getElementById('shape-stroke-color');
+            const shapeStrokeWidth = document.getElementById('shape-stroke-width-value');
+            const shapeOpacity = document.getElementById('shape-opacity');
+            const shapeOpacityValue = document.getElementById('shape-opacity-value');
+
+            // Rectangle specific
+            const rectWidth = document.getElementById('rect-width');
+            const rectHeight = document.getElementById('rect-height');
+            const rectRadius = document.getElementById('rect-radius');
+            const rectRadiusValue = document.getElementById('rect-radius-value');
+
+            // Circle specific
+            const circleRadius = document.getElementById('circle-radius');
+            const circleRadiusValue = document.getElementById('circle-radius-value');
+
+            // Ensure the shapes tab is active when a shape action is performed
+            function activateShapesTab() {
+                // Find the shapes tab button and click it
+                const shapesTabBtn = document.querySelector('[data-target="tab-shapes"]');
+                if (shapesTabBtn && !shapesTabBtn.classList.contains('active')) {
+                    shapesTabBtn.click();
+                }
+            }
+
+            // Add rectangle
+            if (addRectBtn) {
+                addRectBtn.addEventListener('click', function () {
+                    // Ensure shapes tab is active
+                    activateShapesTab();
+
+                    // Create rectangle
+                    const rect = new fabric.Rect({
+                        left: canvas.width / 2,
+                        top: canvas.height / 2,
+                        width: parseInt(rectWidth.value),
+                        height: parseInt(rectHeight.value),
+                        fill: shapeFillColor.value,
+                        stroke: shapeStrokeColor.value,
+                        strokeWidth: parseInt(shapeStrokeWidth.value),
+                        rx: parseInt(rectRadiusValue.value),
+                        ry: parseInt(rectRadiusValue.value),
+                        opacity: parseFloat(shapeOpacity.value),
+                        originX: 'center',
+                        originY: 'center'
+                    });
+
+                    // Add to canvas
+                    canvas.add(rect);
+                    canvas.setActiveObject(rect);
+                    canvas.renderAll();
+                    history.saveState();
+
+                    // Show rectangle controls, hide circle controls
+                    if (rectangleControls) rectangleControls.style.display = 'block';
+                    if (circleControls) circleControls.style.display = 'none';
+
+                    showMobileTooltip('Rectangle added');
+                });
+            }
+
+            // Add circle
+            if (addCircleBtn) {
+                addCircleBtn.addEventListener('click', function () {
+                    // Ensure shapes tab is active
+                    activateShapesTab();
+
+                    // Create circle
+                    const circle = new fabric.Circle({
+                        left: canvas.width / 2,
+                        top: canvas.height / 2,
+                        radius: parseInt(circleRadiusValue.value),
+                        fill: shapeFillColor.value,
+                        stroke: shapeStrokeColor.value,
+                        strokeWidth: parseInt(shapeStrokeWidth.value),
+                        opacity: parseFloat(shapeOpacity.value),
+                        originX: 'center',
+                        originY: 'center'
+                    });
+
+                    // Add to canvas
+                    canvas.add(circle);
+                    canvas.setActiveObject(circle);
+                    canvas.renderAll();
+                    history.saveState();
+
+                    // Show circle controls, hide rectangle controls
+                    if (rectangleControls) rectangleControls.style.display = 'none';
+                    if (circleControls) circleControls.style.display = 'block';
+
+                    showMobileTooltip('Circle added');
+                });
+            }
+
+            // Delete selected shape
+            if (deleteShapeBtn) {
+                deleteShapeBtn.addEventListener('click', function () {
+                    const activeObject = canvas.getActiveObject();
+                    if (activeObject) {
+                        canvas.remove(activeObject);
+                        canvas.renderAll();
+                        history.saveState();
+                        showMobileTooltip('Shape deleted');
+                    }
+                });
+            }
+
+            // Connect value displays for opacity
+            if (shapeOpacity && shapeOpacityValue) {
+                shapeOpacity.addEventListener('input', function () {
+                    shapeOpacityValue.value = Math.round(this.value * 100);
+                    updateShapeProperty('opacity', parseFloat(this.value));
+                });
+
+                shapeOpacityValue.addEventListener('input', function () {
+                    shapeOpacity.value = this.value / 100;
+                    updateShapeProperty('opacity', parseFloat(this.value / 100));
+                });
+            }
+
+            // Connect rectangle radius controls
+            if (rectRadius && rectRadiusValue) {
+                rectRadius.addEventListener('input', function () {
+                    rectRadiusValue.value = this.value;
+                    updateRectangleProperty('rx', parseInt(this.value));
+                    updateRectangleProperty('ry', parseInt(this.value));
+                });
+
+                rectRadiusValue.addEventListener('input', function () {
+                    rectRadius.value = this.value;
+                    updateRectangleProperty('rx', parseInt(this.value));
+                    updateRectangleProperty('ry', parseInt(this.value));
+                });
+            }
+
+            // Connect circle radius controls
+            if (circleRadius && circleRadiusValue) {
+                circleRadius.addEventListener('input', function () {
+                    circleRadiusValue.value = this.value;
+                    updateCircleProperty('radius', parseInt(this.value));
+                });
+
+                circleRadiusValue.addEventListener('input', function () {
+                    circleRadius.value = this.value;
+                    updateCircleProperty('radius', parseInt(this.value));
+                });
+            }
+
+            // Basic property controls
+            if (shapeFillColor) {
+                shapeFillColor.addEventListener('input', function () {
+                    updateShapeProperty('fill', this.value);
+                });
+
+                shapeFillColor.addEventListener('change', function () {
+                    history.saveState();
+                });
+            }
+
+            if (shapeStrokeColor) {
+                shapeStrokeColor.addEventListener('input', function () {
+                    updateShapeProperty('stroke', this.value);
+                });
+
+                shapeStrokeColor.addEventListener('change', function () {
+                    history.saveState();
+                });
+            }
+
+            if (shapeStrokeWidth) {
+                shapeStrokeWidth.addEventListener('input', function () {
+                    updateShapeProperty('strokeWidth', parseInt(this.value));
+                });
+
+                shapeStrokeWidth.addEventListener('change', function () {
+                    history.saveState();
+                });
+            }
+
+            if (rectWidth) {
+                rectWidth.addEventListener('input', function () {
+                    updateRectangleProperty('width', parseInt(this.value));
+                });
+
+                rectWidth.addEventListener('change', function () {
+                    history.saveState();
+                });
+            }
+
+            if (rectHeight) {
+                rectHeight.addEventListener('input', function () {
+                    updateRectangleProperty('height', parseInt(this.value));
+                });
+
+                rectHeight.addEventListener('change', function () {
+                    history.saveState();
+                });
+            }
+
+            // Color swatch functionality
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.addEventListener('click', function () {
+                    const color = this.getAttribute('data-color');
+                    // Apply to closest color input
+                    const colorInput = this.closest('.control-row').querySelector('input[type="color"]');
+                    if (colorInput) {
+                        colorInput.value = color;
+
+                        // Trigger input event
+                        const event = new Event('input', { bubbles: true });
+                        colorInput.dispatchEvent(event);
+
+                        // Save state
+                        history.saveState();
+                    }
+                });
+            });
+
+            // Update properties functions
+            function updateShapeProperty(property, value) {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && (activeObject.type === 'rect' || activeObject.type === 'circle')) {
+                    activeObject.set(property, value);
+                    canvas.renderAll();
+                }
+            }
+
+            function updateRectangleProperty(property, value) {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'rect') {
+                    activeObject.set(property, value);
+                    canvas.renderAll();
+                }
+            }
+
+            function updateCircleProperty(property, value) {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'circle') {
+                    activeObject.set(property, value);
+                    canvas.renderAll();
+                }
+            }
+
+            // Selection handling
+            canvas.on('selection:created', updateShapeControls);
+            canvas.on('selection:updated', updateShapeControls);
+
+            function updateShapeControls(e) {
+                const activeObject = e.selected[0];
+                if (activeObject) {
+                    // Activate shapes tab when selecting a shape
+                    if (activeObject.type === 'rect' || activeObject.type === 'circle') {
+                        activateShapesTab();
+
+                        // Update common controls
+                        shapeFillColor.value = activeObject.fill || '#3498db';
+                        shapeStrokeColor.value = activeObject.stroke || '#2980b9';
+                        shapeStrokeWidth.value = activeObject.strokeWidth || 2;
+                        shapeOpacity.value = activeObject.opacity || 1;
+                        shapeOpacityValue.value = Math.round((activeObject.opacity || 1) * 100);
+
+                        // Show appropriate controls
+                        if (activeObject.type === 'rect') {
+                            if (rectangleControls) rectangleControls.style.display = 'block';
+                            if (circleControls) circleControls.style.display = 'none';
+
+                            // Update rectangle controls
+                            rectWidth.value = activeObject.width || 150;
+                            rectHeight.value = activeObject.height || 100;
+                            rectRadius.value = activeObject.rx || 0;
+                            rectRadiusValue.value = activeObject.rx || 0;
+                        } else if (activeObject.type === 'circle') {
+                            if (rectangleControls) rectangleControls.style.display = 'none';
+                            if (circleControls) circleControls.style.display = 'block';
+
+                            // Update circle controls
+                            circleRadius.value = activeObject.radius || 50;
+                            circleRadiusValue.value = activeObject.radius || 50;
+                        }
+                    }
+                }
+            }
+     });
+</script>
 
 
 
+<script>
+    function saveTemplateCanvas(templateId) {
+        // Get canvas data
+        const canvasData = canvas.toJSON();
+        
+        // Get canvas preview as base64 image
+        const previewData = canvas.toDataURL({
+            format: 'png',
+            quality: 0.8
+        });
+        
+        // Send to server
+        fetch(`/custom/design-editor/${templateId}/save/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+                canvas_json: canvasData,
+                preview_image: previewData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Handle redirect if it exists
+                if (data.redirect_url) {
+                    console.log("Redirect URL found:", data.redirect_url);
+                    window.location.href = data.redirect_url;
+                    return;
+                }
+                
+                // Show success message if no redirect
+                alert('Template saved successfully!');
+            } else {
+                alert('Error saving template: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving template. Please try again.');
+        });
+    }
+
+</script>
 
 
 {% endblock %}
