@@ -50,7 +50,7 @@ class ProductType(models.Model):
     order = models.IntegerField(default=0, help_text="Display order")
     
     # Canvas specifications
-    default_width = models.IntegerField(help_text="Default canvas width in pixels", default=350)
+    default_width = models.IntegerField(help_text="Default canvas width in pixels", default=320)
     default_height = models.IntegerField(help_text="Default canvas height in pixels", default=400)
     
     # Printable area constraints

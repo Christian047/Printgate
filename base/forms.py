@@ -3,11 +3,7 @@ from django import forms
 from .models import PrintJob
 from store.models import *
 
-
-
 from custom_design.models import *
-
-
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -27,12 +23,6 @@ class ProductForm(forms.ModelForm):
         self.fields['base_price'].label = "Base Price (₦)"
         self.fields['bulk_quantity'].label = "Bulk Quantity"
         self.fields['product_type'].empty_label = "Select Product Type"
-
-
-
-
-
-
 
 class BaseOrderForm(forms.Form):
     def __init__(self, product, *args, **kwargs):
@@ -132,7 +122,7 @@ class BaseOrderForm(forms.Form):
             widget=forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'form-control',
-                'placeholder': 'Enter any special instructions...'
+                'placeholder': 'Special Instructions(optional)',
             }),
             required=False,
             label="Special Instructions"
@@ -197,80 +187,66 @@ class BaseOrderForm(forms.Form):
         return pending_order
     
 class DesignerOrderForm(BaseOrderForm):
-
-        def __init__(self, product, *args, **kwargs):
-            super().__init__(product, *args, **kwargs)
-            
-          
-            if 'special_instructions' in self.fields:
-                del self.fields['special_instructions']
-            
-            self.fields['designer_instructions'] = forms.CharField(
-                widget=forms.Textarea(attrs={
-                    'rows': 5,
-                    'class': 'form-control',
-      
-                }),
-                required=True,
-                label="Design Instructions",
-     
-            )
-            
-            # Add field for reference images
-            self.fields['reference_images'] = forms.FileField(
-                widget=forms.ClearableFileInput(attrs={
-                    'class': 'form-control',
-                    'accept': '.jpg,.jpeg,.png,.pdf'
-                }),
-                required=False,
-                label="Reference Images",
+    def __init__(self, product, *args, **kwargs):
+        super().__init__(product, *args, **kwargs)
         
-            )
-            
-            
-
-            # Add special instructions back at the end
-            self.fields['special_instructions'] = forms.CharField(
-                widget=forms.Textarea(attrs={
-                    'rows': 3,
-                    'class': 'form-control',
-              
-                }),
-                required=False,
-                label="Additional Notes"
-            )
+        if 'special_instructions' in self.fields:
+            del self.fields['special_instructions']
         
-        def save(self, customer=None):
-            # Get the pending order created by the parent method
-            pending_order = super().save(customer=customer)
+        self.fields['designer_instructions'] = forms.CharField(
+            widget=forms.Textarea(attrs={
+                'rows': 5,
+                'class': 'form-control',
+            }),
+            required=True,
+            label="Design Instructions",
+        )
+        
+        # Add field for reference images
+        self.fields['reference_images'] = forms.FileField(
+            widget=forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': '.jpg,.jpeg,.png,.pdf'
+            }),
+            required=False,
+            label="Reference Images",
+        )
+
+        # Add special instructions back at the end
+        self.fields['special_instructions'] = forms.CharField(
+            widget=forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-control',
+                'placeholder': 'Special Instructions (optional)',
+            }),
+            required=False,
+            label="Additional Notes"
+        )
+    
+    def save(self, customer=None):
+        # Get the pending order created by the parent method
+        pending_order = super().save(customer=customer)
+        
+        # Add designer fee to the total price
+        pending_order.total_price += 5000
+        pending_order.designer_fee = 5000
+        pending_order.order_type = 'designer'
+        
+        pending_order.designer_instructions = self.cleaned_data.get('designer_instructions', '')
+        pending_order.save()
+        
+        # Handle multiple reference images
+        if 'reference_images' in self.cleaned_data and self.cleaned_data['reference_images']:
+            reference_images = self.files.getlist('reference_images')
             
-            # Add designer fee to the total price
-            pending_order.total_price += 5000
-            pending_order.designer_fee = 5000
-            pending_order.order_type = 'designer'
-            
-            pending_order.designer_instructions = self.cleaned_data.get('designer_instructions', '')
-            pending_order.save()
-            
-            # Handle multiple reference images
-            if 'reference_images' in self.cleaned_data and self.cleaned_data['reference_images']:
-                reference_images = self.files.getlist('reference_images')
+            for image in reference_images:
+                ReferenceImage.objects.create(
+                    pending_order=pending_order,
+                    image=image
+                )
                 
-                for image in reference_images:
-                    ReferenceImage.objects.create(
-                        pending_order=pending_order,
-                        image=image
-                    )
-                    
-            return pending_order
+        return pending_order
         
-        
-
-
-
-
-
-
 # In forms.py
 class DesignOrderForm(BaseOrderForm):
     def __init__(self, product, *args, **kwargs):

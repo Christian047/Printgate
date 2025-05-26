@@ -135,14 +135,21 @@ LOGGING = {
 }
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.2/ref/settings/#database
+
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite2',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'PrintGate',   #The name of your database
+        'USER': 'postgres', #This remains postgres
+        'PASSWORD': 'Padiga047', #The password of your pgadmin
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+
 
 
 # Password validation

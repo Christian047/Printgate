@@ -1,99 +1,267 @@
 {% extends 'base.html' %}
 {% load account socialaccount %}
+{% load static %}
+
 {% block content %}
-
-<div style="margin: 50px;"></div>
-
-<section class="pt-4 p-4 option-card rounded-4 border-0" style="background-color: #eee;">
-  <div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-lg-12 col-xl-11">
-        <div class="card text-black" style="border-radius: 25px;">
-          <div class="card-body p-md-5">
-            <div class="row justify-content-center">
-              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-
-                <p class="display-4 text-center m-3">Printgate.com</p>
-                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
-
-                <form class="mx-1 mx-md-4" id="signupForm" action="{% url 'register' %}" method="post">
-                  {% csrf_token %}
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <input type="text" id="username" name="username" required class="form-control" />
-                      <label class="form-label" for="form3Example1c">Your Name</label>
-                    </div>
-                  </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <input type="email" id="form3Example3c" class="form-control" />
-                      <label class="form-label" for="form3Example3c">Your Email</label>
-                    </div>
-                  </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <input type="password" id="password" name="password" required class="form-control" />
-                      <label class="form-label" name="password" for="form3Example4c">Password</label>
-                    </div>
-                  </div>
-
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <input type="password" id="form3Example4cd" class="form-control" />
-                      <label class="form-label" for="form3Example4cd">Repeat your password</label>
-                    </div>
-                  </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <div>
-                        <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                        {% comment %} <a class="btn btn-lg btn-block btn-outline-dark"
-                          href="{% provider_login_url 'google' %}"> {% endcomment %}
-                          <img src="https://img.icons8.com/color/16/000000/google-logo.png"> Signup Using Google
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                  <div class="form-check d-flex justify-content-center mb-5">
-                    <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
-                    <label class="form-check-label" for="form2Example3">
-                      I agree all statements in <a href="#!">Terms of service</a>
-                    </label>
-                  </div>
-
-                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                    <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                      class="btn btn-primary btn-lg">Register</button>
-                  </div>
-
-                </form>
-
-              </div>
-              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                  class="img-fluid" alt="Sample image">
-
-              </div>
-            </div>
-          </div>
+<br>
+<br>
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-3">Join Printgate.com</h1>
+            <p class="lead text-secondary">Create your account and start designing today</p>
         </div>
-      </div>
     </div>
-  </div>
-</section>
 
+    <!-- Registration Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card h-100 border-0 rounded-4 option-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="row">
+                        <!-- Form Section -->
+                        <div class="col-md-6 order-2 order-md-1">
+                            <div class="pe-md-4">
+                                <h2 class="h3 fw-bold mb-4">Create Your Account</h2>
+                                
+                                <form id="signupForm" action="{% url 'register' %}" method="post">
+                                    {% csrf_token %}
 
+                                    <div class="mb-4">
+                                        <label for="username" class="form-label fw-semibold">
+                                            <i class="fas fa-user me-2 text-muted"></i>Your Name
+                                        </label>
+                                        <input type="text" id="username" name="username" required 
+                                               class="form-control form-control-lg rounded-3" placeholder="Enter your full name">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="email" class="form-label fw-semibold">
+                                            <i class="fas fa-envelope me-2 text-muted"></i>Your Email
+                                        </label>
+                                        <input type="email" id="email" name="email" required 
+                                               class="form-control form-control-lg rounded-3" placeholder="Enter your email address">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="password" class="form-label fw-semibold">
+                                            <i class="fas fa-lock me-2 text-muted"></i>Password
+                                        </label>
+                                        <input type="password" id="password" name="password" required 
+                                               class="form-control form-control-lg rounded-3" placeholder="Create a strong password">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="confirm_password" class="form-label fw-semibold">
+                                            <i class="fas fa-key me-2 text-muted"></i>Confirm Password
+                                        </label>
+                                        <input type="password" id="confirm_password" name="confirm_password" required 
+                                               class="form-control form-control-lg rounded-3" placeholder="Repeat your password">
+                                    </div>
+
+                                    <!-- Google Signup Option -->
+                                    <div class="mb-4">
+                                        <div class="text-center">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <hr class="flex-grow-1">
+                                                <span class="px-3 text-muted small">OR</span>
+                                                <hr class="flex-grow-1">
+                                            </div>
+                                            {% comment %} 
+                                            <a class="btn btn-outline-secondary w-100 py-3" href="{% provider_login_url 'google' %}">
+                                            {% endcomment %}
+                                            <a class="btn btn-outline-secondary w-100 py-3" href="#">
+                                                <img src="https://img.icons8.com/color/20/000000/google-logo.png" class="me-2">
+                                                <span>Continue with Google</span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="terms" required>
+                                            <label class="form-check-label text-muted" for="terms">
+                                                I agree to the <a href="#" class="text-decoration-none fw-semibold" style="color: #007459;">Terms of Service</a>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid mb-4">
+                                        <button type="submit" class="btn btn-primary w-100 py-3">
+                                            <span>Create Account</span>
+                                            <i class="bi bi-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <p class="text-muted">Already have an account? 
+                                            <a href="{% url 'login' %}" class="text-decoration-none fw-semibold" style="color: #007459;">Sign in here</a>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Image Section -->
+                        <div class="col-md-6 order-1 order-md-2">
+                            <div class="image-container mb-4 mb-md-0">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                                     alt="Registration illustration" class="img-fluid rounded-3" style="width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benefits Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="text-center py-4">
+                <h3 class="h5 fw-bold mb-3">Why Join Printgate?</h3>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-palette fa-2x mb-3" style="color: #007459;"></i>
+                            <h4 class="h6 fw-semibold">Easy Design Tools</h4>
+                            <p class="text-muted small">Create stunning designs with our intuitive tools</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-users fa-2x mb-3" style="color: #007459;"></i>
+                            <h4 class="h6 fw-semibold">Professional Designers</h4>
+                            <p class="text-muted small">Access to expert designers when you need them</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-shipping-fast fa-2x mb-3" style="color: #007459;"></i>
+                            <h4 class="h6 fw-semibold">Fast Delivery</h4>
+                            <p class="text-muted small">Quick turnaround on all your printing needs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">Need help getting started? <a href="#" class="text-decoration-none" style="color: #007459;">Contact our support team</a> for assistance.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Card styling - matching design options page */
+    .option-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .option-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Button styling - matching design options page */
+    .btn {
+        border-radius: 0.5rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #007459;
+        border-color: #007459;
+    }
+
+    .btn-primary:hover {
+        background-color: #005a44;
+        border-color: #005a44;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-secondary {
+        color: #6c757d;
+        border-color: #dee2e6;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #495057;
+        transform: translateY(-2px);
+    }
+
+    /* Form styling */
+    .form-control {
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+
+    .form-control:focus {
+        border-color: #007459;
+        box-shadow: 0 0 0 0.2rem rgba(0, 116, 89, 0.25);
+    }
+
+    .form-label {
+        color: #333;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Image container - matching design options page */
+    .image-container {
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    /* Link styling */
+    a {
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #005a44 !important;
+    }
+
+    /* Form check styling */
+    .form-check-input:checked {
+        background-color: #007459;
+        border-color: #007459;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0, 116, 89, 0.25);
+    }
+
+    /* Divider styling */
+    hr {
+        margin: 0;
+        opacity: 0.25;
+    }
+
+    /* Icon styling */
+    .fas {
+        transition: color 0.3s ease;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .pe-md-4 {
+            padding-right: 0 !important;
+        }
+        
+        .image-container {
+            margin-bottom: 2rem;
+        }
+    }
+</style>
 {% endblock %}

@@ -103,9 +103,7 @@ def new_design(request):
 
 
 
-# ----------------------------------------------------------------------------------------------------
-@login_required
-@user_passes_test(is_admin)
+# ----------------------------------------------------------------------------------------------------@login_required
 def design_editor(request, template_id=None):
     """
     Main design editor using Fabric.js
@@ -124,12 +122,18 @@ def design_editor(request, template_id=None):
     # Check if we're accessing via admin template editor path
     if template_id is not None:
         # This is the admin template editor (design-editor/<id>/)
+        # Only allow admin users to access this path
+        if not (request.user.is_staff or request.user.is_superuser):
+            messages.error(request, "Access denied. Only administrators can edit design templates. Please contact support if you need assistance with template editing.")
+            return redirect('designs:design_home')
+            
         template = get_object_or_404(DesignTemplate, id=template_id)
         product_type = template.product_type
         initial_json = template.canvas_json
         is_admin_editor = True
     else:
         # This is the regular editor (editor/?product_type=X&template=Y)
+        # Available to all logged-in users
         product_type_id = request.GET.get('product_type')
         template_id_param = request.GET.get('template')
         variant_id = request.GET.get('variant')
@@ -145,11 +149,12 @@ def design_editor(request, template_id=None):
                 from custom_design.templatetags.design_tags import has_purchased
                 if not has_purchased(request.user, template.id):
                     messages.error(request, "You need to purchase this template before using it.")
-                    return redirect('designs:product_templates', product_slug=product_type.slug)
+                    return redirect('designs:product_templates', product_slug=template.product_type.slug)
         
         # Validate required parameters for regular editor
         if not product_type_id and not design_id:
-            return HttpResponseBadRequest("Product type or design ID is required")
+            messages.error(request, "Missing required information. Please select a product type to start designing.")
+            return redirect('designs:design_home')
         
         # Check if this is part of an order flow
         if pending_order_id:
@@ -175,6 +180,10 @@ def design_editor(request, template_id=None):
             initial_json = user_design.canvas_json
         else:
             # New design
+            if not product_type_id:
+                messages.error(request, "Product type is required to start a new design.")
+                return redirect('designs:design_home')
+                
             product_type = get_object_or_404(ProductType, id=product_type_id, active=True)
             
             if template_id_param:
@@ -209,7 +218,7 @@ def design_editor(request, template_id=None):
                         user_design.preview_image = preview_image
                     user_design.is_draft = False
                     user_design.save()
-                    messages.success(request, "Your design has been updated.")
+                    messages.success(request, "Your design has been updated successfully.")
                 else:
                     # Create new design
                     user_design = UserDesign.objects.create(
@@ -222,7 +231,7 @@ def design_editor(request, template_id=None):
                         preview_image=preview_image,
                         is_draft=False
                     )
-                    messages.success(request, "Your design has been saved.")
+                    messages.success(request, "Your design has been saved successfully.")
                 
                 # If this is part of an order flow, link the design to the pending order
                 if pending_order:
@@ -239,7 +248,8 @@ def design_editor(request, template_id=None):
             except json.JSONDecodeError:
                 messages.error(request, "There was an error processing your design data. Please try again.")
             except Exception as e:
-                messages.error(request, f"An error occurred: {str(e)}")
+                logger.error(f"Error saving design: {str(e)}")
+                messages.error(request, f"An error occurred while saving your design: {str(e)}")
     
     # Shared code for both editor modes
     
@@ -253,7 +263,7 @@ def design_editor(request, template_id=None):
         from django.utils.safestring import mark_safe
         serialized_initial_json = mark_safe(json.dumps(initial_json))
     except TypeError as e:
-        print(f"DEBUG: JSON serialization error - {e}")
+        logger.error(f"JSON serialization error - {e}")
         # Fallback to default empty canvas
         serialized_initial_json = mark_safe(json.dumps({"version": "5.3.1", "objects": [], "background": "#ffffff"}))
     
@@ -276,7 +286,6 @@ def design_editor(request, template_id=None):
     
     # Make sure to return an HttpResponse
     return render(request, 'custom_design/editor.html', context)
-
 
 
 
@@ -1082,9 +1091,17 @@ def design_template_edit(request, pk):
     })
 
 # API endpoint to save canvas data from the editor
+
 @login_required
-@user_passes_test(is_admin)
 def save_template_canvas(request, template_id):
+    # Check if user is admin for this admin-only functionality
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, "Access denied. Only administrators can save template changes.")
+        return JsonResponse({
+            'success': False, 
+            'message': 'Access denied. Admin privileges required.'
+        }, status=403)
+        
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Method not allowed'}, status=405)
         
@@ -1186,9 +1203,6 @@ def save_template_canvas(request, template_id):
     except Exception as e:
         logger.error(f"Error saving template canvas: {str(e)}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'An error occurred: {str(e)}'}, status=500)
-    
-    
-    
     
     
 @login_required

@@ -8,7 +8,6 @@
     <!-- Header Section -->
     <div class="row mb-5">
         <div class="col-12">
-
             <p class="lead text-secondary">Select how you'd like to proceed with your {{ product.name }} design</p>
         </div>
     </div>
@@ -16,7 +15,7 @@
     <!-- Options Cards -->
     <div class="row g-4">
         <!-- Upload Design Option -->
-        <div class="col-md-6">
+        <div class="col-12 col-lg-6">
             <div class="card h-100 border-0 rounded-4 option-card">
                 <div class="card-header bg-white border-0 pt-4 px-4">
                     <h2 class="card-title h3 fw-bold">Upload Your Design</h2>
@@ -33,18 +32,18 @@
                 </div>
             </div>
         </div>
-    <div class="row g-4">
-        <!-- Upload Design Option -->
-        <div class="col-md-6">
+
+        <!-- Create Design Option -->
+        <div class="col-12 col-lg-6">
             <div class="card h-100 border-0 rounded-4 option-card">
                 <div class="card-header bg-white border-0 pt-4 px-4">
                     <h2 class="card-title h3 fw-bold">Create Your Design</h2>
                 </div>
                 <div class="card-body text-center p-4">
                     <div class="image-container mb-4">
-                        <img src="/media/images/design2.png" alt="Upload design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
+                        <img src="/media/images/design2.png" alt="Create design" class="img-fluid rounded-3" style="height: 180px; object-fit: cover; width: 100%;">
                     </div>
-                    <p class="text-muted mb-4">Transform your ideas into reality, No design experience needed!.</p>
+                    <p class="text-muted mb-4">Transform your ideas into reality, No design experience needed!</p>
                     <a href="{% url 'create_design_order' product.id %}" class="btn btn-primary w-100 py-3">
                         <span>Start Designing</span>
                         <i class="bi bi-arrow-right ms-2"></i>
@@ -54,7 +53,7 @@
         </div>
 
         <!-- Hire Designer Option -->
-        <div class="col-md-6">
+        <div class="col-12 col-lg-6">
             <div class="card h-100 border-0 rounded-4 option-card">
                 <div class="card-header bg-white border-0 pt-4 px-4">
                     <h2 class="card-title h3 fw-bold">Hire a Professional Designer</h2>
@@ -85,9 +84,7 @@
             </div>
         </div>
     </div>
-
-
-
+</div>
 
 <style>
     /* Card styling */
@@ -111,22 +108,17 @@
 
     .btn-primary {
         background-color: #007459;
-   
     }
 
     .btn-primary:hover {
-
-
         transform: translateY(-2px);
     }
 
     .btn-outline-primary {
         color: #007459;
-     
     }
 
     .btn-outline-primary:hover {
-   
         color: white;
         transform: translateY(-2px);
     }
@@ -151,6 +143,17 @@
     .btn-success:hover {
         background-color: #128C7E;
         border-color: #128C7E;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 991.98px) {
+        .row.g-4 {
+            gap: 1rem !important;
+        }
+        
+        .option-card {
+            margin-bottom: 1rem;
+        }
     }
 </style>
 {% endblock %}
