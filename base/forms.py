@@ -5,15 +5,21 @@ from store.models import *
 
 from custom_design.models import *
 
+
+
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'base_price', 'bulk_quantity', 'image', 'category', 'product_type']
+        fields = ['title', 'base_price', 'bulk_quantity', 'image', 'image_2', 'image_3', 'image_4', 'category', 'product_type']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'base_price': forms.NumberInput(attrs={'class': 'form-control'}),
             'bulk_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-      
+            'image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'image_2': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'image_3': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+            'image_4': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'category': forms.SelectMultiple(attrs={'class': 'form-select select2 w-100'}),
             'product_type': forms.Select(attrs={'class': 'form-select'}),
         }
@@ -23,6 +29,22 @@ class ProductForm(forms.ModelForm):
         self.fields['base_price'].label = "Base Price (₦)"
         self.fields['bulk_quantity'].label = "Bulk Quantity"
         self.fields['product_type'].empty_label = "Select Product Type"
+        
+        # Labels for image fields
+        self.fields['image'].label = "Main Product Image"
+        self.fields['image_2'].label = "Additional Image 2 (Optional)"
+        self.fields['image_3'].label = "Additional Image 3 (Optional)"
+        self.fields['image_4'].label = "Additional Image 4 (Optional)"
+        
+        # Make additional images optional in the form
+        self.fields['image_2'].required = False
+        self.fields['image_3'].required = False
+        self.fields['image_4'].required = False
+
+
+
+
+
 
 class BaseOrderForm(forms.Form):
     def __init__(self, product, *args, **kwargs):

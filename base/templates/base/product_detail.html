@@ -1,38 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-<br>
-<br>
+<br><br>
 
 <div class="container my-5">
     <div class="row">
-        <!-- Product Image Section -->
+        <!-- Product Image Section with Carousel -->
         <div class="col-md-6">
             <div class="border rounded p-3 bg-light">
-                <img src="{{ product.image.url }}" class="img-fluid rounded-3 w-100" alt="{{ product.title }}" style="max-height: 450px; object-fit: cover;">
+                {% if product.has_multiple_images %}
+                    <!-- Carousel Gallery -->
+                    <div class="gallery-container">
+                        <div class="featured-image-container">
+                            <img src="{{ product.get_all_images.0 }}" alt="{{ product.title }}" class="featured-image" id="featured-image">
+                        </div>
+                        <div class="thumbnail-container">
+                            {% for image_url in product.get_all_images %}
+                                <img src="{{ image_url }}" 
+                                     alt="{{ product.title }} - Image {{ forloop.counter }}" 
+                                     class="thumbnail {% if forloop.first %}active{% endif %}" 
+                                     onclick="changeImage(this)">
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Single Image Fallback -->
+                    <img src="{{ product.image.url }}" class="img-fluid rounded-3 w-100" alt="{{ product.title }}" style="max-height: 450px; object-fit: cover;">
+                {% endif %}
             </div>
         </div>
 
         <!-- Product Details Section -->
         <div class="col-md-6 py-2 m-2">
             <h1 class="fw-bold">{{ product.title }}</h1>
-            <p class="text-muted">Category: <strong>{{ product.category.name }}</strong></p>
+            <p class="text-muted">Category: 
+                <strong>
+                    {% for category in product.category.all %}
+                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </strong>
+            </p>
 
             <!-- Price -->
             <div class="py-2">
                 <h2 class="text-dark fw-bold">₦{{ product.base_price|floatformat:2 }}</h2>
             </div>
 
-    
             <!-- Description Section -->
             <div class="py-3">
                 <h5 class="fw-semibold">Product Description</h5>
-                <p class="text-dark">This is a premium {{ product.category.name }} product, designed to provide excellent quality and performance. Ideal for various needs and occasions.</p>
+                <p class="text-dark">This is a premium 
+                    {% for category in product.category.all %}
+                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    product, designed to provide excellent quality and performance. Ideal for various needs and occasions.
+                </p>
             </div>
 
             <!-- Call to Action Buttons -->
             <div class="d-grid gap-2 d-md-flex">
-                <a href="{% url 'options' product.pk %}" class="btn btn-primary px-5 py-3 fw-semibold" style= "background-color: #007459;">
+                <a href="{% url 'options' product.pk %}" class="btn btn-primary px-5 py-3 fw-semibold" style="background-color: #007459;">
                     <i class="fas fa-shopping-cart"></i> Print
                 </a>
                 <a href="{% url 'home' %}" class="btn btn-outline-dark px-5 py-3 fw-semibold">
@@ -56,4 +83,76 @@
         </div>
     </div>
 </div>
+
+<style>
+    .gallery-container {
+        max-width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .featured-image-container {
+        position: relative;
+        width: 100%;
+        height: 450px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        border-radius: 0.375rem;
+    }
+    .featured-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .thumbnail-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+    }
+    .thumbnail {
+        flex: 1;
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 0.25rem;
+        border: 2px solid transparent;
+    }
+    .thumbnail:hover {
+        opacity: 0.7;
+        transform: scale(1.02);
+    }
+    .thumbnail.active {
+        border: 3px solid #007459;
+        opacity: 1;
+    }
+    .overlay-text {
+        display: none;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .thumbnail {
+            height: 60px;
+        }
+        .featured-image-container {
+            height: 300px;
+        }
+        .overlay-text {
+            font-size: 0.9rem;
+            padding: 15px;
+        }
+    }
+</style>
+
+<script>
+    function changeImage(clickedImage) {
+        // Update featured image
+        document.getElementById('featured-image').src = clickedImage.src;
+        
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+        clickedImage.classList.add('active');
+    }
+</script>
+
 {% endblock %}

@@ -446,7 +446,7 @@ color:#ffe037;
       
       <!-- Contact Numbers -->
       <div class="carousel-contact">
-        0812 345 6789 | 0803 987 6543
+        08035868564 | 08063562721
       </div>
       
       <div class="carousel-caption">
@@ -465,7 +465,7 @@ color:#ffe037;
     </div>
   </div>
 </div>
-<!-- Carousel End -->
+
 
 
 <section id="portfolio" class="portfolio">
@@ -513,14 +513,14 @@ color:#ffe037;
 
     <!-- Card Body -->
 <div class="card-body p-2">
-  <h4 class="card-title fw-bold">{{ product.title }}</h4>
+  <h4 class="card-title fw-bold"  style="color: var(--brand-primary);">{{ product.title }}</h4>
   
   <div class="d-flex justify-content-between align-items-start flex-wrap">
     <div class="flex-grow-1">
       {% comment %} <div class="text-muted small">Base Price:</div> {% endcomment %}
-      <h3 class="card-title h2 fw-bold" style="color: var(--brand-primary);">₦{{ product.base_price|intcomma }}</h3>
+      <h3 class="card-title h2 fw-bolder">₦{{ product.base_price|intcomma }}</h3>
       {% if product.bulk_quantity %}
-        <div class="small" style="font-style: italic;">per {{ product.bulk_quantity }} pcs</div>
+        <div>per {{ product.bulk_quantity }} pcs</div>
       {% endif %}
       
       <!-- Print button - shows below bulk quantity on mobile -->

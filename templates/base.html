@@ -106,8 +106,8 @@
   {% comment %} Navbar---------------------------- {% endcomment %}
   <nav class="navbar navbar-dark  navbar-expand-lg fixed-top"
     style="background: linear-gradient(to bottom, #00533f, #00745c);">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">Printgate</a>
+    <div class="container-fluid"> 
+      <a class="navbar-brand" href="{% url 'home' %}"><img src="media/images/logo1.png" alt="" style="height:24px;"> Printgate</a>
 
       {% comment %} <div class="form-inline my-2 my-lg-0">
 
@@ -190,22 +190,28 @@
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'custom-home' %}">Create a design</a>
         </li>
+
+        {% if user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'add_product' %}">Add Products</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'product_list' %}">Manage Products</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{%  url 'convert' %}">Unit Converter</a>
-        </li>
 
         <li class="nav-item">
           <a class="nav-link" href="{%  url 'orders' %}">Admin dashboard</a>
         </li>
 
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{%  url 'convert' %}">Unit Converter</a>
+        </li>
 
-        {% if user.is_authenticated %}
+    
+
+
+        {% if user.is_superuser %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="{% url 'new_design' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Design Section
@@ -269,7 +275,7 @@
 
   <div class="row">
     <div class="whatsapp-background">
-      <a href="https://wa.me/+2348027989868" target="_blank" class="text-decoration-none" style="color:#004d3b;">
+      <a href="https://wa.me/+2348035868564" target="_blank" class="text-decoration-none" style="color:#004d3b;">
         Chat with us <i class="fa-brands fa-whatsapp whatsapp-icon"></i>
       </a>
     </div>
@@ -300,11 +306,11 @@
           <li>
             <h2 style="color: #ffe037;">Onitsha Address</h2>
           </li>
-          <div style="font-size: 20px; color: #fff;">58 Old Market Road, Onitsha, <br> Anambra State, Nigeria</div>
+          <div style="font-size: 20px; color: #fff;">64 Old Market Road, Onitsha, <br> Anambra State, Nigeria</div>
         </ul>
 
-        <div style="font-size: 20px; font-weight:bold; color:#fff;">0812 345 6789 |
-          0803 987 6543</div>
+        <div style="font-size: 20px; font-weight:bold; color:#fff;">0803 586 8564 |
+         0806 356 2721</div>
   
       </div>
 

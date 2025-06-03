@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 
-# Create your models here.
+
+
 
 class Customer(models.Model):
 	user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
@@ -29,19 +30,38 @@ allowed_files = FileExtensionValidator(
             )
 
 # --------------------------------------------------------------------------------------------------------
-
 class Product(models.Model):
     title = models.CharField(max_length=200)
     base_price = models.IntegerField(null=True, blank=True)
     bulk_quantity = models.IntegerField(null=True, blank=True)
-    digital = models.BooleanField(default=False,null=True, blank=True)
-    image =  models.ImageField(
+    digital = models.BooleanField(default=False, null=True, blank=True)
+    
+    # Main product image
+    image = models.ImageField(
         upload_to='product/', default='default.jpg', null=True, blank=True
-        
     )
-    # category = models.ForeignKey(Categories, on_delete=models.SET_NULL, null=True, blank=True, related_name= 'product_category')
-    category = models.ManyToManyField(Categories, related_name= 'product_category')
-    product_type = models.ForeignKey('custom_design.ProductType', on_delete=models.SET_NULL, null=True, blank=True, related_name='store_products')
+    
+    # Secondary images for carousel (optional)
+    image_2 = models.ImageField(
+        upload_to='product/', null=True, blank=True, 
+        help_text="Optional secondary image"
+    )
+    image_3 = models.ImageField(
+        upload_to='product/', null=True, blank=True, 
+        help_text="Optional secondary image"
+    )
+    image_4 = models.ImageField(
+        upload_to='product/', null=True, blank=True, 
+        help_text="Optional secondary image"
+    )
+    
+    category = models.ManyToManyField(Categories, related_name='product_category')
+    product_type = models.ForeignKey(
+        'custom_design.ProductType', 
+        on_delete=models.SET_NULL, 
+        null=True, blank=True, 
+        related_name='store_products'
+    )
 
     def __str__(self):
         return self.title
@@ -53,7 +73,44 @@ class Product(models.Model):
         except:
             url = ''
         return url
-
+    
+    @property
+    def get_all_images(self):
+        """
+        Returns a list of image URLs for the carousel.
+        Only includes images that exist.
+        """
+        images = []
+        
+        # Main image
+        if self.image:
+            images.append(self.imageURL)
+        
+        # Secondary images
+        if self.image_2:
+            try:
+                images.append(self.image_2.url)
+            except:
+                pass
+                
+        if self.image_3:
+            try:
+                images.append(self.image_3.url)
+            except:
+                pass
+                
+        if self.image_4:
+            try:
+                images.append(self.image_4.url)
+            except:
+                pass
+        
+        return images
+    
+    @property
+    def has_multiple_images(self):
+        """Returns True if product has more than one image"""
+        return len(self.get_all_images) > 1
 
 # --------------------------------------------------------------------------------------------------------
 

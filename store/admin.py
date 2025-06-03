@@ -9,21 +9,29 @@ from django.utils.safestring import mark_safe
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):  
     list_display = ('title', 'base_price', 'bulk_quantity', 'digital', 'category_image', 'get_categories')
-    filter_horizontal = ('category',)  # Note: This should match your field name
+    filter_horizontal = ('category',)
+    
+    # Optional: Add fieldsets to organize the form better
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'base_price', 'bulk_quantity', 'digital', 'category', 'product_type')
+        }),
+        ('Images', {
+            'fields': ('image', 'image_2', 'image_3', 'image_4'),
+            'description': 'Upload main image and up to 3 additional images for the product carousel'
+        }),
+    )
     
     def category_image(self, obj):
-        if obj.image:  # Ensure there's an image
+        if obj.image:
             return mark_safe(f'<img src="{obj.image.url}" width="50" height="50" />')
         return "No Image"
     
     def get_categories(self, obj):
-        # Join all category names into a comma-separated string
-        # Note the change here to match your field name
         return ", ".join([cat.name for cat in obj.category.all()])
     
     # Set a display name for the column
     get_categories.short_description = 'Categories'
-
 
     
 @admin.register(ProductVariant)
